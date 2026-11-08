@@ -1,0 +1,14 @@
+.env
+.env.*
+!.env.example
+.venv/
+__pycache__/
+*.pyc
+.git/
+*.log
+evidence/
+Dockerfile
+.dockerignore
+uv.lock
+pyproject.toml
+uv.toml
