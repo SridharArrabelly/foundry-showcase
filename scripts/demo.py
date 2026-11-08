@@ -140,7 +140,8 @@ def main():
         "mode": "live-agent-deterministic-evaluation", "created_at": stamp(),
         "requested_version": args.version, "passed": passed, "total": len(rows),
         "gate_passed": passed == len(rows), "threshold": "all reviewed deterministic checks pass",
-        "datasets": [{"path": str(p), "sha256": hashlib.sha256(Path(p).read_bytes()).hexdigest()}
+        "dataset_hash_format": "sha256-normalized-lf",
+        "datasets": [{"path": str(p), "sha256": hashlib.sha256(Path(p).read_bytes().replace(b"\r\n", b"\n")).hexdigest()}
                      for p in args.dataset],
         "limitations": "Small synthetic set. Not an LLM judge, safety certification, benchmark or ROI measurement.",
         "cases": rows,

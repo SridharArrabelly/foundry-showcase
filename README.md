@@ -7,6 +7,8 @@ behaviour, gate a release and turn reviewed operational evidence into a test.
 **Synthetic demo, not a production reference deployment.** Read the explicit
 boundaries below before presenting.
 
+**Start here: [delivery map, deployed versions and live links](docs/DELIVERY.md).**
+
 ## Deliverables
 
 - `presentation/Foundry - From prototype to operated service.pptx`: 15 main
@@ -58,6 +60,9 @@ management-plane permissions. Viewing traces also requires telemetry read access
 
 For manual authentication, run `az login` and `azd auth login` yourself in the
 intended tenant. Do not copy tokens into source or slides.
+For a fresh clone on an authorized machine, run `scripts/configure_existing.ps1`
+to reuse the resource IDs in `config/demo-target.json`. It creates only local
+azd configuration and does not provision new cloud resources.
 
 ```powershell
 Set-Location C:\Users\sarrabelly\Documents\GitHub\foundry-showcase\demo
@@ -174,6 +179,11 @@ Official references:
 [Copilot SDK BYOK](https://github.com/github/copilot-sdk/blob/main/docs/auth/byok.md).
 
 ## Cleanup
+
+To regenerate the presentation, install `presentation/requirements.txt`, run
+`python presentation/build_deck.py`, then run `scripts/render_slides.ps1` on
+Windows with PowerPoint installed. The PDF intentionally contains the 15 visible
+slides; the five Q&A backups remain hidden in the editable deck.
 
 Stop local processes you started. Delete resources only after reviewing the exact
 resource group and confirming it contains only this demo. Telemetry and the

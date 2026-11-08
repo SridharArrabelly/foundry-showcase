@@ -22,10 +22,29 @@ def main():
         raise ValueError("The complete core plus regression suite must pass")
     if report.get("requested_version") != args.version:
         raise ValueError("Report version differs from the requested release")
-    if any(not row["passed"] or row["result"]["variant"] != "improved" for row in report["cases"]):
+    rows = report["cases"]
+    required_ids = {
+        json.loads(line)["id"]
+        for path in (Path("datasets/core.jsonl"), Path("datasets/regression.jsonl"))
+        for line in path.read_text(encoding="utf-8").splitlines() if line.strip()
+    }
+    ids = [row["id"] for row in rows]
+    if len(set(ids)) != len(ids) or not required_ids <= set(ids):
+        raise ValueError("Missing or duplicate required release cases")
+    if any(
+        not row["passed"] or not all(row["checks"].values())
+        or row["result"]["variant"] != "improved"
+        or row["result"]["mode"] != "live-copilot-sdk"
+        or row["result"]["hosting"] != "foundry"
+        or row["result"].get("requested_version") != args.version
+        for row in rows
+    ):
         raise ValueError("Every case must pass against the improved candidate")
     for dataset in report["datasets"]:
-        if hashlib.sha256(Path(dataset["path"]).read_bytes()).hexdigest() != dataset["sha256"]:
+        content = Path(dataset["path"]).read_bytes()
+        hashes = {hashlib.sha256(content).hexdigest(),
+                  hashlib.sha256(content.replace(b"\r\n", b"\n")).hexdigest()}
+        if dataset["sha256"] not in hashes:
             raise ValueError(f"Dataset changed since evaluation: {dataset['path']}")
     revision = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True, check=True).stdout.strip()
     release = {

@@ -21,6 +21,10 @@
   improved requests the batch. Keep baseline out of the approved release pointer.
 - Core and extended regression results refer to the same dataset hashes.
 - Human-reviewed feedback includes source invocation, trace ID and reviewer.
+- The packaged case approvals and recorded rehearsal reviewer are demonstration
+  metadata, not proof of customer/domain-expert sign-off. Have the presenter
+  approve the labels before delivery. The CLI's reviewer field is not an
+  authenticated approval system.
 
 ## Timing and costs
 
