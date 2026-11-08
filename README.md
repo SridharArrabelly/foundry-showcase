@@ -109,7 +109,7 @@ an arbitrary default subscription:
 
 ```powershell
 azd deploy volt-assistant --no-prompt
-azd ai agent show --output json
+azd ai agent show --output json | ConvertFrom-Json | Select-Object name, version, status, playground_url
 python scripts\demo.py ask "Is my Volt Charge 65 from batch CH-0722 safe to use?" `
   --version <actual-version> --out evidence\recall.json
 ```

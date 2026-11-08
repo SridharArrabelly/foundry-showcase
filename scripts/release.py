@@ -2,6 +2,7 @@
 import argparse
 import hashlib
 import json
+import os
 import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
@@ -28,7 +29,9 @@ def main():
             raise ValueError(f"Dataset changed since evaluation: {dataset['path']}")
     revision = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True, check=True).stdout.strip()
     release = {
-        "agent": "volt-assistant", "version": args.version, "source_revision": revision,
+        "agent": "volt-assistant", "version": args.version,
+        "review_workspace_revision": revision,
+        "deployment_source_revision": os.environ.get("GITHUB_SHA"),
         "report_sha256": hashlib.sha256(data).hexdigest(),
         "datasets": report["datasets"], "created_at": datetime.now(timezone.utc).isoformat(),
         "scope": "Approved demo-client version pointer. Does not change Foundry portal default routing.",

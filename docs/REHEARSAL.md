@@ -7,6 +7,8 @@
 - Verify model quota and that the presenter has Foundry data-plane permissions.
 - Verify Application Insights connection, trace ingestion and telemetry read access.
 - Verify GitHub repository access, Actions availability and OIDC trust on main.
+- Match the exact OIDC subject emitted by the repository. New repositories may
+  include immutable owner/repository IDs; do not broaden the trust to fix a mismatch.
 - No cloud credentials in source, screenshots, traces or slide notes.
 
 ## Data and expected outputs

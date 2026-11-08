@@ -13,7 +13,7 @@ Traces and evaluation result tabs; GitHub Actions. Hide notifications.
 ```powershell
 Set-Location C:\Users\sarrabelly\Documents\GitHub\foundry-showcase\demo
 $py = ".\src\github-copilot-invocations\.venv\Scripts\python.exe"
-azd ai agent show --output json
+azd ai agent show --output json | ConvertFrom-Json | Select-Object name, version, status, playground_url
 # Use the actual version IDs in evidence/rehearsal-index.json, once created.
 $versions = Get-Content evidence\rehearsal-index.json | ConvertFrom-Json
 $baseline = $versions.baseline_version
@@ -76,6 +76,9 @@ Get-Content evidence\release.json
 python scripts\demo.py ask "Check Volt Charge 65 batch CH-0926 for a recall." `
   --out evidence\released-request.json
 ```
+
+Do not display an unfiltered `azd ai agent show` response: it includes configured
+environment values, including the telemetry connection string.
 
 The client uses the approved version from `release.json`. This pointer is not a
 change to Foundry's default portal routing. Show version, dataset hash and

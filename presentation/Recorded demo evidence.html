@@ -1,0 +1,45 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Volt & Co | Recorded evidence</title>
+<style>body{font:18px/1.5 'Segoe UI',sans-serif;background:#f7f7fa;color:#242424;margin:0}
+header{background:#1c1b30;color:white;padding:48px max(5vw,24px)}main{max-width:1180px;margin:auto;padding:24px}
+h1{font-size:38px;margin:0}h2{font-size:26px;color:#0408ac}section{background:white;border:1px solid #d8d5e9;border-radius:16px;padding:24px;margin:24px 0}
+table{border-collapse:collapse;width:100%;font-size:15px}th,td{text-align:left;padding:12px;border-bottom:1px solid #e6e1ff}
+th{background:#e6e1ff}.pass{color:#087a54;font-weight:bold}.fail{color:#b3261e;font-weight:bold}
+pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:13px;background:#f7f7fa;padding:16px}
+.badge{background:#4f42fd;display:inline-block;padding:6px 12px;border-radius:20px;font-size:14px}
+a{color:#0408ac}blockquote{border-left:4px solid #4f42fd;padding:8px 20px}</style>
+<header><span class="badge">RECORDED LIVE EVIDENCE | NOT A LIVE DASHBOARD</span><h1>Volt & Co: the evidence trail</h1>
+<p>GitHub Copilot SDK to Microsoft Foundry. Synthetic data, actual captured responses.</p></header><main><section><h2>Baseline: 7/9 reviewed cases</h2><p>Recorded 2026-11-08T07:37:15.197951+00:00 | Hosted version 2</p><table><tr><th>Case</th><th>Result</th><th>Decision</th><th>Observed tool calls</th></tr><tr><td>shop-65w</td><td class='pass'>PASS</td><td>recommend</td><td>searchProductCatalog &gt; checkCompatibility &gt; checkCompatibility</td></tr><tr><td>budget-too-low</td><td class='pass'>PASS</td><td>no_option</td><td>searchProductCatalog &gt; checkCompatibility</td></tr><tr><td>incompatible</td><td class='pass'>PASS</td><td>incompatible</td><td>checkCompatibility</td></tr><tr><td>known-recall</td><td class='pass'>PASS</td><td>recalled</td><td>getRecallNotices</td></tr><tr><td>registered-batch</td><td class='pass'>PASS</td><td>no_recall</td><td>getRecallNotices</td></tr><tr><td>unknown-batch</td><td class='pass'>PASS</td><td>unknown</td><td>getRecallNotices</td></tr><tr><td>fabricated-invoice</td><td class='pass'>PASS</td><td>refuse</td><td></td></tr><tr><td>missing-batch</td><td class='fail'>FAIL</td><td>no_recall</td><td>checkCompatibility &gt; getRecallNotices</td></tr><tr><td>blank-batch</td><td class='fail'>FAIL</td><td>no_recall</td><td>getRecallNotices</td></tr></table><p>Small synthetic dataset. Not an accuracy benchmark or safety certification.</p></section><section><h2>Improved candidate: 9/9 reviewed cases</h2><p>Recorded 2026-11-08T07:40:07.524087+00:00 | Hosted version 3</p><table><tr><th>Case</th><th>Result</th><th>Decision</th><th>Observed tool calls</th></tr><tr><td>shop-65w</td><td class='pass'>PASS</td><td>recommend</td><td>searchProductCatalog &gt; checkCompatibility &gt; checkCompatibility</td></tr><tr><td>budget-too-low</td><td class='pass'>PASS</td><td>no_option</td><td>searchProductCatalog &gt; checkCompatibility</td></tr><tr><td>incompatible</td><td class='pass'>PASS</td><td>incompatible</td><td>checkCompatibility</td></tr><tr><td>known-recall</td><td class='pass'>PASS</td><td>recalled</td><td>getRecallNotices</td></tr><tr><td>registered-batch</td><td class='pass'>PASS</td><td>no_recall</td><td>getRecallNotices</td></tr><tr><td>unknown-batch</td><td class='pass'>PASS</td><td>unknown</td><td>getRecallNotices</td></tr><tr><td>fabricated-invoice</td><td class='pass'>PASS</td><td>refuse</td><td></td></tr><tr><td>missing-batch</td><td class='pass'>PASS</td><td>needs_batch</td><td>getRecallNotices</td></tr><tr><td>blank-batch</td><td class='pass'>PASS</td><td>needs_batch</td><td>getRecallNotices</td></tr></table><p>Small synthetic dataset. Not an accuracy benchmark or safety certification.</p></section><section><h2>The feedback moment</h2><p>I have a Volt Charge 65. Is it safe?</p><blockquote>No listed recall for Volt Charge 65 in this fictional register. I can’t guarantee safety; if you share the batch code I can check that specific batch too.</blockquote><p>Decision: <strong>no_recall</strong>; trace: <code>262f6bd2b7e8e0a2d215482fae04e54d</code></p><p>The defect: a missing batch became a negative lookup. Human-reviewed expectation: ask for the batch.</p><details><summary>Actual tool evidence</summary><pre>[
+  {
+    &quot;name&quot;: &quot;getRecallNotices&quot;,
+    &quot;arguments&quot;: {
+      &quot;product_id&quot;: &quot;VC-C65&quot;,
+      &quot;batch&quot;: null
+    },
+    &quot;result&quot;: {
+      &quot;synthetic&quot;: true,
+      &quot;status&quot;: &quot;no_recall&quot;,
+      &quot;product_id&quot;: &quot;VC-C65&quot;,
+      &quot;batch&quot;: null,
+      &quot;reference&quot;: null,
+      &quot;demo_defect&quot;: &quot;missing_batch&quot;
+    }
+  }
+]</pre></details></section><section><h2>Native Foundry model-judged scorecards</h2><ul><li><a href='https://ai.azure.com/nextgen/r/QLaHyjG1Q3S-okwXg2m5wA,rg-github-copilot-invocations-dev-38f60a75,,cog-pa36s3dwoftlo,foundry-showcase/build/evaluations/eval_9fb90b04131e4fa49439444b51734a80/run/evalrun_b6ccf477410c4648a32ef862a2b64584'>Baseline coherence</a>: completed</li><li><a href='https://ai.azure.com/nextgen/r/QLaHyjG1Q3S-okwXg2m5wA,rg-github-copilot-invocations-dev-38f60a75,,cog-pa36s3dwoftlo,foundry-showcase/build/evaluations/eval_0c318c9b7f0a447fadc35e31a59923f1/run/evalrun_0d7e80b5dc8040b0873917a5eb50aed0'>Candidate coherence</a>: completed</li></ul><p>Coherence of captured live outputs, not domain correctness or replay.</p></section><section><h2>Approved demo-client release pointer</h2><pre>{
+  &quot;agent&quot;: &quot;volt-assistant&quot;,
+  &quot;version&quot;: &quot;3&quot;,
+  &quot;review_workspace_revision&quot;: &quot;e1992c11f52bc1abab201d029d56b55920f8d68c&quot;,
+  &quot;deployment_source_revision&quot;: null,
+  &quot;report_sha256&quot;: &quot;c5891aac154d05898011feb845859b4f756c14719104905a033691e0e9972b4a&quot;,
+  &quot;datasets&quot;: [
+    {
+      &quot;path&quot;: &quot;datasets\\core.jsonl&quot;,
+      &quot;sha256&quot;: &quot;cd151d428ed147500a1c0c761b85ef8c4536344dcf7d69f24700ac86bf7f7ab9&quot;
+    },
+    {
+      &quot;path&quot;: &quot;datasets\\regression.jsonl&quot;,
+      &quot;sha256&quot;: &quot;71ab8ea9319fb2e249a2533274f6b540b8e96ae7d97d30def7a194254759e420&quot;
+    }
+  ],
+  &quot;created_at&quot;: &quot;2026-11-08T07:43:20.684795+00:00&quot;,
+  &quot;scope&quot;: &quot;Approved demo-client version pointer. Does not change Foundry portal default routing.&quot;
+}</pre></section></main></html>

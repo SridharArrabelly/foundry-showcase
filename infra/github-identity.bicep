@@ -1,6 +1,8 @@
 param accountName string
 param projectName string
 param repository string
+@description('Exact subject emitted by the GitHub OIDC token. New repositories can include immutable owner/repository IDs.')
+param oidcSubject string = 'repo:${repository}:ref:refs/heads/main'
 param location string = resourceGroup().location
 
 resource account 'Microsoft.CognitiveServices/accounts@2025-06-01' existing = { name: accountName }
@@ -17,7 +19,7 @@ resource federation 'Microsoft.ManagedIdentity/userAssignedIdentities/federatedI
   name: 'github-main'
   properties: {
     issuer: 'https://token.actions.githubusercontent.com'
-    subject: 'repo:${repository}:ref:refs/heads/main'
+    subject: oidcSubject
     audiences: ['api://AzureADTokenExchange']
   }
 }
