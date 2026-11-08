@@ -10,6 +10,11 @@ The deck has **15 visible slides plus 5 hidden Q&A backups**. The Notes pane
 contains talk track, timing, transitions to and from demos, fallback and source
 boundaries. The PDF intentionally exports only the 15 visible slides.
 
+The visual revision restores the original Bank Briefing Azure cover art and
+workshop diagrams (inner/outer loops, release bridge, platform and improvement
+loop), with high-contrast text and explicit font formatting for the app canvas.
+The source-derived diagrams are images; new text and diagrams remain editable.
+
 ## Actual rehearsal, 8 November 2026
 
 | Artifact | Recorded result |

@@ -185,6 +185,17 @@ To regenerate the presentation, install `presentation/requirements.txt`, run
 Windows with PowerPoint installed. The PDF intentionally contains the 15 visible
 slides; the five Q&A backups remain hidden in the editable deck.
 
+The revised design uses the original Azure artwork from the Bank Briefing and
+high-resolution workshop lifecycle/platform diagrams. Their provenance is in
+`presentation/assets/PROVENANCE.md`. Source diagrams are images; surrounding
+text, new process diagrams and the result comparison remain editable. Speaker
+notes are sourced from `presentation/slide_notes.json`.
+
+All text runs have explicit size and colour so the app canvas does not lose
+inherited paragraph formatting. `build_deck.py` checks this before saving.
+The supplied assets make rebuilding independent of the original decks;
+`extract_reference_assets.py` is only needed to refresh them from those files.
+
 Stop local processes you started. Delete resources only after reviewing the exact
 resource group and confirming it contains only this demo. Telemetry and the
 workflow identity are deployed by separate Bicep templates; `azd down` is not a

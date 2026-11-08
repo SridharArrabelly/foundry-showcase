@@ -1,10 +1,9 @@
 # Slide-by-slide presenter notes
 
-Notes are also embedded in PowerPoint's Notes pane and Presenter View.
+Visual rebuild: original Azure artwork and workshop diagrams, with explicit run formatting for canvas readability.
 
 
-## Slide 1: From prototype
-to operated service
+## Slide 1: Microsoft Foundry: from prototype to operated service
 
 TIME: Holding slide; welcome included in 00:00-02:00
 
@@ -28,8 +27,11 @@ Workshop slides 9 and 12; current Microsoft Foundry product name.
 
 PRESENTER REMINDER: All Volt and Co records are synthetic. Show recorded evidence as recorded, and live invocations as live. The demo has local DEV and a hosted demo target in one Foundry project; it is not a production-isolation reference deployment.
 
+VISUAL REBUILD
+Original Azure title artwork from the Bank Briefing. Black text on the original light field. Explicit run-level font size and color.
 
-## Slide 2: A convincing answer is only the beginning
+
+## Slide 2: One customer request. A complete operating story.
 
 TIME: 00:00-02:00
 
@@ -52,6 +54,9 @@ SOURCE / CLAIM BOUNDARY
 Adapted from workshop slide 9; avoid unsupported reliability or performance claims.
 
 PRESENTER REMINDER: All Volt and Co records are synthetic. Show recorded evidence as recorded, and live invocations as live. The demo has local DEV and a hosted demo target in one Foundry project; it is not a production-isolation reference deployment.
+
+VISUAL REBUILD
+Flow layout and outcome-first wording adapted from Bank Briefing slide 4; replaces disconnected generic cards.
 
 
 ## Slide 3: Meet Volt & Co
@@ -78,8 +83,11 @@ Workshop slide 6 and notes. New synthetic fixture: volt/data.json; no claim that
 
 PRESENTER REMINDER: All Volt and Co records are synthetic. Show recorded evidence as recorded, and live invocations as live. The demo has local DEV and a hosted demo target in one Foundry project; it is not a production-isolation reference deployment.
 
+VISUAL REBUILD
+Data-row layout follows Bank Briefing slides 3 and 8. Prices/specifications are the deployed synthetic fixtures—not original workshop results.
 
-## Slide 4: Two loops. Two evidence bridges.
+
+## Slide 4: One continuous system: inner and outer loop
 
 TIME: 04:00-07:00
 
@@ -103,8 +111,14 @@ Workshop slides 12-14 and speaker notes. https://learn.microsoft.com/azure/found
 
 PRESENTER REMINDER: All Volt and Co records are synthetic. Show recorded evidence as recorded, and live invocations as live. The demo has local DEV and a hosted demo target in one Foundry project; it is not a production-isolation reference deployment.
 
+VISUAL REBUILD
+Actual diagram from workshop slide 12. Implementation filenames were shortened in the image for legibility.
 
-## Slide 5: Build with GitHub. Operate in Foundry.
+UPDATED PRESENTER CUE
+Treat the full diagram as the reference lifecycle. This live demo does not implement every box: DEV is local; the hosted serving environment is a demo project. Do not claim production isolation, Agent 365, a managed Toolbox or automated red teaming.
+
+
+## Slide 5: Build in GitHub. Run and improve in Foundry.
 
 TIME: 07:00-09:00
 
@@ -128,8 +142,14 @@ Workshop slides 6 and 30. Official Microsoft Copilot SDK Invocations sample; git
 
 PRESENTER REMINDER: All Volt and Co records are synthetic. Show recorded evidence as recorded, and live invocations as live. The demo has local DEV and a hosted demo target in one Foundry project; it is not a production-isolation reference deployment.
 
+VISUAL REBUILD
+Enlarged BUILD and HOST sections from the original workshop slide 23 architecture graphic.
 
-## Slide 6: A useful answer, with an inspectable path
+UPDATED PRESENTER CUE
+The graphic is the broader platform reference, not a claim that every shown integration is configured. Point specifically to Copilot SDK, hosted runtime, models, evaluation and tracing.
+
+
+## Slide 6: Watch the answer—and the path that produced it
 
 TIME: 09:00-16:00
 
@@ -153,8 +173,11 @@ Executable commands are in docs/PRESENTER.md and scripts/demo.py. Do not present
 
 PRESENTER REMINDER: All Volt and Co records are synthetic. Show recorded evidence as recorded, and live invocations as live. The demo has local DEV and a hosted demo target in one Foundry project; it is not a production-isolation reference deployment.
 
+VISUAL REBUILD
+Editable request-to-tool sequence. This is a diagram, not a fabricated portal screenshot. Exact commands remain in the speaker notes.
 
-## Slide 7: A good demo is not a quality baseline
+
+## Slide 7: From a convincing answer to measurable evidence
 
 TIME: 16:00-17:00
 
@@ -178,8 +201,14 @@ Workshop slide 84; datasets/core.jsonl.
 
 PRESENTER REMINDER: All Volt and Co records are synthetic. Show recorded evidence as recorded, and live invocations as live. The demo has local DEV and a hosted demo target in one Foundry project; it is not a production-isolation reference deployment.
 
+VISUAL REBUILD
+Chart uses the actual baseline and candidate reports (7/9 versus 9/9). It does not import results from other agents.
 
-## Slide 8: Three checks, three different jobs
+UPDATED PRESENTER CUE
+Do not translate this into a percentage accuracy claim. The model-judged coherence scorecard is a separate measurement.
+
+
+## Slide 8: Three checks. Three different jobs.
 
 TIME: 17:00-18:00
 
@@ -203,8 +232,11 @@ Workshop slide 86. https://learn.microsoft.com/azure/foundry/observability/how-t
 
 PRESENTER REMINDER: All Volt and Co records are synthetic. Show recorded evidence as recorded, and live invocations as live. The demo has local DEV and a hosted demo target in one Foundry project; it is not a production-isolation reference deployment.
 
+VISUAL REBUILD
+Text hierarchy and status-lane layout adapted from Bank Briefing slide 8; evaluator logic from workshop slide 86.
 
-## Slide 9: Change one thing. Measure what changed.
+
+## Slide 9: Change the contract—not just the wording
 
 TIME: 18:00-25:00
 
@@ -228,8 +260,11 @@ Executable commands are in docs/PRESENTER.md and scripts/demo.py. Do not present
 
 PRESENTER REMINDER: All Volt and Co records are synthetic. Show recorded evidence as recorded, and live invocations as live. The demo has local DEV and a hosted demo target in one Foundry project; it is not a production-isolation reference deployment.
 
+VISUAL REBUILD
+Readable before/after visualization of the actual tool defect and fix. Exact code and results are in the demo; this slide is not a terminal screenshot.
 
-## Slide 10: Release the evidence, not just the prompt
+
+## Slide 10: How a candidate becomes an operated service
 
 TIME: 25:00-27:00
 
@@ -252,6 +287,12 @@ SOURCE / CLAIM BOUNDARY
 Workshop slides 14, 162 and 178. Microsoft hosted-agent CI/CD quickstart.
 
 PRESENTER REMINDER: All Volt and Co records are synthetic. Show recorded evidence as recorded, and live invocations as live. The demo has local DEV and a hosted demo target in one Foundry project; it is not a production-isolation reference deployment.
+
+VISUAL REBUILD
+Actual outer-loop bridge diagram from workshop slide 162. Its DEV/PROD labels describe the reference production pattern.
+
+UPDATED PRESENTER CUE
+The caption explicitly distinguishes the deployed demo from production isolation. Do not claim that a passing local score changes the portal's default routing.
 
 
 ## Slide 11: A release we can explain
@@ -278,6 +319,9 @@ Executable commands are in docs/PRESENTER.md and scripts/demo.py. Do not present
 
 PRESENTER REMINDER: All Volt and Co records are synthetic. Show recorded evidence as recorded, and live invocations as live. The demo has local DEV and a hosted demo target in one Foundry project; it is not a production-isolation reference deployment.
 
+VISUAL REBUILD
+Document-flow layout from the Bank Briefing's worked scenario. Uses the real version 4 release and live workflow, not generic success badges.
+
 
 ## Slide 12: Operations teaches development what to test
 
@@ -303,8 +347,14 @@ Workshop slides 14, 189 and 193. Trace-to-dataset conversion is preview; this pa
 
 PRESENTER REMINDER: All Volt and Co records are synthetic. Show recorded evidence as recorded, and live invocations as live. The demo has local DEV and a hosted demo target in one Foundry project; it is not a production-isolation reference deployment.
 
+VISUAL REBUILD
+Original lifecycle illustration from workshop slide 67.
 
-## Slide 13: Close the loop
+UPDATED PRESENTER CUE
+The diagram describes the broader platform loop; Insights and Agent Optimizer are not live dependencies in this implementation. Our actual path is capture, review, add a test, fix and re-evaluate.
+
+
+## Slide 13: Close the loop with one new test
 
 TIME: 35:00-47:00
 
@@ -328,8 +378,11 @@ Executable commands are in docs/PRESENTER.md and scripts/demo.py. Do not present
 
 PRESENTER REMINDER: All Volt and Co records are synthetic. Show recorded evidence as recorded, and live invocations as live. The demo has local DEV and a hosted demo target in one Foundry project; it is not a production-isolation reference deployment.
 
+VISUAL REBUILD
+Editable feedback-loop diagram anchored in the captured missing-batch case.
 
-## Slide 14: Four things to take away
+
+## Slide 14: One system. Four things to remember.
 
 TIME: 47:00-49:00; 49:00-50:00 buffer
 
@@ -353,8 +406,11 @@ Selective synthesis of workshop slides 12 and 202; unused memory/IQ/optimizer cl
 
 PRESENTER REMINDER: All Volt and Co records are synthetic. Show recorded evidence as recorded, and live invocations as live. The demo has local DEV and a hosted demo target in one Foundry project; it is not a production-isolation reference deployment.
 
+VISUAL REBUILD
+Reuses the original Bank Briefing Azure artwork. Large black text stays on the light side of the composition.
 
-## Slide 15: Your questions. Your operating model.
+
+## Slide 15: Thank you / Q&A
 
 TIME: 50:00-60:00
 
@@ -378,8 +434,11 @@ Architecture reference deck: outcome-first and ownership framing.
 
 PRESENTER REMINDER: All Volt and Co records are synthetic. Show recorded evidence as recorded, and live invocations as live. The demo has local DEV and a hosted demo target in one Foundry project; it is not a production-isolation reference deployment.
 
+VISUAL REBUILD
+Original Bank Briefing closing-slide visual language and artwork.
 
-## Slide 16: What is live here, and what is not
+
+## Slide 16: What is implemented—and what is not
 
 TIME: Q&A backup only
 
@@ -402,6 +461,9 @@ SOURCE / CLAIM BOUNDARY
 Implementation inspection and workshop scope reduction.
 
 PRESENTER REMINDER: All Volt and Co records are synthetic. Show recorded evidence as recorded, and live invocations as live. The demo has local DEV and a hosted demo target in one Foundry project; it is not a production-isolation reference deployment.
+
+VISUAL REBUILD
+Bank Briefing's two-column editorial treatment; no repetitive rounded cards.
 
 
 ## Slide 17: Availability is capability-specific
@@ -429,8 +491,11 @@ https://learn.microsoft.com/azure/foundry/observability/concepts/trace-agent-con
 
 PRESENTER REMINDER: All Volt and Co records are synthetic. Show recorded evidence as recorded, and live invocations as live. The demo has local DEV and a hosted demo target in one Foundry project; it is not a production-isolation reference deployment.
 
+VISUAL REBUILD
+Status-table design follows the Bank Briefing, but uses the current checked status—not its historical September status claims.
 
-## Slide 18: Who owns what?
+
+## Slide 18: The broader agent platform
 
 TIME: Q&A backup only
 
@@ -454,8 +519,11 @@ Workshop slide 30 and official Foundry identity/tracing guidance.
 
 PRESENTER REMINDER: All Volt and Co records are synthetic. Show recorded evidence as recorded, and live invocations as live. The demo has local DEV and a hosted demo target in one Foundry project; it is not a production-isolation reference deployment.
 
+VISUAL REBUILD
+Enlarged original platform graphic from workshop slide 22. Broader capabilities are explicitly labelled as a reference; the ownership discussion remains in the notes.
 
-## Slide 19: When the network is not on our side
+
+## Slide 19: When a live step takes too long
 
 TIME: Presenter backup; not part of the 50-minute path
 
@@ -478,6 +546,9 @@ SOURCE / CLAIM BOUNDARY
 docs/REHEARSAL.md
 
 PRESENTER REMINDER: All Volt and Co records are synthetic. Show recorded evidence as recorded, and live invocations as live. The demo has local DEV and a hosted demo target in one Foundry project; it is not a production-isolation reference deployment.
+
+VISUAL REBUILD
+Shortened-path timeline matches the main narrative; readable black text on light backgrounds.
 
 
 ## Slide 20: Sources and useful boundaries
@@ -508,3 +579,6 @@ https://github.com/microsoft-foundry/foundry-samples/tree/main/samples/python/ho
 https://github.com/github/copilot-sdk/blob/main/docs/auth/byok.md
 
 PRESENTER REMINDER: All Volt and Co records are synthetic. Show recorded evidence as recorded, and live invocations as live. The demo has local DEV and a hosted demo target in one Foundry project; it is not a production-isolation reference deployment.
+
+VISUAL REBUILD
+Visual provenance is recorded in presentation/assets/PROVENANCE.md. Complex original diagrams are high-resolution images; all surrounding text and new diagrams remain editable.
