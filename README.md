@@ -16,6 +16,8 @@ boundaries below before presenting.
   transitions, demo cues, fallback and source notes in PowerPoint Presenter View.
 - `presentation/Foundry - From prototype to operated service.pdf`: audience handout.
 - `presentation/Presenter notes.md`: searchable copy of all embedded notes.
+- `presentation/Presenter script.md` / `.html` / `.pdf`: full read-aloud delivery,
+  separated stage directions, exact transitions, demo commands and contingency wording.
 - `docs/PRESENTER.md`: exact commands and screen sequence.
 - `docs/REHEARSAL.md`: access, readiness, costs and contingency checks.
 - `scripts/demo.py`: live requests, deterministic evaluation and reviewed feedback.
@@ -189,7 +191,12 @@ The revised design uses the original Azure artwork from the Bank Briefing and
 high-resolution workshop lifecycle/platform diagrams. Their provenance is in
 `presentation/assets/PROVENANCE.md`. Source diagrams are images; surrounding
 text, new process diagrams and the result comparison remain editable. Speaker
-notes are sourced from `presentation/slide_notes.json`.
+notes are authored in `presentation/Presenter script.md`. Run
+`python presentation/update_speaker_notes.py` to embed them, update
+`slide_notes.json` for future deck rebuilds, and regenerate the readable script.
+This notes-only update verifies that every non-notes PowerPoint part is unchanged.
+The printable script PDF is a print export of the HTML; it is separate from
+the unchanged audience slide handout.
 
 All text runs have explicit size and colour so the app canvas does not lose
 inherited paragraph formatting. `build_deck.py` checks this before saving.

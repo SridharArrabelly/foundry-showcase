@@ -125,9 +125,6 @@ def takeaway(s, value, y=6.28, fill="pale"):
 def note(s, title, visual, extra=""):
     number = len(prs.slides)
     body = NOTES[number - 1]
-    body += "\n\nVISUAL REBUILD\n" + visual
-    if extra:
-        body += "\n\nUPDATED PRESENTER CUE\n" + extra
     s.notes_slide.notes_text_frame.text = body
     guide.append((number, title, body))
 

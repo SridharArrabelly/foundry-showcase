@@ -3,12 +3,18 @@
 ## Open first
 
 1. `presentation/Foundry - From prototype to operated service.pptx`
-2. `docs/PRESENTER.md`
+2. `presentation/Presenter script.html`
 3. `presentation/Recorded demo evidence.html`
 
 The deck has **15 visible slides plus 5 hidden Q&A backups**. The Notes pane
 contains talk track, timing, transitions to and from demos, fallback and source
 boundaries. The PDF intentionally exports only the 15 visible slides.
+
+The speaker notes now contain a complete delivery script, not topic reminders:
+read-aloud wording, separate screen actions, exact commands, loading commentary,
+success/failure branches and the sentence to transition to the next slide.
+The same manuscript is available as `Presenter script.md`, a navigable HTML
+reader, and a print-ready `Presenter script.pdf`.
 
 The visual revision restores the original Bank Briefing Azure cover art and
 workshop diagrams (inner/outer loops, release bridge, platform and improvement

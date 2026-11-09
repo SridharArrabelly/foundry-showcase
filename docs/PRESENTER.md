@@ -1,137 +1,62 @@
 # Presenter operating guide
 
-The PPTX contains the talk track in the Notes pane, with a timed handoff for each
-demo. Use Presenter View. The visible slide remains the customer-friendly
-summary; do not put command transcripts on every slide.
+The complete, word-for-word delivery script is now:
 
-## Before the room opens
+- [Presenter script.md](../presentation/Presenter%20script.md): authored manuscript.
+- [Presenter script.html](../presentation/Presenter%20script.html): readable,
+  navigable and printable view for a second screen.
+- [Presenter script.pdf](../presentation/Presenter%20script.pdf): print-ready
+  reading copy. Copy commands from HTML or Markdown rather than PDF line wraps.
+- The Notes pane of `Foundry - From prototype to operated service.pptx`: the same
+  slide-specific script, embedded for PowerPoint Presenter View. Slide 1 also
+  includes the pre-show setup at the end of its note.
 
-Open only these surfaces: PowerPoint Presenter View; VS Code on `volt/domain.py`
-and the datasets; one terminal in the demo root; Foundry project with agent,
-Traces and evaluation result tabs; GitHub Actions. Hide notifications.
+## Delivery convention
 
-```powershell
-Set-Location C:\Users\sarrabelly\Documents\GitHub\foundry-showcase\demo
-$py = ".\src\github-copilot-invocations\.venv\Scripts\python.exe"
-azd ai agent show --output json | ConvertFrom-Json | Select-Object name, version, status, playground_url
-# Use the actual version IDs in evidence/rehearsal-index.json, once created.
-$versions = Get-Content evidence\rehearsal-index.json | ConvertFrom-Json
-$baseline = $versions.baseline_version
-$improved = $versions.improved_version
-```
+Read **SAY**, **TRANSITION - SAY**, and **RETURN TO SLIDES - SAY** aloud.
+Follow **DO**, **COMMAND**, **CHECK**, and **EXPECT** silently.
+Conditional wording replaces the normal path; do not read every branch.
+Only read success wording after observing the expected result.
 
-Never substitute a guessed version. If no rehearsal index exists, finish
-rehearsal before presenting. First invocation may download/start the Copilot
-runtime and warm Foundry compute; warm the exact versions in advance.
+The manuscript includes:
 
-## Demo 1 | slides 5-6 | 09:00-16:00
+- The full 00:00-60:00 running order.
+- Pre-show commands, variables and bookmarks.
+- Complete spoken delivery for each slide.
+- Exact terminal commands and screen actions during each demo.
+- What to say while a request runs, when it succeeds, when it differs, and when
+  switching to recorded evidence.
+- The precise sentence for leaving and returning to each demo.
+- Scripted answers for the five hidden Q&A slides.
 
-Say: "The infrastructure is prepared. Watch the customer request, not setup."
+## Essential operating rules
 
-```powershell
-python scripts\demo.py ask "Find the cheapest charger for my Volt Book 14 under EUR 50." `
-  --version $improved --out evidence\shopping.json
-python scripts\demo.py ask "Is my Volt Charge 65 from batch CH-0722 safe to use?" `
-  --version $improved --out evidence\recall.json
-```
+Use the unique `$sessionDir` created in the pre-show setup so a new performance
+does not overwrite rehearsal evidence or an earlier approved case.
 
-Expected: VC-C65 at EUR 39.90, after the 30W charger is rejected for a 65W
-requirement. Recall status is `recalled` for the synthetic CH-0722 record.
-Open the captured JSON and show tool inputs/results. Foundry: project > agent >
-Traces > completed request. If ingestion is delayed, open the rehearsed trace.
+Give each live request about 30 seconds on stage, and the final focused
+evaluation up to 45 seconds. If it is still running, use the labelled recorded
+path. Do not retry repeatedly or paste commands into a busy terminal.
 
-Return to slide 7: "We can explain this one execution. Now let's measure a set."
+Do not run a deployment, install packages, change IAM, or launch a full native
+evaluation batch during the presentation. Those are preparation tasks.
 
-## Demo 2 | slides 7-9 | 18:00-25:00
+The prepared baseline is deliberately defective. The seven-of-nine versus
+nine-of-nine results are synthetic-case rehearsal evidence, not a population
+accuracy claim. A focused one-case PASS is not a full release approval.
 
-Show `datasets/core.jsonl`, then the new missing-batch case in regression.jsonl.
-The baseline bug is deliberate; do not stage it as an unexpected production incident.
-The correction is in `recall_notices`: missing input must return `needs_batch`.
+Preview features, data-residency boundaries, and the demo-client release pointer
+are explained in the spoken script rather than hidden in technical footnotes.
 
-```powershell
-python scripts\check_contract.py --variant baseline  # expected exit 1 / BLOCK
-python scripts\check_contract.py --variant improved  # expected exit 0 / PASS
-python scripts\demo.py ask "I have a Volt Charge 65. Is it safe?" `
-  --version $baseline --out evidence\missing-batch-baseline.json
-python scripts\demo.py ask "I have a Volt Charge 65. Is it safe?" `
-  --version $improved --out evidence\missing-batch-improved.json
-```
+## Keep the timing
 
-Show actual completed `baseline.json` and `candidate.json`. Do not wait for a full
-suite live. For a fresh run, use `demo.py evaluate --version ... --dataset ...`.
-Open `evidence/foundry-evaluation.json`'s report URL for the native coherence run.
-Clarify that coherence is not recall correctness or a safety guarantee.
+At minute 43, start the final focused recheck even if earlier material ran long.
+At minute 47, return to the takeaways. At minute 50, start Q&A.
 
-Return to slide 10: "An improved candidate still needs a release decision."
+If five minutes late, use completed scorecards and workflow records, but preserve
+the observation -> reviewed expectation -> new test -> corrected-candidate
+story. Do not replace it with an extra feature tour.
 
-## Demo 3 | slides 10-11 | 27:00-34:00
-
-GitHub > Actions > Volt quality gate: open a completed `baseline` failure and
-`improved` pass. The failure should point to the missing-batch contract.
-If available, open the live candidate/release workflow separately. Do not
-describe the offline quality job as having invoked a model.
-
-```powershell
-Get-Content evidence\release.json
-python scripts\demo.py ask "Check Volt Charge 65 batch CH-0926 for a recall." `
-  --out evidence\released-request.json
-```
-
-Do not display an unfiltered `azd ai agent show` response: it includes configured
-environment values, including the telemetry connection string.
-
-The client uses the approved version from `release.json`. This pointer is not a
-change to Foundry's default portal routing. Show version, dataset hash and
-report hash. Say deployment and full scoring happened during rehearsal.
-
-Return to slide 12: "The release only proves the expectations we wrote down."
-
-## Demo 4 | slides 12-13 | 35:00-47:00
-
-Foundry > agent > Monitor (preview), then Traces. Use a completed captured
-missing-batch request with its trace ID. If the Foundry filter is empty, use the
-connected Application Insights resource and filter custom spans by `volt.variant`
-and the captured operation/trace ID. Do not claim a missing UI integration works.
-
-Review the expected behaviour with the audience before running:
-
-```powershell
-python scripts\demo.py feedback --trace evidence\missing-batch-baseline.json `
-  --id reviewed-missing-batch --query "I have a Volt Charge 65. Is it safe?" `
-  --expected-decision needs_batch `
-  --expected-behavior "Ask for the batch code before a recall conclusion; never infer safety from missing evidence." `
-  --reviewer "Presenter reviewed with audience" --approve `
-  --out evidence\reviewed-case.jsonl
-python scripts\demo.py evaluate --version $improved `
-  --dataset evidence\reviewed-case.jsonl --out evidence\reviewed-result.json
-```
-
-The feedback command refuses to overwrite an existing review. Use a unique
-filename on the next rehearsal. Do not include an unreviewed output as truth.
-Portal `Traces > select > Add to dataset` is an optional preview path. The
-code-first reviewed row is the verified fallback and does not claim that button
-was used.
-
-Return to slide 14: "The next release has a stronger contract."
-
-## Shortened path
-
-If 5 minutes late: keep one live shopping request, open completed evaluations,
-show completed release evidence, and preserve the missing-batch feedback loop.
-Skip fresh native judge runs, preview screens and a cold deployment. Finish at
-minute 50 and leave Q&A intact.
-
-## Technical and business Q&A
-
-| Question | Answer |
-|---|---|
-| Is this the managed Copilot harness prompt-agent option? | No. This is code using the Copilot SDK, packaged as a Foundry hosted agent. |
-| Are you running GitHub-hosted inference? | No. BYOK here means our Foundry model with Entra; no GitHub runtime token is embedded. |
-| Why not just a prompt agent? | Use one when managed authoring/tool support fits. This story deliberately shows code-owned logic and its release lifecycle. |
-| Can the customer-facing runtime run shell commands? | This sample exposes only the three reviewed tools. It is not a general coding assistant. |
-| Is missing-batch refusal a platform guardrail? | No. It is a domain tool contract and agent behaviour, not evidence of a content-filter intervention. |
-| Do passing scores prove safety? | No. Coverage, calibrated evaluators, least privilege and human review remain necessary. |
-| Does Sweden Central guarantee Sweden-only processing? | No. The selected model is GlobalStandard; validate each service, deployment type and data path. |
-| What does it cost? | Model calls, hosted compute, telemetry, evaluations and CI all contribute. Measure representative usage and current rates; don't quote savings from one prompt. |
-| What is the ROI? | Establish customer handling-time, resolution-quality and escalation baselines, then measure the pilot against them. |
-| What should a production rollout add? | Separate environments and deployment identities, reviewed policy thresholds, mandatory release checks, approvals, retention/privacy controls and incident ownership. |
+For resource access, cost, data and fallback preparation, use
+[REHEARSAL.md](REHEARSAL.md). For exact deployed versions and live links, use
+[DELIVERY.md](DELIVERY.md).
