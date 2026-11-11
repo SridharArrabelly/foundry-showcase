@@ -25,7 +25,10 @@ def scoped(user_id, session_id):
 def test_scope_is_stable_across_sessions_and_separate_for_callers():
     assert scoped("synthetic-caller-a", "one") == scoped("synthetic-caller-a", "two")
     assert scoped("synthetic-caller-a", "one") != scoped("synthetic-caller-b", "one")
-    assert re.fullmatch(r"volt-support/[0-9a-f]{64}", scoped("synthetic-caller-a", "one"))
+    scope = scoped("synthetic-caller-a", "one")
+    assert re.fullmatch(r"[A-Za-z0-9_-]+", scope)
+    assert len(scope) <= 256
+    assert "synthetic-caller-a" not in scope
 
 
 def test_missing_authenticated_context_never_uses_shared_memory():

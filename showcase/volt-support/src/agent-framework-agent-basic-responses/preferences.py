@@ -15,7 +15,7 @@ def caller_scope() -> str:
     if not context.call_id or not context.user_id:
         raise RuntimeError("Memory requires the hosted platform's authenticated caller context.")
     digest = hashlib.sha256(f"volt-support:{context.user_id}".encode()).hexdigest()
-    return f"volt-support/{digest}"
+    return f"volt-support-{digest}"
 
 
 class PreferenceMemory(AgentMiddleware):
