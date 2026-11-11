@@ -62,6 +62,30 @@ async def probe(endpoint: str, out: Path) -> None:
                         "passed": passed, "result": result.model_dump(mode="json"),
                     })
                     print(f"{'PASS' if passed else 'FAIL'} {name}: expected {expected}; received {body}")
+                query = (
+                    "For Volt Charge 65 batch CH-0722 and order VC-10482 outside the normal return window, "
+                    "retrieve both the recall notice and replacement policy, with their reference identifiers."
+                )
+                knowledge = await session.call_tool(
+                    "volt-policy-knowledge___knowledge_base_retrieve", {"query_variants": [query]}
+                )
+                references = set()
+                for content in knowledge.content:
+                    if content.type == "text":
+                        value = json.loads(content.text)
+                        if isinstance(value, dict) and value.get("kind") == "reference":
+                            source = value.get("sourceData", {})
+                            if source.get("content") and source.get("id") == source.get("reference"):
+                                references.add(source["reference"])
+                expected_references = {"VOLT-REPLACEMENT-2026-11", "SYNTHETIC-RECALL-001"}
+                passed = not knowledge.isError and expected_references.issubset(references)
+                records.append({
+                    "tool": "knowledge_base_retrieve", "passed": passed,
+                    "expected_references": sorted(expected_references),
+                    "observed_references": sorted(references),
+                    "result": knowledge.model_dump(mode="json"),
+                })
+                print(f"{'PASS' if passed else 'FAIL'} IQ source documents: {sorted(references)}")
     evidence = {
         "captured_at": datetime.now(timezone.utc).isoformat(),
         "endpoint": endpoint, "tool_names": names, "cases": records,

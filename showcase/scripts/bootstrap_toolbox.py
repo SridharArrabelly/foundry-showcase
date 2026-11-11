@@ -4,6 +4,7 @@ import argparse
 import json
 
 from azure.ai.projects import AIProjectClient
+from azure.core.exceptions import ResourceNotFoundError
 from azure.identity import DefaultAzureCredential
 
 
@@ -11,6 +12,7 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--project-endpoint", required=True)
     parser.add_argument("--publish", action="store_true")
+    parser.add_argument("--connection-prefix", default="volt")
     args = parser.parse_args()
     name = "volt-support-tools"
     profiles = {
@@ -25,17 +27,22 @@ def main() -> None:
         endpoint=args.project_endpoint, credential=credential
     ) as project:
         tools = []
-        for connection_name, allowed in profiles.items():
+        for label, allowed in profiles.items():
+            connection_name = label.replace("volt-", args.connection_prefix + "-", 1)
             connection = project.connections.get(connection_name)
             tools.append({
                 "type": "mcp",
-                "name": connection_name,
-                "server_label": connection_name,
+                "name": label,
+                "server_label": label,
                 "server_url": connection.target,
                 "project_connection_id": connection.id,
                 "allowed_tools": allowed,
             })
-        versions = list(project.toolboxes.list_versions(name))
+        try:
+            versions = list(project.toolboxes.list_versions(name))
+        except ResourceNotFoundError:
+            print("No toolbox exists in this project; creating its first curated version.")
+            versions = []
         matches = [
             version for version in versions
             if [tool.as_dict() for tool in version.tools] == tools

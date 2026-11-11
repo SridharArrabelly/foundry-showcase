@@ -55,7 +55,7 @@ param aiFoundryModelsConfig = [
     publisher: 'OpenAI'
     version: '2026-03-17'
     sku: 'DataZoneStandard'
-    capacity: 10
+    capacity: 50
     aiserviceIndex: 0
     apiVersion: '2025-04-01-preview'
   }

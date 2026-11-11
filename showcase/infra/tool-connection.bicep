@@ -3,6 +3,8 @@ targetScope = 'resourceGroup'
 param accountName string = 'fdy-volt-citadel-261111'
 param projectName string = 'volt-dev'
 param apimName string = 'apim-volt-citadel-261111'
+param apimSubscriptionName string = 'TOOL-Volt-Support-DEV-SUB-01'
+param connectionName string = 'volt-business-tools'
 
 resource account 'Microsoft.CognitiveServices/accounts@2025-06-01' existing = {
   name: accountName
@@ -16,11 +18,11 @@ resource apim 'Microsoft.ApiManagement/service@2024-05-01' existing = {
 }
 resource subscription 'Microsoft.ApiManagement/service/subscriptions@2024-05-01' existing = {
   parent: apim
-  name: 'TOOL-Volt-Support-DEV-SUB-01'
+  name: apimSubscriptionName
 }
 resource connection 'Microsoft.CognitiveServices/accounts/projects/connections@2025-10-01-preview' = {
   parent: project
-  name: 'volt-business-tools'
+  name: connectionName
   properties: {
     category: 'RemoteTool'
     authType: 'CustomKeys'
