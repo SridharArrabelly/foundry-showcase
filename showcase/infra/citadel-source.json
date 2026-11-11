@@ -1,0 +1,11 @@
+{
+  "repository": "https://github.com/Azure-Samples/ai-hub-gateway-solution-accelerator",
+  "commit": "81599b31dfbaee20ebd3a6d2ba9b07dde3c31814",
+  "archive": "https://codeload.github.com/Azure-Samples/ai-hub-gateway-solution-accelerator/zip/81599b31dfbaee20ebd3a6d2ba9b07dde3c31814",
+  "license": "MIT",
+  "template": "bicep/infra/main.bicep",
+  "profile": "Single-region small internal enablement deployment",
+  "subscription": "40b687ca-31b5-4374-bea2-4c178369b9c0",
+  "tenant": "b1cd5b73-a77b-4002-a5a6-1599e4c4ee37",
+  "region": "swedencentral"
+}

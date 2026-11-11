@@ -1,0 +1,17 @@
+[project]
+name = "agent-framework-agent-basic-responses"
+version = "0.1.0"
+description = "A Microsoft Foundry hosted agent built with Microsoft Agent Framework."
+requires-python = ">=3.13"
+dependencies = [
+    "agent-framework-foundry",
+    "agent-framework-foundry-hosting>=1.0.0b260813",
+    "azure-ai-agentserver-optimization>=1.0.0b1",
+    "azure-ai-projects>=2.10.0",
+    "debugpy",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.2.0",
+]

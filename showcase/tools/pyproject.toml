@@ -1,0 +1,12 @@
+[project]
+name = "volt-showcase-tools"
+version = "0.1.0"
+description = "Read-only synthetic Volt business API for the Citadel MCP gateway."
+requires-python = ">=3.12"
+dependencies = [
+    "azure-functions>=1.24.0",
+    "pydantic>=2.13.5",
+]
+
+[dependency-groups]
+dev = ["pytest>=9.2.0"]

@@ -1,0 +1,248 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Volt synthetic business API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/tools/searchProductCatalog": {
+      "get": {
+        "operationId": "searchProductCatalog",
+        "summary": "searchProductCatalog",
+        "description": "Find fictional Volt products within a category and EUR budget.",
+        "parameters": [
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "description": "",
+            "schema": {
+              "default": "charger",
+              "title": "Category",
+              "type": "string"
+            }
+          },
+          {
+            "name": "max_price_eur",
+            "in": "query",
+            "required": false,
+            "description": "",
+            "schema": {
+              "default": 1000,
+              "minimum": 0,
+              "title": "Max Price Eur",
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Read-only synthetic business result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid arguments"
+          },
+          "401": {
+            "description": "Authentication required"
+          }
+        }
+      }
+    },
+    "/tools/checkCompatibility": {
+      "get": {
+        "operationId": "checkCompatibility",
+        "summary": "checkCompatibility",
+        "description": "Check a fictional charger and device using catalog specifications.",
+        "parameters": [
+          {
+            "name": "product_id",
+            "in": "query",
+            "required": true,
+            "description": "",
+            "schema": {
+              "title": "Product Id",
+              "type": "string"
+            }
+          },
+          {
+            "name": "device_id",
+            "in": "query",
+            "required": true,
+            "description": "",
+            "schema": {
+              "title": "Device Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Read-only synthetic business result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid arguments"
+          },
+          "401": {
+            "description": "Authentication required"
+          }
+        }
+      }
+    },
+    "/tools/getRecallNotices/{product_id}": {
+      "get": {
+        "operationId": "getRecallNotices",
+        "summary": "getRecallNotices",
+        "description": "Check the synthetic batch-specific recall register. Missing batch is not evidence of no recall.",
+        "parameters": [
+          {
+            "name": "product_id",
+            "in": "path",
+            "required": true,
+            "description": "Volt product identifier, for example VC-C65.",
+            "schema": {
+              "description": "Volt product identifier, for example VC-C65.",
+              "title": "Product Id",
+              "type": "string"
+            }
+          },
+          {
+            "name": "batch",
+            "in": "query",
+            "required": false,
+            "description": "Batch printed on the device. Omit when unknown; never infer.",
+            "schema": {
+              "default": null,
+              "description": "Batch printed on the device. Omit when unknown; never infer.",
+              "title": "Batch",
+              "type": "string",
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Read-only synthetic business result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid arguments"
+          },
+          "401": {
+            "description": "Authentication required"
+          }
+        }
+      }
+    },
+    "/tools/getOrderStatus": {
+      "get": {
+        "operationId": "getOrderStatus",
+        "summary": "getOrderStatus",
+        "description": "Read the single synthetic order fixture. Does not authorize ownership or change the order.",
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "query",
+            "required": true,
+            "description": "Synthetic customer-supplied order identifier, for example VC-10482.",
+            "schema": {
+              "description": "Synthetic customer-supplied order identifier, for example VC-10482.",
+              "title": "Order Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Read-only synthetic business result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid arguments"
+          },
+          "401": {
+            "description": "Authentication required"
+          }
+        }
+      }
+    },
+    "/tools/getReturnWarrantyEligibility": {
+      "get": {
+        "operationId": "getReturnWarrantyEligibility",
+        "summary": "getReturnWarrantyEligibility",
+        "description": "Assess the synthetic replacement policy; never issue refunds, ship goods, or approve a replacement.",
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "query",
+            "required": false,
+            "description": "Customer-supplied synthetic order identifier. Omit when unknown.",
+            "schema": {
+              "default": null,
+              "description": "Customer-supplied synthetic order identifier. Omit when unknown.",
+              "title": "Order Id",
+              "type": "string",
+              "nullable": true
+            }
+          },
+          {
+            "name": "batch",
+            "in": "query",
+            "required": false,
+            "description": "Batch printed on the device. Omit when unknown; never infer.",
+            "schema": {
+              "default": null,
+              "description": "Batch printed on the device. Omit when unknown; never infer.",
+              "title": "Batch",
+              "type": "string",
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Read-only synthetic business result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid arguments"
+          },
+          "401": {
+            "description": "Authentication required"
+          }
+        }
+      }
+    }
+  }
+}

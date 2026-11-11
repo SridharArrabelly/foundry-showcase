@@ -1,0 +1,43 @@
+name: Volt Citadel foundations
+on:
+  pull_request:
+    paths: ["showcase/**", ".github/workflows/citadel-quality.yml"]
+  push:
+    branches: ["feature/volt-citadel"]
+    paths: ["showcase/**", ".github/workflows/citadel-quality.yml"]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  contracts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - uses: astral-sh/setup-uv@v6
+      - name: Tool API and synthetic business rules
+        working-directory: showcase/tools
+        run: uv run --locked python -m pytest -q
+      - name: OpenAPI contract matches the validators
+        working-directory: showcase/tools
+        run: |
+          uv run --locked python ../scripts/build_tool_schema.py
+          git diff --exit-code -- openapi.json
+      - name: Hosted integration configuration
+        working-directory: showcase/volt-support/src/agent-framework-agent-basic-responses
+        run: uv run --locked python -m pytest -q
+      - name: Native business grader contract
+        working-directory: showcase/volt-support/src/agent-framework-agent-basic-responses
+        run: uv run --locked python -m pytest ../../../evaluators -q
+      - name: Restore pinned Citadel templates
+        shell: pwsh
+        run: ./showcase/scripts/Get-CitadelSource.ps1
+      - name: Compile infrastructure
+        run: |
+          az bicep build-params --file showcase/infra/hub.bicepparam --outfile .runtime/hub.parameters.json --only-show-errors
+          az bicep build --file showcase/infra/workload.bicep --outfile .runtime/workload.json --only-show-errors
+          az bicep build --file showcase/infra/guardrails.bicep --outfile .runtime/guardrails.json --only-show-errors
+          az bicep build --file showcase/infra/tools-api.bicep --outfile .runtime/tools-api.json --only-show-errors
+          az bicep build --file showcase/infra/tool-connection.bicep --outfile .runtime/tool-connection.json --only-show-errors
