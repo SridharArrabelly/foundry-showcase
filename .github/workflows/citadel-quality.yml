@@ -41,3 +41,4 @@ jobs:
           az bicep build --file showcase/infra/guardrails.bicep --outfile .runtime/guardrails.json --only-show-errors
           az bicep build --file showcase/infra/tools-api.bicep --outfile .runtime/tools-api.json --only-show-errors
           az bicep build --file showcase/infra/tool-connection.bicep --outfile .runtime/tool-connection.json --only-show-errors
+          az bicep build --file showcase/infra/agent-access.bicep --outfile .runtime/agent-access.json --only-show-errors

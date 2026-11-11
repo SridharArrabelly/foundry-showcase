@@ -17,8 +17,17 @@ Nothing in this directory is a claim of customer-production readiness.
 
 The model gateway, IQ retrieval and six business-tool cases through the complete
 Foundry Toolbox / APIM / Functions path have been exercised against Azure.
-The first hosted version is deployed; customer-journey invocation, authenticated memory behavior,
-the live PR/release exercise, and the replacement presentation are not yet ready.
+The first hosted customer journey executed all four tools and returned policy
+citations. A native business evaluation of nine captured v1 responses completed
+with **8 passed, 1 failed, 0 errored**. The failing replacement answer sounded
+correct but used `decision: recommendation` while the eligibility tool returned
+`eligible`. This is a genuine observed contract defect, not a seeded safety error.
+Fresh model responses can vary; the recording preserves the original incident.
+The harmless guardrail marker produced a native HTTP 400 `content_filter`.
+
+Authenticated memory behavior, optimization and the live PR/release exercise
+are not yet ready. The replacement presentation has been built and visually
+reviewed, but its remaining live-demo bindings are still being completed.
 
 ## Environment and costs
 

@@ -4,6 +4,7 @@
 __pycache__/
 .pytest_cache/
 tests/
+.foundry/
 pyproject.toml
 uv.lock
 uv.toml
