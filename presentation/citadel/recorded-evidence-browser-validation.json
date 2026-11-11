@@ -1,0 +1,21 @@
+{
+  "browser": "Local headless Microsoft Edge via Playwright",
+  "offline": true,
+  "network_requests": [],
+  "console_errors": [],
+  "comparisons_checked": 18,
+  "recorded_runs": 3,
+  "case_rows": 27,
+  "trace_rows": 43,
+  "desktop_and_mobile_layout": "passed",
+  "theme_modes": [
+    "light",
+    "dark"
+  ],
+  "script_termination_and_DOM_injection_fixture": "passed",
+  "signed_download_url_redaction": "passed",
+  "unsafe_report_link_rejection": "passed",
+  "source_files_unchanged": true,
+  "private_memory_data_included": false,
+  "all_generator_inputs_are_portable_recordings": true
+}

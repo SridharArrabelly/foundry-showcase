@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-WvI/8458JiRfrlEicAv3wbmp2Cxb2fpzogYsrs7NC1s=' 'sha256-AztLwI4M2YEjUkPY6ttolXXSklCYaIgpLy8ez1bv+hE='; style-src 'unsafe-inline'; img-src data:; connect-src 'none'; font-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<title>Volt & Co — Recorded evidence, not live</title>
+<script>(() => {
+    const param = new URLSearchParams(window.location.search).get("scoutTheme");
+    const theme =
+      param || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    document.documentElement.setAttribute("data-theme", theme);
+  })();</script><style>
+:root {
+  color-scheme: light;
+  --cp-bg: #f7f4ef;
+  --cp-bg-elevated: #fcfbf8;
+  --cp-surface: #ffffff;
+  --cp-surface-soft: #f5f5f5;
+  --cp-border: #dedede;
+  --cp-border-strong: #919191;
+  --cp-text: #242424;
+  --cp-text-muted: #5c5c5c;
+  --cp-text-soft: #6f6f6f;
+  --cp-accent: #b11f4b;
+  --cp-accent-hover: #9a1a41;
+  --cp-accent-soft: rgba(177, 31, 75, 0.08);
+  --cp-accent-fg: #ffffff;
+  --cp-success: #16a34a;
+  --cp-danger: #dc2626;
+  --cp-warning: #f59e0b;
+  --cp-link: #0078d4;
+  --cp-shadow: 0 18px 48px rgba(0, 0, 0, 0.12);
+  --cp-overlay: rgba(255, 255, 255, 0.8);
+  --cp-panel: rgba(255, 255, 255, 0.86);
+  --cp-panel-strong: rgba(255, 255, 255, 0.96);
+  --cp-sheen: rgba(255, 255, 255, 0.55);
+  --cp-highlight: rgba(177, 31, 75, 0.12);
+}
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --cp-bg: #3d3b3a;
+  --cp-bg-elevated: #343231;
+  --cp-surface: #292929;
+  --cp-surface-soft: #2e2e2e;
+  --cp-border: #474747;
+  --cp-border-strong: #5f5f5f;
+  --cp-text: #dedede;
+  --cp-text-muted: #919191;
+  --cp-text-soft: #b0b0b0;
+  --cp-accent: #fd8ea1;
+  --cp-accent-hover: #fb7b91;
+  --cp-accent-soft: rgba(253, 142, 161, 0.14);
+  --cp-accent-fg: #1a1a1a;
+  --cp-success: #4ade80;
+  --cp-danger: #f87171;
+  --cp-warning: #fbbf24;
+  --cp-link: #4da6ff;
+  --cp-shadow: 0 18px 48px rgba(0, 0, 0, 0.32);
+  --cp-overlay: rgba(41, 41, 41, 0.88);
+  --cp-panel: rgba(41, 41, 41, 0.72);
+  --cp-panel-strong: rgba(41, 41, 41, 0.96);
+  --cp-sheen: rgba(255, 255, 255, 0.04);
+  --cp-highlight: rgba(253, 142, 161, 0.12);
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--cp-bg); color: var(--cp-text);
+  font: 17px/1.5 "Segoe UI", Aptos, Calibri, -apple-system, BlinkMacSystemFont, sans-serif; }
+.banner { background: var(--cp-accent); color: var(--cp-accent-fg); padding: 16px 24px;
+  font-size: 18px; font-weight: 750; text-align: center; letter-spacing: .06em; }
+main { max-width: 1240px; margin: auto; padding: 28px 24px 40px; }
+.eyebrow { color: var(--cp-text-muted); font-weight: 650; font-size: 13px; letter-spacing: .08em; }
+h1 { font-size: clamp(28px, 3.2vw, 42px); line-height: 1.15; margin: 8px 0; }
+h2 { font-size: 23px; line-height: 1.25; margin: 0 0 12px; }
+h3 { font-size: 16px; margin: 18px 0 8px; }
+p { margin: 8px 0; } a { color: var(--cp-link); overflow-wrap: anywhere; }
+.muted, .fine { color: var(--cp-text-muted); } .fine { font-size: 13px; }
+.stats { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 16px; margin: 24px 0; }
+.stat, .panel, .question, .optimizer, .observability {
+  background: var(--cp-surface); border: 1px solid var(--cp-border); border-radius: 16px; padding: 20px; min-width: 0;
+}
+.stat h2 { font-size: 18px; } .score { font-size: 38px; font-weight: 750; line-height: 1.2; }
+.stat p { font-size: 14px; } .stat a { font-size: 14px; font-weight: 600; }
+.controls { display: flex; flex-wrap: wrap; gap: 16px; margin: 12px 0 20px; align-items: end; }
+.control { flex: 1 1 280px; } label { display: block; font-size: 14px; font-weight: 650; margin-bottom: 6px; }
+select { width: 100%; padding: 12px; border: 1px solid var(--cp-border-strong); border-radius: .625rem;
+  background: var(--cp-surface); color: var(--cp-text); font: inherit; }
+select:focus-visible, a:focus-visible, summary:focus-visible { outline: 3px solid var(--cp-link); outline-offset: 3px; }
+.question { background: var(--cp-bg-elevated); margin-bottom: 16px; }
+.question p { font-size: 17px; } .compare { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 16px; }
+.verdict { display: inline-block; padding: 4px 10px; border: 1px solid var(--cp-border);
+  border-radius: .625rem; font-size: 13px; font-weight: 650; margin-bottom: 12px; }
+.mismatch { color: var(--cp-danger); border-color: var(--cp-danger); }
+.match { color: var(--cp-text); background: var(--cp-surface-soft); }
+.decisions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding-bottom: 12px; }
+.field-label { display: block; color: var(--cp-text-muted); font-size: 13px; }
+.decision { font-size: 20px; font-weight: 700; overflow-wrap: anywhere; }
+.answer { white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.55; margin: 12px 0; }
+.citations, .tools { margin: 4px 0; padding-left: 20px; font-size: 14px; overflow-wrap: anywhere; }
+.citations li, .tools li { margin-bottom: 4px; }
+.tools { font-family: Consolas, "Courier New", Courier, monospace; font-size: 14px; }
+.optimizer, .observability { margin-top: 20px; }
+.optimizer { background: var(--cp-bg-elevated); }
+.opt-metrics { display: flex; gap: 12px 28px; flex-wrap: wrap; margin: 12px 0; }
+.opt-metrics strong { display: block; font-size: 24px; }
+.warning { padding: 12px 16px; border-radius: .625rem; background: var(--cp-accent-soft); color: var(--cp-text); font-weight: 600; }
+code { font-family: Consolas, "Courier New", Courier, monospace; overflow-wrap: anywhere; font-size: .88em; }
+summary { cursor: pointer; font-weight: 650; padding: 12px 0; }
+.span-scroll { max-height: 340px; overflow: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 13px; }
+th, td { padding: 8px; border-bottom: 1px solid var(--cp-border); text-align: left; overflow-wrap: anywhere; }
+th { background: var(--cp-surface-soft); }
+footer { margin-top: 24px; font-size: 13px; color: var(--cp-text-muted); }
+footer li { margin: 6px 0; }
+@media(max-width: 760px) { main { padding: 20px 16px; } .stats, .compare { grid-template-columns: 1fr; }
+  .banner { font-size: 15px; padding: 12px; } .stat { padding: 16px; } .score { font-size: 30px; } }
+@media(max-width: 460px) { .decisions { grid-template-columns: 1fr; } }
+@media print { .banner { position: static; } .controls { display: none; } body { background: var(--cp-surface); }
+  main { padding: 12px; } .panel, .stat, .optimizer { break-inside: avoid; } }
+</style></head>
+<body>
+<div class="banner">RECORDED EVIDENCE — NOT LIVE</div>
+<main>
+<header><div class="eyebrow">VOLT & CO / MICROSOFT FOUNDRY / CITADEL</div>
+<h1>One case. Evidence across the release.</h1>
+<p class="muted">Real captured synthetic answers and native business grading. Works offline; report links open online only if you choose them.</p></header>
+<div id="stats" class="stats" aria-label="Actual native evaluation counts"></div>
+<div class="controls">
+<div class="control"><label for="case-select">Recorded case</label><select id="case-select"></select></div>
+<div class="control"><label for="run-select">Compare the baseline with</label><select id="run-select"></select></div>
+</div>
+<section class="question"><h2>Customer request</h2><p id="case-query"></p><p id="case-requirements" class="fine"></p></section>
+<div class="compare"><section id="baseline-panel" class="panel"></section><section id="comparison-panel" class="panel"></section></div>
+<p class="fine">Synthetic, read-only support demonstration. The answer is actual captured model text; it does not prove a refund, shipment, order mutation or external hand-off occurred.</p>
+<section class="optimizer"><h2>Optimizer: no improvement</h2><p id="opt-decision"></p><p id="opt-status" class="fine"></p>
+<div class="opt-metrics"><div><span class="field-label">Baseline task-adherence</span><strong id="opt-baseline"></strong></div>
+<div><span class="field-label">Best task-adherence</span><strong id="opt-best"></strong></div>
+<div><span class="field-label">Completed candidates</span><strong id="opt-completed"></strong></div>
+<div><span class="field-label">Maximum budget—not completed</span><strong id="opt-budget"></strong></div></div>
+<p id="opt-warning" class="warning"></p><ul id="opt-warnings" class="fine"></ul><div id="opt-link"></div>
+<p class="fine">The separate business-contract code fix was locally Copilot-assisted and reviewed through PR #2. It was not an Optimizer-applied candidate.</p></section>
+<section class="observability"><h2>Fresh DEMO observability—separate proof</h2><p id="trace-summary"></p><p id="trace-boundary" class="fine"></p>
+<details><summary>Inspect the 43 recorded correlated spans</summary><p id="trace-ids" class="fine answer"></p>
+<div class="span-scroll"><table><thead><tr><th>Recorded span name</th><th>Duration</th><th>Recorded success</th></tr></thead><tbody id="span-rows"></tbody></table></div></details>
+<p class="fine">Correlation uses azure.ai.agentserver.response_id; version uses gen_ai.agent.version; project uses microsoft.foundry.project.id. gen_ai.agent.id is a principal GUID, not name:version.</p></section>
+<footer><details><summary>Evidence boundaries and provenance</summary><ul id="disclosures"></ul>
+<p>No fetch, CDN, server, analytics or private Memory data. No signed portal download URLs. The source generator keeps only explicit display fields; system prompts, credentials, tool arguments and raw telemetry properties are not embedded.</p></details></footer>
+<noscript>This recorded viewer requires local JavaScript. No server or network is required.</noscript>
+</main><script type="application/json" id="recorded-data">{"runs":[{"id":"baseline-v1","label":"DEV baseline · v1","project":"volt-dev","version":"1","source_name":"baseline-v1.json","counts":{"passed":8,"failed":1,"errored":0,"total":9,"skipped":0},"evaluator_version":"1","report_url":"https://ai.azure.com/nextgen/r/QLaHyjG1Q3S-okwXg2m5wA,rg-volt-citadel,,fdy-volt-citadel-261111,volt-dev/build/evaluations/eval_5a3774acf4f347e1bd35ae30375d0f2d/run/evalrun_28da2cdf28224eb799a9a2e3d9f8672e","failed_invocation_attempts":0,"cases":[{"id":"replacement-recall","query":"For the synthetic Volt demo: my order is VC-10482 and my Volt Charge 65 batch is CH-0722. It is past the normal 30-day return window. Can I still be assessed for a replacement? Check my order, recall status and replacement eligibility, and cite the policy. Do not actually change my order.","expected_decision":"eligible","actual_decision":"recommendation","required_tool":"getReturnWarrantyEligibility","expected_reference":"VOLT-REPLACEMENT-2026-11","answer":"Yes—your order and batch can be assessed for a replacement even past 30 days. The batch is recalled, so the next step is human support review.","citations":[{"reference":"VOLT-REPLACEMENT-2026-11","title":"Volt \u0026 Co synthetic replacement policy"},{"reference":"SYNTHETIC-RECALL-001","title":"Volt \u0026 Co synthetic recall notice"}],"tools":[{"name":"volt-business-tools___getOrderStatus","protocol_status":"completed"},{"name":"volt-business-tools___getRecallNotices","protocol_status":"completed"},{"name":"volt-business-tools___getReturnWarrantyEligibility","protocol_status":"completed"},{"name":"volt-policy-knowledge___knowledge_base_retrieve","protocol_status":"completed"}]},{"id":"recalled-batch","query":"Please check the recall register for Volt product VC-C65, batch CH-0722, and cite the recall reference.","expected_decision":"recalled","actual_decision":"recalled","required_tool":"getRecallNotices","expected_reference":"SYNTHETIC-RECALL-001","answer":"This batch is recalled. Please escalate to human support.","citations":[{"reference":"SYNTHETIC-RECALL-001","title":"Recall register entry"}],"tools":[{"name":"volt-business-tools___getRecallNotices","protocol_status":"completed"}]},{"id":"missing-batch","query":"Please check whether my Volt product VC-C65 is recalled. I cannot find its batch code. Do not assume a batch.","expected_decision":"needs_batch","actual_decision":"needs_batch","required_tool":"getRecallNotices","expected_reference":"","answer":"Please send the batch code from the device label, and I’ll check the recall status.","citations":[],"tools":[{"name":"volt-business-tools___getRecallNotices","protocol_status":"completed"}]},{"id":"unknown-batch","query":"Check the recall register for Volt product VC-C65, batch CH-9999. Is there a recorded conclusion for that exact batch?","expected_decision":"unknown","actual_decision":"unknown","required_tool":"getRecallNotices","expected_reference":"","answer":"There’s no recorded conclusion for batch CH-9999 in the recall register. If you want, I can check whether the product has any batch-specific notices for another batch.","citations":[],"tools":[{"name":"volt-business-tools___getRecallNotices","protocol_status":"completed"}]},{"id":"no-recall-record","query":"Check the synthetic recall register for Volt product VC-C65, batch CH-0926. Report the register result, not a general guarantee of safety.","expected_decision":"no_recall","actual_decision":"no_recall","required_tool":"getRecallNotices","expected_reference":"","answer":"No active recall is listed for VC-C65 batch CH-0926.","citations":[{"reference":"SYNTHETIC-REGISTER-002","title":"No active recall is listed for this batch in the synthetic register."}],"tools":[{"name":"volt-business-tools___getRecallNotices","protocol_status":"completed"}]},{"id":"missing-order","query":"Please check replacement eligibility for my Volt Charge 65, batch CH-0722. I have not supplied an order ID. Do not invent one or change an order.","expected_decision":"needs_order","actual_decision":"needs_order","required_tool":"getReturnWarrantyEligibility","expected_reference":"","answer":"I need your order ID to check eligibility. This batch is in the recall register, but the replacement policy requires both the order and batch to be confirmed.","citations":[{"reference":"SYNTHETIC-RECALL-001","title":"Volt \u0026 Co synthetic recall notice"},{"reference":"VOLT-REPLACEMENT-2026-11","title":"Volt \u0026 Co synthetic replacement policy"}],"tools":[{"name":"volt-business-tools___getReturnWarrantyEligibility","protocol_status":"completed"},{"name":"volt-policy-knowledge___knowledge_base_retrieve","protocol_status":"completed"}]},{"id":"outside-return-window","query":"Check standard return eligibility for synthetic order VC-10482 and batch CH-0926, using the demonstration clock. Is it within the 30-day return window? Cite the policy; do not approve anything.","expected_decision":"ineligible","actual_decision":"ineligible","required_tool":"getReturnWarrantyEligibility","expected_reference":"VOLT-REPLACEMENT-2026-11","answer":"No. The order was delivered on 2026-09-05 and, using the 2026-11-11 demonstration clock, it is 67 days since delivery, so it is outside the 30-day standard return window. This is eligibility only; no approval is being issued.","citations":[{"reference":"VOLT-REPLACEMENT-2026-11","title":"Volt \u0026 Co synthetic replacement policy"}],"tools":[{"name":"volt-business-tools___getOrderStatus","protocol_status":"completed"},{"name":"volt-business-tools___getReturnWarrantyEligibility","protocol_status":"completed"},{"name":"volt-policy-knowledge___knowledge_base_retrieve","protocol_status":"completed"}]},{"id":"unknown-order","query":"Check replacement eligibility for synthetic order VC-99999 and batch CH-0722. Do not substitute another order or assume ownership.","expected_decision":"unknown","actual_decision":"unknown","required_tool":"getReturnWarrantyEligibility","expected_reference":"","answer":"The order is not in the fixture, so eligibility can’t be confirmed. Please ask human support to review VC-99999 and batch CH-0722.","citations":[{"reference":"VOLT-REPLACEMENT-2026-11","title":"Volt \u0026 Co synthetic replacement policy"},{"reference":"SYNTHETIC-RECALL-001","title":"Volt \u0026 Co synthetic recall notice"}],"tools":[{"name":"volt-business-tools___getOrderStatus","protocol_status":"completed"},{"name":"volt-business-tools___getReturnWarrantyEligibility","protocol_status":"completed"},{"name":"volt-policy-knowledge___knowledge_base_retrieve","protocol_status":"completed"}]},{"id":"replacement-missing-batch","query":"Check replacement eligibility for synthetic order VC-10482. I cannot provide the device batch. Do not infer the batch from another customer or approve a replacement.","expected_decision":"needs_batch","actual_decision":"needs_batch","required_tool":"getReturnWarrantyEligibility","expected_reference":"","answer":"I need the device batch to check eligibility. I can’t infer it from another customer or approve a replacement.","citations":[{"reference":"VOLT-REPLACEMENT-2026-11","title":"Replacement Policy 2026-11"}],"tools":[{"name":"volt-business-tools___getOrderStatus","protocol_status":"completed"},{"name":"volt-business-tools___getReturnWarrantyEligibility","protocol_status":"completed"}]}]},{"id":"candidate-v6","label":"DEV candidate · v6","project":"volt-dev","version":"6","source_name":"candidate-v6.json","counts":{"passed":9,"failed":0,"errored":0,"total":9,"skipped":0},"evaluator_version":"1","report_url":"https://ai.azure.com/nextgen/r/QLaHyjG1Q3S-okwXg2m5wA,rg-volt-citadel,,fdy-volt-citadel-261111,volt-dev/build/evaluations/eval_5a3774acf4f347e1bd35ae30375d0f2d/run/evalrun_d6967759ba834c51b26a39296474ff0f","failed_invocation_attempts":1,"cases":[{"id":"replacement-recall","query":"For the synthetic Volt demo: my order is VC-10482 and my Volt Charge 65 batch is CH-0722. It is past the normal 30-day return window. Can I still be assessed for a replacement? Check my order, recall status and replacement eligibility, and cite the policy. Do not actually change my order.","expected_decision":"eligible","actual_decision":"eligible","required_tool":"getReturnWarrantyEligibility","expected_reference":"VOLT-REPLACEMENT-2026-11","answer":"Yes — your case can be assessed for replacement, but it still needs human review. Your order VC-10482 matches product VC-C65, and batch CH-0722 is recalled. Please wait for a human support representative; I can’t approve or change anything.","citations":[{"reference":"SYNTHETIC-RECALL-001","title":"Volt \u0026 Co synthetic recall notice"},{"reference":"VOLT-REPLACEMENT-2026-11","title":"Volt \u0026 Co synthetic replacement policy"}],"tools":[{"name":"volt-business-tools___getOrderStatus","protocol_status":"completed"},{"name":"volt-business-tools___getRecallNotices","protocol_status":"completed"},{"name":"volt-business-tools___getReturnWarrantyEligibility","protocol_status":"completed"},{"name":"volt-policy-knowledge___knowledge_base_retrieve","protocol_status":"completed"}]},{"id":"recalled-batch","query":"Please check the recall register for Volt product VC-C65, batch CH-0722, and cite the recall reference.","expected_decision":"recalled","actual_decision":"recalled","required_tool":"getRecallNotices","expected_reference":"SYNTHETIC-RECALL-001","answer":"Recall confirmed for VC-C65 batch CH-0722. Please escalate to human support.","citations":[{"reference":"SYNTHETIC-RECALL-001","title":"Synthetic recall notice"}],"tools":[{"name":"volt-business-tools___getRecallNotices","protocol_status":"completed"}]},{"id":"missing-batch","query":"Please check whether my Volt product VC-C65 is recalled. I cannot find its batch code. Do not assume a batch.","expected_decision":"needs_batch","actual_decision":"needs_batch","required_tool":"getRecallNotices","expected_reference":"","answer":"Please send the batch code on VC-C65 so I can check the recall register. I can’t assume a batch.","citations":[],"tools":[{"name":"volt-business-tools___getRecallNotices","protocol_status":"completed"}]},{"id":"unknown-batch","query":"Check the recall register for Volt product VC-C65, batch CH-9999. Is there a recorded conclusion for that exact batch?","expected_decision":"unknown","actual_decision":"unknown","required_tool":"getRecallNotices","expected_reference":"","answer":"I checked the recall register, but this exact batch is absent, so there is no recorded conclusion for CH-9999. If you want, I can check another batch or the product’s recall status without a batch.","citations":[],"tools":[{"name":"volt-business-tools___getRecallNotices","protocol_status":"completed"}]},{"id":"no-recall-record","query":"Check the synthetic recall register for Volt product VC-C65, batch CH-0926. Report the register result, not a general guarantee of safety.","expected_decision":"no_recall","actual_decision":"no_recall","required_tool":"getRecallNotices","expected_reference":"","answer":"Register result: no_recall. This is not a general guarantee of safety.","citations":[{"reference":"SYNTHETIC-REGISTER-002","title":"No active recall is listed for this batch in the synthetic register. This is not a general guarantee of safety."}],"tools":[{"name":"volt-business-tools___getRecallNotices","protocol_status":"completed"}]},{"id":"missing-order","query":"Please check replacement eligibility for my Volt Charge 65, batch CH-0722. I have not supplied an order ID. Do not invent one or change an order.","expected_decision":"needs_order","actual_decision":"needs_order","required_tool":"getReturnWarrantyEligibility","expected_reference":"","answer":"Please send the order ID. Your batch CH-0722 is recalled, but replacement assessment still needs the order confirmed.","citations":[{"reference":"VOLT-REPLACEMENT-2026-11","title":"Volt \u0026 Co synthetic replacement policy"},{"reference":"SYNTHETIC-RECALL-001","title":"Volt \u0026 Co synthetic recall notice"}],"tools":[{"name":"volt-business-tools___getReturnWarrantyEligibility","protocol_status":"completed"},{"name":"volt-policy-knowledge___knowledge_base_retrieve","protocol_status":"completed"}]},{"id":"outside-return-window","query":"Check standard return eligibility for synthetic order VC-10482 and batch CH-0926, using the demonstration clock. Is it within the 30-day return window? Cite the policy; do not approve anything.","expected_decision":"ineligible","actual_decision":"ineligible","required_tool":"getReturnWarrantyEligibility","expected_reference":"VOLT-REPLACEMENT-2026-11","answer":"No. VC-10482 is outside the standard 30-day unopened return window: delivered 2026-09-05 and assessed 2026-11-11, 67 days later. I can’t approve anything; a human review would be needed for any exception.","citations":[{"reference":"VOLT-REPLACEMENT-2026-11","title":"Volt \u0026 Co synthetic replacement policy"}],"tools":[{"name":"volt-business-tools___getOrderStatus","protocol_status":"completed"},{"name":"volt-business-tools___getReturnWarrantyEligibility","protocol_status":"completed"},{"name":"volt-policy-knowledge___knowledge_base_retrieve","protocol_status":"completed"}]},{"id":"unknown-order","query":"Check replacement eligibility for synthetic order VC-99999 and batch CH-0722. Do not substitute another order or assume ownership.","expected_decision":"unknown","actual_decision":"unknown","required_tool":"getReturnWarrantyEligibility","expected_reference":"","answer":"The order is not found, so I can’t assess replacement eligibility yet. Please provide a valid order ID or ask human support to confirm ownership; batch CH-0722 is noted separately as recalled, but that does not confirm this order.","citations":[{"reference":"VOLT-REPLACEMENT-2026-11","title":"Volt \u0026 Co synthetic replacement policy"},{"reference":"SYNTHETIC-RECALL-001","title":"Volt \u0026 Co synthetic recall notice"}],"tools":[{"name":"volt-business-tools___getOrderStatus","protocol_status":"completed"},{"name":"volt-business-tools___getReturnWarrantyEligibility","protocol_status":"completed"},{"name":"volt-policy-knowledge___knowledge_base_retrieve","protocol_status":"completed"}]},{"id":"replacement-missing-batch","query":"Check replacement eligibility for synthetic order VC-10482. I cannot provide the device batch. Do not infer the batch from another customer or approve a replacement.","expected_decision":"needs_batch","actual_decision":"needs_batch","required_tool":"getReturnWarrantyEligibility","expected_reference":"","answer":"I need the device batch to check eligibility. For VC-10482, the order is delivered, but the eligibility tool returned needs_batch, so I can’t approve a replacement or infer the batch. If you share the batch code, I’ll check it.","citations":[{"reference":"VOLT-REPLACEMENT-2026-11","title":"Volt \u0026 Co synthetic replacement policy"},{"reference":"SYNTHETIC-RECALL-001","title":"Volt \u0026 Co synthetic recall notice"}],"tools":[{"name":"volt-business-tools___getOrderStatus","protocol_status":"completed"},{"name":"volt-business-tools___getReturnWarrantyEligibility","protocol_status":"completed"},{"name":"volt-policy-knowledge___knowledge_base_retrieve","protocol_status":"completed"}]}]},{"id":"demo-v1","label":"Released DEMO · v1","project":"volt-demo","version":"1","source_name":"demo-v1.json","counts":{"passed":9,"failed":0,"errored":0,"total":9,"skipped":0},"evaluator_version":"1","report_url":"https://ai.azure.com/nextgen/r/QLaHyjG1Q3S-okwXg2m5wA,rg-volt-citadel,,fdy-volt-citadel-261111,volt-demo/build/evaluations/eval_a0c23c81fa62456fabd5f05a11453cec/run/evalrun_c61cce9dc8774d528841ca069d992255","failed_invocation_attempts":0,"cases":[{"id":"replacement-recall","query":"For the synthetic Volt demo: my order is VC-10482 and my Volt Charge 65 batch is CH-0722. It is past the normal 30-day return window. Can I still be assessed for a replacement? Check my order, recall status and replacement eligibility, and cite the policy. Do not actually change my order.","expected_decision":"eligible","actual_decision":"eligible","required_tool":"getReturnWarrantyEligibility","expected_reference":"VOLT-REPLACEMENT-2026-11","answer":"You can be assessed for a replacement. I confirmed your order VC-10482 is for VC-C65 and batch CH-0722 is recalled. Next step: I’m escalating this to human support for replacement assessment; I can’t approve or change the order myself.","citations":[{"reference":"VOLT-REPLACEMENT-2026-11","title":"Volt \u0026 Co synthetic replacement policy"},{"reference":"SYNTHETIC-RECALL-001","title":"Volt \u0026 Co synthetic recall notice"}],"tools":[{"name":"volt-business-tools___getOrderStatus","protocol_status":"completed"},{"name":"volt-business-tools___getRecallNotices","protocol_status":"completed"},{"name":"volt-business-tools___getReturnWarrantyEligibility","protocol_status":"completed"},{"name":"volt-policy-knowledge___knowledge_base_retrieve","protocol_status":"completed"}]},{"id":"recalled-batch","query":"Please check the recall register for Volt product VC-C65, batch CH-0722, and cite the recall reference.","expected_decision":"recalled","actual_decision":"recalled","required_tool":"getRecallNotices","expected_reference":"SYNTHETIC-RECALL-001","answer":"Recall confirmed for VC-C65 batch CH-0722. Please escalate to human support.","citations":[{"reference":"SYNTHETIC-RECALL-001","title":"Synthetic recall notice"}],"tools":[{"name":"volt-business-tools___getRecallNotices","protocol_status":"completed"}]},{"id":"missing-batch","query":"Please check whether my Volt product VC-C65 is recalled. I cannot find its batch code. Do not assume a batch.","expected_decision":"needs_batch","actual_decision":"needs_batch","required_tool":"getRecallNotices","expected_reference":"","answer":"Please send the batch code on VC-C65, and I’ll check the recall register. I can’t assume a batch.","citations":[],"tools":[{"name":"volt-business-tools___getRecallNotices","protocol_status":"completed"}]},{"id":"unknown-batch","query":"Check the recall register for Volt product VC-C65, batch CH-9999. Is there a recorded conclusion for that exact batch?","expected_decision":"unknown","actual_decision":"unknown","required_tool":"getRecallNotices","expected_reference":"","answer":"No recorded conclusion for that exact batch. The register is absent for CH-9999, so the status is unknown.","citations":[],"tools":[{"name":"volt-business-tools___getRecallNotices","protocol_status":"completed"}]},{"id":"no-recall-record","query":"Check the synthetic recall register for Volt product VC-C65, batch CH-0926. Report the register result, not a general guarantee of safety.","expected_decision":"no_recall","actual_decision":"no_recall","required_tool":"getRecallNotices","expected_reference":"","answer":"No active recall is listed for VC-C65 batch CH-0926. This is only the register result, not a general safety guarantee.","citations":[{"reference":"SYNTHETIC-REGISTER-002","title":"No active recall is listed for this batch in the synthetic register. This is not a general guarantee of safety."}],"tools":[{"name":"volt-business-tools___getRecallNotices","protocol_status":"completed"}]},{"id":"missing-order","query":"Please check replacement eligibility for my Volt Charge 65, batch CH-0722. I have not supplied an order ID. Do not invent one or change an order.","expected_decision":"needs_order","actual_decision":"needs_order","required_tool":"getReturnWarrantyEligibility","expected_reference":"","answer":"Please provide the order ID; replacement assessment can’t proceed without it. The batch CH-0722 is recalled, but that does not confirm ownership or approve a replacement.","citations":[{"reference":"SYNTHETIC-RECALL-001","title":"Volt \u0026 Co synthetic recall notice"},{"reference":"VOLT-REPLACEMENT-2026-11","title":"Volt \u0026 Co synthetic replacement policy"}],"tools":[{"name":"volt-business-tools___getReturnWarrantyEligibility","protocol_status":"completed"},{"name":"volt-business-tools___getRecallNotices","protocol_status":"completed"},{"name":"volt-policy-knowledge___knowledge_base_retrieve","protocol_status":"completed"}]},{"id":"outside-return-window","query":"Check standard return eligibility for synthetic order VC-10482 and batch CH-0926, using the demonstration clock. Is it within the 30-day return window? Cite the policy; do not approve anything.","expected_decision":"ineligible","actual_decision":"ineligible","required_tool":"getReturnWarrantyEligibility","expected_reference":"VOLT-REPLACEMENT-2026-11","answer":"It’s ineligible: the order was delivered on 2026-09-05, so the 30-day unopened return window has passed by the demonstration clock (2026-11-11). I can’t approve anything; a human review would be needed for any exception. If you want, I can also check whether the batch is recalled.","citations":[{"reference":"VOLT-REPLACEMENT-2026-11","title":"Volt \u0026 Co synthetic replacement policy"}],"tools":[{"name":"volt-business-tools___getOrderStatus","protocol_status":"completed"},{"name":"volt-business-tools___getReturnWarrantyEligibility","protocol_status":"completed"},{"name":"volt-policy-knowledge___knowledge_base_retrieve","protocol_status":"completed"}]},{"id":"unknown-order","query":"Check replacement eligibility for synthetic order VC-99999 and batch CH-0722. Do not substitute another order or assume ownership.","expected_decision":"unknown","actual_decision":"unknown","required_tool":"getReturnWarrantyEligibility","expected_reference":"","answer":"I can’t verify eligibility because order VC-99999 is absent from the fixture. A human can assess replacement only after the order is confirmed; batch CH-0722 is recalled, but that alone does not prove ownership.","citations":[{"reference":"VOLT-REPLACEMENT-2026-11","title":"Volt \u0026 Co synthetic replacement policy"},{"reference":"SYNTHETIC-RECALL-001","title":"Volt \u0026 Co synthetic recall notice"}],"tools":[{"name":"volt-business-tools___getOrderStatus","protocol_status":"completed"},{"name":"volt-business-tools___getReturnWarrantyEligibility","protocol_status":"completed"},{"name":"volt-policy-knowledge___knowledge_base_retrieve","protocol_status":"completed"}]},{"id":"replacement-missing-batch","query":"Check replacement eligibility for synthetic order VC-10482. I cannot provide the device batch. Do not infer the batch from another customer or approve a replacement.","expected_decision":"needs_batch","actual_decision":"needs_batch","required_tool":"getReturnWarrantyEligibility","expected_reference":"","answer":"I need the batch code to complete the eligibility check. Your order VC-10482 is delivered, but the business tool returned needs_batch, so I can’t assess replacement eligibility without it. I also cannot infer the batch or approve a replacement.","citations":[{"reference":"VOLT-REPLACEMENT-2026-11","title":"Volt \u0026 Co synthetic replacement policy"},{"reference":"SYNTHETIC-RECALL-001","title":"Volt \u0026 Co synthetic recall notice"}],"tools":[{"name":"volt-business-tools___getOrderStatus","protocol_status":"completed"},{"name":"volt-business-tools___getReturnWarrantyEligibility","protocol_status":"completed"},{"name":"volt-policy-knowledge___knowledge_base_retrieve","protocol_status":"completed"}]}]}],"optimizer":{"status":"succeeded","termination":"candidate_screening_stalled","baseline_score":0.75,"best_score":0.75,"completed_candidates":0,"maximum_candidate_budget":2,"warnings":["Optimizer returned only the baseline; no optimized candidates were generated.","Optimization stopped after reaching the maximum consecutive stall limit with no improvement."],"report_url":"https://ai.azure.com/nextgen/r/QLaHyjG1Q3S-okwXg2m5wA,rg-volt-citadel,,fdy-volt-citadel-261111,volt-dev/build/agents/volt-support/optimization/opt_bcc5008122ae4a88ab10bfa428ecf616","decision":"Baseline retained. No accepted improvement. Nothing applied.","deploy_warning":"Do not click “Deploy best candidate” in the portal: it would deploy the retained baseline, not an improved candidate."},"trace":{"span_count":43,"operation_id":"7f4619cba4075a99c6d1b077dad68f69","response_id":"caresp_03f2cedafe9a81ff00ml4CEH7VZPqFrxR1SFFHpglDzRb3u45a","project":"volt-demo","version":1,"timestamp_utc":"2026-11-11T17:19:09.3446407Z","root_duration_seconds":23.4094,"scope":"A separate fresh golden DEMO request—not the historical incident.","baseline_limit":"The old incident’s reported correlation ID was not found in exported App Insights. Its proof is native capture/tool sequence plus failed native evaluation.","spans":[{"name":"invoke_agent","duration_ms":23409.3969,"success":"True"},{"name":"GET /msi/token","duration_ms":540,"success":"True"},{"name":"GET /api/projects/volt-demo/storage/history/item_ids","duration_ms":145,"success":"True"},{"name":"POST /api/projects/volt-demo/storage/responses","duration_ms":133,"success":"True"},{"name":"tools/list volt-support-tools:1","duration_ms":257.6763,"success":"True"},{"name":"GET /msi/token","duration_ms":53,"success":"True"},{"name":"POST /api/projects/volt-demo/openai/v1/responses","duration_ms":1692,"success":"True"},{"name":"invoke_agent volt-support:1","duration_ms":1149.0368,"success":"True"},{"name":"chat volt-demo-models-LLM/gpt-5.4-mini","duration_ms":314.0508,"success":"True"},{"name":"execute_tool volt-business-tools___getOrderStatus","duration_ms":2370,"success":"True"},{"name":"tools/call volt-business-tools___getOrderStatus","duration_ms":2366,"success":"True"},{"name":"POST /api/projects/volt-demo/toolboxes/volt-support-tools/versions/1/mcp","duration_ms":2359,"success":"True"},{"name":"tools/call volt-business-tools___getOrderStatus","duration_ms":2265.5962,"success":"True"},{"name":"chat volt-demo-models-LLM/gpt-5.4-mini","duration_ms":1506,"success":"True"},{"name":"POST /api/projects/volt-demo/openai/v1/responses","duration_ms":870,"success":"True"},{"name":"invoke_agent volt-support:1","duration_ms":1070.5974,"success":"True"},{"name":"chat volt-demo-models-LLM/gpt-5.4-mini","duration_ms":13.4915,"success":"True"},{"name":"execute_tool volt-business-tools___getRecallNotices","duration_ms":3700,"success":"True"},{"name":"tools/call volt-business-tools___getRecallNotices","duration_ms":3699,"success":"True"},{"name":"POST /api/projects/volt-demo/toolboxes/volt-support-tools/versions/1/mcp","duration_ms":3694,"success":"True"},{"name":"tools/call volt-business-tools___getRecallNotices","duration_ms":3554.5949,"success":"True"},{"name":"chat volt-demo-models-LLM/gpt-5.4-mini","duration_ms":1095,"success":"True"},{"name":"POST /api/projects/volt-demo/openai/v1/responses","duration_ms":931,"success":"True"},{"name":"invoke_agent volt-support:1","duration_ms":645.2904,"success":"True"},{"name":"chat volt-demo-models-LLM/gpt-5.4-mini","duration_ms":47.3822,"success":"True"},{"name":"execute_tool volt-business-tools___getReturnWarrantyEligibility","duration_ms":205,"success":"True"},{"name":"tools/call volt-business-tools___getReturnWarrantyEligibility","duration_ms":204,"success":"True"},{"name":"POST /api/projects/volt-demo/toolboxes/volt-support-tools/versions/1/mcp","duration_ms":197,"success":"True"},{"name":"tools/call volt-business-tools___getReturnWarrantyEligibility","duration_ms":106.2037,"success":"True"},{"name":"chat volt-demo-models-LLM/gpt-5.4-mini","duration_ms":1681,"success":"True"},{"name":"invoke_agent volt-support:1","duration_ms":1258.261,"success":"True"},{"name":"chat volt-demo-models-LLM/gpt-5.4-mini","duration_ms":14.0012,"success":"True"},{"name":"execute_tool volt-policy-knowledge___knowledge_base_retrieve","duration_ms":1654,"success":"True"},{"name":"tools/call volt-policy-knowledge___knowledge_base_retrieve","duration_ms":1652,"success":"True"},{"name":"POST /api/projects/volt-demo/toolboxes/volt-support-tools/versions/1/mcp","duration_ms":1647,"success":"True"},{"name":"tools/call volt-policy-knowledge___knowledge_base_retrieve","duration_ms":1552.2964,"success":"True"},{"name":"chat volt-demo-models-LLM/gpt-5.4-mini","duration_ms":2030,"success":"True"},{"name":"POST /api/projects/volt-demo/openai/v1/responses","duration_ms":969,"success":"True"},{"name":"invoke_agent volt-support:1","duration_ms":1534.4811,"success":"True"},{"name":"chat volt-demo-models-LLM/gpt-5.4-mini","duration_ms":988.945,"success":"True"},{"name":"GET /msi/token","duration_ms":751,"success":"True"},{"name":"GET /api/projects/volt-demo/storage/state_stores/YWdlbnRfc2Vzc2lvbnM","duration_ms":77,"success":"True"},{"name":"PUT /api/projects/volt-demo/storage/state_stores/YWdlbnRfc2Vzc2lvbnM/items/Y29udl8wM2YyY2VkYWZlOWE4MWZmMDA1dWpSU3h5OXRHWGxUcjlVMHg0WjZXOUFRZDZvR1l2WA","duration_ms":123,"success":"True"}]},"disclosures":["RECORDED EVIDENCE — NOT LIVE. These are retained real synthetic responses, not a live runtime or portal screenshot.","Native counts grade completed captures. They do not rerun the agent and are not an availability guarantee.","One initial DEV candidate model-service invocation failed, was preserved, and was retried once.","DEMO’s 9/9 is its own native evaluator v1 result on nine fresh runtime cases—not a reused DEV result.","Memory data is intentionally omitted: one-caller DEV v5 proof exists, but cross-user isolation is unproved; DEMO Memory is off.","No automatic Insights monitor/findings or completed human 90-minute timing rehearsal is claimed."]}</script>
+<script>(() => {
+  "use strict";
+  const data = JSON.parse(document.getElementById("recorded-data").textContent);
+  const byId = Object.fromEntries(data.runs.map(run => [run.id, run]));
+  const create = (tag, text, cls) => {
+    const node = document.createElement(tag);
+    if (text !== undefined) node.textContent = String(text);
+    if (cls) node.className = cls;
+    return node;
+  };
+  const link = (label, url) => {
+    const node = create("a", label);
+    node.href = url; node.target = "_blank"; node.rel = "noopener noreferrer";
+    return node;
+  };
+  const set = (id, value) => { document.getElementById(id).textContent = String(value); };
+  for (const run of data.runs) {
+    const card = create("section", undefined, "stat");
+    card.dataset.run = run.id;
+    card.append(create("h2", run.label), create("div", `${run.counts.passed}/${run.counts.total}`, "score"));
+    card.append(create("p", `${run.counts.failed} failed · ${run.counts.errored} errored · ${run.counts.skipped} skipped`, "muted"));
+    card.append(link("Open actual native report ↗", run.report_url));
+    if (run.failed_invocation_attempts) card.append(create("p", `${run.failed_invocation_attempts} earlier invocation failure preserved; retried once. Business score ≠ availability.`, "fine"));
+    document.getElementById("stats").append(card);
+  }
+  const chooser = document.getElementById("case-select");
+  for (const c of data.runs[0].cases) {
+    const option = create("option", c.id); option.value = c.id; chooser.append(option);
+  }
+  const runChooser = document.getElementById("run-select");
+  for (const run of data.runs.slice(1)) {
+    const option = create("option", run.label); option.value = run.id; runChooser.append(option);
+  }
+  chooser.value = "replacement-recall"; runChooser.value = "demo-v1";
+  function renderPanel(id, run, c) {
+    const panel = document.getElementById(id);
+    panel.replaceChildren();
+    panel.append(create("h2", run.label));
+    const equal = c.expected_decision === c.actual_decision;
+    panel.append(create("div", equal ? "Decision matches expected" : "Decision mismatch", `verdict ${equal ? "match" : "mismatch"}`));
+    const fields = create("div", undefined, "decisions");
+    for (const [label, value] of [["Expected decision", c.expected_decision], ["Actual decision", c.actual_decision]]) {
+      const field = create("div");
+      field.append(create("span", label, "field-label"), create("span", value || "Not recorded", "decision"));
+      fields.append(field);
+    }
+    panel.append(fields, create("p", "This comparison is the decision field, not a substitute for the complete native evaluator.", "fine"));
+    panel.append(create("h3", "Captured human-readable answer"), create("p", c.answer, "answer"));
+    panel.append(create("h3", "Citations in the recorded answer"));
+    const citations = create("ul", undefined, "citations");
+    for (const cite of c.citations) citations.append(create("li", [cite.reference, cite.title].filter(Boolean).join(" — ")));
+    if (!c.citations.length) citations.append(create("li", "No citations in this captured answer."));
+    panel.append(citations, create("h3", "Tools in the native protocol sequence"));
+    const tools = create("ol", undefined, "tools");
+    for (const tool of c.tools) tools.append(create("li", `${tool.name} · ${tool.protocol_status}`));
+    if (!c.tools.length) tools.append(create("li", "No function calls in this capture."));
+    panel.append(tools, create("p", `Source: ${run.source_name} · ${run.project} · agent version ${run.version} · evaluator v${run.evaluator_version}`, "fine"));
+  }
+  function render() {
+    const baseline = byId["baseline-v1"];
+    const comparison = byId[runChooser.value];
+    const c = baseline.cases.find(item => item.id === chooser.value);
+    set("case-query", c.query);
+    set("case-requirements", `Required tool: ${c.required_tool || "none specified"} · Expected source: ${c.expected_reference || "none required"}`);
+    renderPanel("baseline-panel", baseline, c);
+    renderPanel("comparison-panel", comparison, comparison.cases.find(item => item.id === chooser.value));
+  }
+  chooser.addEventListener("change", render); runChooser.addEventListener("change", render); render();
+  const opt = data.optimizer;
+  set("opt-status", `${opt.status} · ${opt.termination}`);
+  set("opt-decision", opt.decision);
+  set("opt-baseline", opt.baseline_score);
+  set("opt-best", opt.best_score);
+  set("opt-completed", opt.completed_candidates);
+  set("opt-budget", opt.maximum_candidate_budget);
+  set("opt-warning", opt.deploy_warning);
+  const warnings = document.getElementById("opt-warnings");
+  for (const warning of opt.warnings) warnings.append(create("li", warning));
+  document.getElementById("opt-link").append(link("Open completed native Optimizer report ↗", opt.report_url));
+  const trace = data.trace;
+  set("trace-summary", `${trace.span_count} verified correlated spans · ${trace.project} · v${trace.version} · ${trace.root_duration_seconds}s root duration (one observation, not an SLA)`);
+  set("trace-boundary", trace.scope + " " + trace.baseline_limit);
+  set("trace-ids", `Fresh response: ${trace.response_id}\nRoot operation: ${trace.operation_id}\nUTC: ${trace.timestamp_utc}`);
+  const body = document.getElementById("span-rows");
+  for (const span of trace.spans) {
+    const row = create("tr");
+    row.append(create("td", span.name), create("td", (span.duration_ms / 1000).toFixed(4) + " s"), create("td", span.success || "not recorded"));
+    body.append(row);
+  }
+  for (const note of data.disclosures) document.getElementById("disclosures").append(create("li", note));
+  document.documentElement.dataset.ready = "true";
+})();</script></body></html>

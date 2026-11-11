@@ -17,7 +17,10 @@ for block in text.split("\n\n"):
     block = block.strip()
     if not block:
         continue
-    if block.startswith("# "):
+    if block.startswith("```") and block.endswith("```"):
+        command = "\n".join(block.splitlines()[1:-1])
+        blocks.append('<p class="cue command">' + escape(command).replace("\n", "<br>") + "</p>")
+    elif block.startswith("# "):
         blocks.append("<h1>" + inline(block[2:]) + "</h1>")
     elif block.startswith("## "):
         heading = block[3:]
@@ -42,6 +45,7 @@ p { margin: 0 0 9pt; }
 p.cue { color: #005b9f; background-color: #edf5fb; padding: 8pt; font-size: 10pt; }
 strong { color: #352263; }
 code { font-family: Consolas, monospace; font-size: 9.5pt; }
+p.command { font-family: Consolas, monospace; font-size: 9pt; }
 li { margin-bottom: 5pt; }
 </style></head><body>""" + "\n".join(blocks) + "</body></html>"
 path = ROOT / "Presenter manuscript.html"

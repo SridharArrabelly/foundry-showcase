@@ -1,0 +1,183 @@
+{
+  "method": "Count leading-curly-quote main-route paragraphs on visible slides 1\u201317, before each If branch; exclude stage directions, fenced/inline code, headings, backups, Q&A and appendices.",
+  "tokenization": "Unicode word tokens; hyphenated/slashed terms count as one. Verbal expansion of numbers/IDs and unscripted commentary can add time.",
+  "manuscript_sha256": "3b2b01885ba0fddcc368362fbc48c99be49374c9694247c064bbd3719234b164",
+  "spoken_words": 5769,
+  "content_budget_minutes": 80,
+  "qa_budget_excluded_minutes": 10,
+  "booked_transitions_minutes": 6.0,
+  "speech_minutes_by_words_per_minute": {
+    "120": 48.08,
+    "130": 44.38,
+    "140": 41.21
+  },
+  "remaining_for_non_narrated_demo_and_wait_minutes": {
+    "120": 25.92,
+    "130": 29.62,
+    "140": 32.79
+  },
+  "first_six_slides_speech_plus_one_transition_minute_at_130wpm": 13.03,
+  "warnings": [
+    "Do not add all 52 demo minutes as silent time: part of this script is spoken during demonstrations.",
+    "Cover and architecture/transition slots are locally tight; the first 13-minute block has almost no spare time at 130 wpm.",
+    "Slide 16 has only two minutes for a fresh call, inspection and close; preserve the 30-second fallback cutoff.",
+    "A live four-session Memory run can add unscripted waits; the main route can use the verified redacted prior proof.",
+    "This estimate is not a full human 90-minute rehearsal or a latency guarantee."
+  ],
+  "human_90minute_rehearsal_performed": false,
+  "slides": [
+    {
+      "slide": 1,
+      "spoken_words": 151,
+      "spoken_paragraphs": 5,
+      "allocated_minutes": 1.0,
+      "booked_transition_minutes": 0,
+      "speech_plus_transition_at_130wpm_minutes": 1.16,
+      "excess_before_silent_demo_at_130wpm_seconds": 9.7
+    },
+    {
+      "slide": 2,
+      "spoken_words": 332,
+      "spoken_paragraphs": 8,
+      "allocated_minutes": 3.0,
+      "booked_transition_minutes": 0,
+      "speech_plus_transition_at_130wpm_minutes": 2.55,
+      "excess_before_silent_demo_at_130wpm_seconds": 0
+    },
+    {
+      "slide": 3,
+      "spoken_words": 243,
+      "spoken_paragraphs": 8,
+      "allocated_minutes": 2.0,
+      "booked_transition_minutes": 0,
+      "speech_plus_transition_at_130wpm_minutes": 1.87,
+      "excess_before_silent_demo_at_130wpm_seconds": 0
+    },
+    {
+      "slide": 4,
+      "spoken_words": 263,
+      "spoken_paragraphs": 8,
+      "allocated_minutes": 2.0,
+      "booked_transition_minutes": 0,
+      "speech_plus_transition_at_130wpm_minutes": 2.02,
+      "excess_before_silent_demo_at_130wpm_seconds": 1.4
+    },
+    {
+      "slide": 5,
+      "spoken_words": 219,
+      "spoken_paragraphs": 7,
+      "allocated_minutes": 2.0,
+      "booked_transition_minutes": 0,
+      "speech_plus_transition_at_130wpm_minutes": 1.68,
+      "excess_before_silent_demo_at_130wpm_seconds": 0
+    },
+    {
+      "slide": 6,
+      "spoken_words": 356,
+      "spoken_paragraphs": 11,
+      "allocated_minutes": 3.0,
+      "booked_transition_minutes": 1.0,
+      "speech_plus_transition_at_130wpm_minutes": 3.74,
+      "excess_before_silent_demo_at_130wpm_seconds": 44.3
+    },
+    {
+      "slide": 7,
+      "spoken_words": 413,
+      "spoken_paragraphs": 10,
+      "allocated_minutes": 8.0,
+      "booked_transition_minutes": 0.5,
+      "speech_plus_transition_at_130wpm_minutes": 3.68,
+      "excess_before_silent_demo_at_130wpm_seconds": 0
+    },
+    {
+      "slide": 8,
+      "spoken_words": 353,
+      "spoken_paragraphs": 10,
+      "allocated_minutes": 6.0,
+      "booked_transition_minutes": 0.5,
+      "speech_plus_transition_at_130wpm_minutes": 3.22,
+      "excess_before_silent_demo_at_130wpm_seconds": 0
+    },
+    {
+      "slide": 9,
+      "spoken_words": 319,
+      "spoken_paragraphs": 10,
+      "allocated_minutes": 5.0,
+      "booked_transition_minutes": 0,
+      "speech_plus_transition_at_130wpm_minutes": 2.45,
+      "excess_before_silent_demo_at_130wpm_seconds": 0
+    },
+    {
+      "slide": 10,
+      "spoken_words": 332,
+      "spoken_paragraphs": 10,
+      "allocated_minutes": 7.0,
+      "booked_transition_minutes": 1.0,
+      "speech_plus_transition_at_130wpm_minutes": 3.55,
+      "excess_before_silent_demo_at_130wpm_seconds": 0
+    },
+    {
+      "slide": 11,
+      "spoken_words": 449,
+      "spoken_paragraphs": 13,
+      "allocated_minutes": 6.0,
+      "booked_transition_minutes": 1.0,
+      "speech_plus_transition_at_130wpm_minutes": 4.45,
+      "excess_before_silent_demo_at_130wpm_seconds": 0
+    },
+    {
+      "slide": 12,
+      "spoken_words": 438,
+      "spoken_paragraphs": 14,
+      "allocated_minutes": 6.0,
+      "booked_transition_minutes": 0.5,
+      "speech_plus_transition_at_130wpm_minutes": 3.87,
+      "excess_before_silent_demo_at_130wpm_seconds": 0
+    },
+    {
+      "slide": 13,
+      "spoken_words": 402,
+      "spoken_paragraphs": 13,
+      "allocated_minutes": 6.0,
+      "booked_transition_minutes": 0.5,
+      "speech_plus_transition_at_130wpm_minutes": 3.59,
+      "excess_before_silent_demo_at_130wpm_seconds": 0
+    },
+    {
+      "slide": 14,
+      "spoken_words": 395,
+      "spoken_paragraphs": 11,
+      "allocated_minutes": 6.0,
+      "booked_transition_minutes": 1.0,
+      "speech_plus_transition_at_130wpm_minutes": 4.04,
+      "excess_before_silent_demo_at_130wpm_seconds": 0
+    },
+    {
+      "slide": 15,
+      "spoken_words": 722,
+      "spoken_paragraphs": 19,
+      "allocated_minutes": 13.0,
+      "booked_transition_minutes": 0,
+      "speech_plus_transition_at_130wpm_minutes": 5.55,
+      "excess_before_silent_demo_at_130wpm_seconds": 0
+    },
+    {
+      "slide": 16,
+      "spoken_words": 172,
+      "spoken_paragraphs": 6,
+      "allocated_minutes": 2.0,
+      "booked_transition_minutes": 0,
+      "speech_plus_transition_at_130wpm_minutes": 1.32,
+      "excess_before_silent_demo_at_130wpm_seconds": 0
+    },
+    {
+      "slide": 17,
+      "spoken_words": 210,
+      "spoken_paragraphs": 8,
+      "allocated_minutes": 2.0,
+      "booked_transition_minutes": 0,
+      "speech_plus_transition_at_130wpm_minutes": 1.62,
+      "excess_before_silent_demo_at_130wpm_seconds": 0
+    }
+  ]
+}
