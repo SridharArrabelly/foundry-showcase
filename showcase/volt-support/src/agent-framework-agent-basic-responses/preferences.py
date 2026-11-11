@@ -58,7 +58,7 @@ class PreferenceMemory(AgentMiddleware):
             )
         return {
             "status": "remembered", "preference": PREFERENCE,
-            "memory_id": existing.id, "synthetic": True,
+            "memory_id": existing.memory_id, "synthetic": True,
         }
 
     async def forget_response_style(self) -> dict:
@@ -67,7 +67,7 @@ class PreferenceMemory(AgentMiddleware):
         for item in await self.items():
             if item.content == PREFERENCE:
                 await self.project.beta.memory_stores.delete_memory(
-                    STORE, item.id, headers=get_request_context().platform_headers()
+                    STORE, item.memory_id, headers=get_request_context().platform_headers()
                 )
-                deleted.append(item.id)
+                deleted.append(item.memory_id)
         return {"status": "forgotten", "deleted_memory_ids": deleted, "synthetic": True}

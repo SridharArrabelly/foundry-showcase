@@ -1,15 +1,24 @@
 import asyncio
 import re
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import AsyncMock
 
 import pytest
 from azure.ai.agentserver.core import FoundryAgentRequestContext, reset_request_context, set_request_context
+from azure.ai.projects.models import UserProfileMemoryItem
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from preferences import PREFERENCE, PreferenceMemory, caller_scope
+
+
+def memory_item(memory_id, content=PREFERENCE):
+    return UserProfileMemoryItem(
+        memory_id=memory_id, content=content, scope="synthetic-scope",
+        updated_at=datetime(2026, 11, 11, tzinfo=timezone.utc),
+    )
 
 
 def scoped(user_id, session_id):
@@ -63,8 +72,8 @@ def test_forgetting_deletes_only_this_callers_fixed_preference():
         store = SimpleNamespace(delete_memory=AsyncMock())
         memory = PreferenceMemory(SimpleNamespace(beta=SimpleNamespace(memory_stores=store)))
         memory.items = AsyncMock(return_value=[
-            SimpleNamespace(id="allowed", content=PREFERENCE),
-            SimpleNamespace(id="unrelated", content="Unrelated store entry"),
+            memory_item("allowed"),
+            memory_item("unrelated", "Unrelated store entry"),
         ])
         token = set_request_context(FoundryAgentRequestContext(
             call_id="opaque-test-call", user_id="synthetic-caller-a", session_id="one"
@@ -75,6 +84,26 @@ def test_forgetting_deletes_only_this_callers_fixed_preference():
             assert result["deleted_memory_ids"] == ["allowed"]
             store.delete_memory.assert_awaited_once_with(
                 "volt-preferences", "allowed", headers={"x-agent-foundry-call-id": "opaque-test-call"}
+            )
+        finally:
+            reset_request_context(token)
+    asyncio.run(exercise())
+
+
+def test_remember_returns_the_native_memory_item_identifier():
+    async def exercise():
+        store = SimpleNamespace(create_memory=AsyncMock(return_value=memory_item("created")))
+        memory = PreferenceMemory(SimpleNamespace(beta=SimpleNamespace(memory_stores=store)))
+        memory.items = AsyncMock(return_value=[])
+        token = set_request_context(FoundryAgentRequestContext(
+            call_id="opaque-test-call", user_id="synthetic-caller-a", session_id="one"
+        ))
+        try:
+            result = await memory.remember_response_style()
+            assert result["memory_id"] == "created"
+            store.create_memory.assert_awaited_once_with(
+                "volt-preferences", scope=caller_scope(), content=PREFERENCE, kind="user_profile",
+                headers={"x-agent-foundry-call-id": "opaque-test-call"},
             )
         finally:
             reset_request_context(token)
