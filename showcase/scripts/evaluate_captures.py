@@ -14,25 +14,52 @@ HEADERS = {"Foundry-Features": "Evaluations=V1Preview"}
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def validate_case_coverage(rows: list[dict], cases: list[dict]) -> None:
+    expected = {case["id"]: case for case in cases}
+    if not cases or len(expected) != len(cases):
+        raise ValueError("The expected dataset must contain unique cases.")
+    if len(rows) != len(cases) or {row["id"] for row in rows} != set(expected):
+        raise ValueError("Captures must cover every expected case exactly once.")
+    for row in rows:
+        if any(row.get(key) != value for key, value in expected[row["id"]].items()):
+            raise ValueError(f"Captured expectations differ from the dataset: {row['id']}")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--project-endpoint", required=True)
     parser.add_argument("--captures", type=Path, required=True)
+    parser.add_argument("--dataset", type=Path, required=True)
     parser.add_argument("--label", required=True)
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--eval-id")
     parser.add_argument("--evaluator-version", default="1")
+    parser.add_argument("--deployment-receipt", type=Path)
     parser.add_argument("--require-all-pass", action="store_true")
     args = parser.parse_args()
     if args.out.exists():
         raise FileExistsError(f"Evaluation receipt already exists: {args.out}; inspect it instead of submitting twice.")
     rows = [json.loads(line) for line in args.captures.read_text(encoding="utf-8").splitlines() if line.strip()]
+    cases = [json.loads(line) for line in args.dataset.read_text(encoding="utf-8").splitlines() if line.strip()]
+    validate_case_coverage(rows, cases)
     if not rows or len({row["response_id"] for row in rows}) != len(rows):
         raise ValueError("Provide nonempty captures with distinct response IDs.")
     versions = {row["agent_version"] for row in rows}
     code_hashes = {row["code_content_hash"] for row in rows}
     if len(versions) != 1 or len(code_hashes) != 1:
         raise ValueError("A run must compare captures from one verified agent version and code artifact.")
+    lineage = {}
+    if args.deployment_receipt:
+        deployment = json.loads(args.deployment_receipt.read_text(encoding="utf-8"))
+        if (
+            deployment.get("status") != "deployed-hash-verified"
+            or deployment.get("source_clean") is not True
+            or deployment.get("agent_version") not in versions
+            or deployment.get("code_content_hash") not in code_hashes
+            or deployment.get("package_sha256") != deployment.get("code_content_hash")
+        ):
+            raise ValueError("Deployment receipt does not identify the captured immutable package.")
+        lineage["source_commit"] = deployment["source_commit"]
     code = (ROOT / "evaluators" / "business_contract.py").read_text(encoding="utf-8")
     source_hash = hashlib.sha256(code.encode()).hexdigest()
     with DefaultAzureCredential() as credential, AIProjectClient(
@@ -81,6 +108,7 @@ def main() -> None:
         run = client.evals.runs.create(
             eval_id=evaluation.id, name=args.label,
             metadata={
+                **lineage,
                 "agent_name": rows[0]["agent_name"], "agent_version": next(iter(versions)),
                 "code_content_hash": next(iter(code_hashes)),
                 "evaluator_version": evaluator.version, "evaluator_sha256": source_hash,

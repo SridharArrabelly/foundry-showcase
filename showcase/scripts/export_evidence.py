@@ -9,8 +9,10 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--capture-dir", type=Path, required=True)
     parser.add_argument("--out", type=Path, required=True)
+    parser.add_argument("--evaluation-receipt", type=Path)
     args = parser.parse_args()
-    receipt = json.loads((args.capture_dir / "evaluation.json").read_text(encoding="utf-8"))
+    receipt_path = args.evaluation_receipt or args.capture_dir / "evaluation.json"
+    receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
     rows = [
         json.loads(line) for line in (args.capture_dir / "captured.jsonl").read_text(encoding="utf-8").splitlines()
         if line.strip()
@@ -34,6 +36,15 @@ def main() -> None:
             "observed_tools": json.loads(row["observed_tools"]),
             "protocol_output": raw["output"],
         })
+    failed_attempts = []
+    for path in sorted((args.capture_dir / "failed-attempts").glob("*.json")):
+        failed = json.loads(path.read_text(encoding="utf-8"))
+        raw = failed["response"]
+        failed_attempts.append({
+            "case_id": failed["case"]["id"], "response_id": raw["id"],
+            "created_at": raw["created_at"], "status": raw["status"],
+            "error_code": (raw.get("error") or {}).get("code"),
+        })
     artifact = {
         "kind": "recorded-synthetic-evidence",
         "notice": "Recorded live calls, not a live runtime or a guarantee of future model behavior.",
@@ -41,6 +52,8 @@ def main() -> None:
         "report_url": run["report_url"], "native_counts": run["result_counts"],
         "evaluator_version": receipt["evaluator_version"],
         "evaluator_sha256": receipt["evaluator_sha256"],
+        "failed_invocation_attempts": failed_attempts,
+        "quality_scope": "Business grading of completed responses, not an invocation availability rate.",
         "cases": records,
     }
     args.out.parent.mkdir(parents=True, exist_ok=True)

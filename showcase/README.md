@@ -25,9 +25,19 @@ correct but used `decision: recommendation` while the eligibility tool returned
 Fresh model responses can vary; the recording preserves the original incident.
 The harmless guardrail marker produced a native HTTP 400 `content_filter`.
 
-Authenticated memory behavior, optimization and the live PR/release exercise
-are not yet ready. The replacement presentation has been built and visually
-reviewed, but its remaining live-demo bindings are still being completed.
+The focused fix in PR #2 has a complete native v6 evaluation: **9 passed, 0
+failed, 0 errored**, using the same evaluator and unchanged nine-case dataset.
+One invocation initially failed with a model-service error; its evidence was
+preserved and that case retried once. Business grading of completed responses
+is not an availability measurement. The native status is attached to the exact
+PR commit; the PR is ready for human review, not merged or promoted to DEMO.
+
+Native Memory now passes remember, cross-conversation recall, forget and native
+deletion checks for one authenticated caller. A second-identity test remains
+pending; do not claim independent per-user authorization from a scope string.
+Optimizer, DEMO promotion and the full release rehearsal remain unfinished.
+The replacement presentation has been built and visually reviewed, but its
+remaining live-demo bindings are still being completed.
 
 ## Environment and costs
 
@@ -101,8 +111,61 @@ Fluent prose without the correct structured decision and observed tool call
 does not pass the business metric.
 
 Memory stores retain only synthetic response-style preferences for seven days.
-Conversation summaries and procedural memory are disabled. Scope isolation and
-authenticated caller binding must be demonstrated before memory is marked ready.
+Conversation summaries and procedural memory are disabled. Scope partitioning
+is application logic, not an independent RBAC boundary. End-user identity
+provenance and isolation require additional verification before production.
+
+Memory also has a model-authorization dependency. The runtime and caller use
+project-scoped roles, while the project's managed identity needs model access on
+the Foundry account. This cost-controlled DEV/DEMO profile shares that account;
+it is not a hard production isolation boundary. Native Memory/model-service
+traffic is not covered by the customer agent's APIM token budget. Review separate
+accounts and narrower role requirements before applying this profile to production.
+
+The Memory proof pins native sessions to v5, where Memory is enabled. The current
+endpoint is v6, where it is disabled. A preview metadata discrepancy was observed:
+the returned session ID and native session readback identify v5, but the response's
+`agent_reference.version` reports v6. `probe_memory.py` preserves both, warns
+explicitly and verifies the native item and deletion independently. The business
+capture gate remains stricter and rejects a response-version mismatch.
+
+## Replaying the verified evidence
+
+`recordings\baseline-v1.json` and `recordings\candidate-v6.json` are labeled
+recordings of real hosted calls, not live demonstrations or future guarantees.
+The candidate export also records the failed invocation separately.
+
+From the repository root, using the existing agent virtual environment:
+
+```powershell
+$python = ".\showcase\volt-support\src\agent-framework-agent-basic-responses\.venv\Scripts\python.exe"
+$endpoint = "https://fdy-volt-citadel-261111.services.ai.azure.com/api/projects/volt-dev"
+$root = ".\showcase\volt-support\src\agent-framework-agent-basic-responses"
+
+& $python .\showcase\scripts\probe_memory.py `
+  --project-endpoint $endpoint --expected-version 5 `
+  --out .\.runtime\memory-rehearsal
+
+& $python .\showcase\scripts\capture_cases.py `
+  --project-endpoint $endpoint --expected-version 6 `
+  --dataset "$root\.foundry\datasets\volt-regression.jsonl" `
+  --out "$root\.foundry\results\rehearsal-v6" --pause-seconds 60
+
+& $python .\showcase\scripts\evaluate_captures.py `
+  --project-endpoint $endpoint `
+  --captures "$root\.foundry\results\rehearsal-v6\captured.jsonl" `
+  --dataset "$root\.foundry\datasets\volt-regression.jsonl" `
+  --label "Rehearsal v6" `
+  --out "$root\.foundry\results\rehearsal-v6\evaluation.json" `
+  --eval-id eval_5a3774acf4f347e1bd35ae30375d0f2d --require-all-pass
+```
+
+These commands incur usage. Run evaluation only after capture succeeds. Cached
+matching responses are reused; incomplete or altered datasets fail the gate.
+Existing evaluation receipts prevent accidental resubmission. Use new explicitly
+named output directories for a fresh rehearsal, rather than deleting evidence.
+Current source commit/package lineage is in the PR and native evaluation metadata;
+pass `--deployment-receipt` when validating a newly packaged candidate.
 
 ## Provenance
 

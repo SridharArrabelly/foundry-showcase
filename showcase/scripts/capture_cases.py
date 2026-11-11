@@ -8,6 +8,7 @@ import time
 from pathlib import Path
 
 from azure.ai.projects import AIProjectClient
+from azure.ai.projects.models import VersionRefIndicator
 from azure.identity import DefaultAzureCredential
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -72,7 +73,19 @@ def main() -> None:
                     if not user_texts or user_texts[-1] != case["query"]:
                         raise ValueError("Existing response input does not match the selected case.")
                 else:
-                    result = client.responses.create(input=case["query"])
+                    session = project.agents.create_session(
+                        agent_name=args.agent,
+                        version_indicator=VersionRefIndicator(agent_version=args.expected_version),
+                    )
+                    if session.version_indicator.agent_version != args.expected_version:
+                        raise RuntimeError("The created session is not bound to the requested version.")
+                    conversation = client.conversations.create()
+                    result = client.responses.create(
+                        input=case["query"], conversation={"id": conversation.id},
+                        extra_body={"agent_session_id": session.agent_session_id},
+                    )
+                    if result.model_dump().get("agent_session_id") != session.agent_session_id:
+                        raise RuntimeError("The response did not use the requested version-bound session.")
                 response = result.model_dump(mode="json")
                 output_text = result.output_text
                 record = {
@@ -84,7 +97,11 @@ def main() -> None:
             if reference.get("name") != args.agent or reference.get("version") != args.expected_version:
                 raise RuntimeError(f"Unexpected serving version in {path}; refusing to mislabel the result.")
             if response.get("status") != "completed":
-                raise RuntimeError(f"Hosted response did not complete: {path}")
+                failure_dir = args.out / "failed-attempts"
+                failure_dir.mkdir(exist_ok=True)
+                failure_path = failure_dir / f"{case['id']}-{time.time_ns()}.json"
+                failure_path.write_text(json.dumps(record, indent=2) + "\n", encoding="utf-8")
+                raise RuntimeError(f"Hosted response did not complete; evidence saved to {failure_path}")
             if not path.exists():
                 path.write_text(json.dumps(record, indent=2) + "\n", encoding="utf-8")
             row = {

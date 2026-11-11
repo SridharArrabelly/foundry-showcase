@@ -3,9 +3,12 @@
 import argparse
 import json
 import sys
+import time
+import warnings
 from pathlib import Path
 
 from azure.ai.projects import AIProjectClient
+from azure.ai.projects.models import VersionRefIndicator
 from azure.core.exceptions import ResourceNotFoundError
 from azure.identity import DefaultAzureCredential
 
@@ -35,6 +38,22 @@ def tool_result(response: dict, name: str) -> dict:
     raise RuntimeError(f"No successful native {name} receipt was observed.")
 
 
+def wait_for_item(project, memory_id: str, *, present: bool):
+    deadline = time.monotonic() + 60
+    while True:
+        try:
+            item = project.beta.memory_stores.get_memory(STORE, memory_id)
+        except ResourceNotFoundError:
+            if not present:
+                return None
+        else:
+            if present:
+                return item
+        if time.monotonic() >= deadline:
+            raise TimeoutError(f"Native memory item did not become {'visible' if present else 'absent'} within 60 seconds.")
+        time.sleep(2)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--project-endpoint", required=True)
@@ -49,13 +68,39 @@ def main() -> None:
         agent_name="volt-support", timeout=180, max_retries=0
     ) as client:
         def invoke(name: str, prompt: str) -> dict:
-            response = client.responses.create(input=prompt)
+            session = project.agents.create_session(
+                agent_name="volt-support",
+                version_indicator=VersionRefIndicator(agent_version=args.expected_version),
+            )
+            if session.version_indicator.agent_version != args.expected_version:
+                raise RuntimeError("The created session is not bound to the requested version.")
+            conversation = client.conversations.create()
+            response = client.responses.create(
+                input=prompt, conversation={"id": conversation.id},
+                extra_body={"agent_session_id": session.agent_session_id},
+            )
             data = response.model_dump(mode="json")
             reference = data.get("agent_reference") or {}
-            record = {"step": name, "input": prompt, "response": data, "output_text": response.output_text}
+            binding = project.agents.get_session("volt-support", session.agent_session_id)
+            record = {
+                "step": name, "input": prompt, "response": data, "output_text": response.output_text,
+                "requested_session_id": session.agent_session_id,
+                "session_version_indicator": binding.version_indicator.as_dict(),
+            }
             (args.out / f"{name}.json").write_text(json.dumps(record, indent=2) + "\n", encoding="utf-8")
-            if reference.get("version") != args.expected_version or data.get("status") != "completed":
-                raise RuntimeError(f"Unexpected version or incomplete response for {name}.")
+            if (
+                binding.version_indicator.agent_version != args.expected_version
+                or data.get("agent_session_id") != session.agent_session_id
+                or reference.get("name") != "volt-support" or data.get("status") != "completed"
+            ):
+                raise RuntimeError(f"Unexpected session binding or incomplete response for {name}.")
+            if reference.get("version") != args.expected_version:
+                warnings.warn(
+                    f"{name}: response agent_reference reports v{reference.get('version')}, "
+                    f"but native session readback is pinned to v{args.expected_version}. "
+                    "This preview metadata discrepancy is preserved in the evidence.",
+                    RuntimeWarning,
+                )
             records.append(record)
             print(f"{name}: {response.output_text}", flush=True)
             return data
@@ -67,7 +112,7 @@ def main() -> None:
         )
         receipt = tool_result(remembered, "remember_response_style")
         memory_id = receipt["memory_id"]
-        item = project.beta.memory_stores.get_memory(STORE, memory_id)
+        item = wait_for_item(project, memory_id, present=True)
         if item.content != PREFERENCE or item.kind != "user_profile":
             raise RuntimeError("The native memory item does not match the permitted preference.")
         stored = item.as_dict()
@@ -84,12 +129,7 @@ def main() -> None:
         deleted = tool_result(forgotten, "forget_response_style")
         if memory_id not in deleted.get("deleted_memory_ids", []):
             raise RuntimeError("The forget receipt did not identify the remembered item.")
-        try:
-            project.beta.memory_stores.get_memory(STORE, memory_id)
-        except ResourceNotFoundError:
-            pass
-        else:
-            raise RuntimeError("The native memory item is still retrievable after deletion.")
+        wait_for_item(project, memory_id, present=False)
         invoke(
             "after-forget",
             "What response-style preference, if any, is saved for me now? "
@@ -101,9 +141,13 @@ def main() -> None:
         raise RuntimeError("Distinct conversation IDs were not observed; do not claim cross-conversation proof.")
     summary = {
         "kind": "single-authenticated-caller-memory-proof",
-        "agent_version": args.expected_version,
+        "session_bound_version": args.expected_version,
+        "response_reported_versions": sorted({
+            record["response"]["agent_reference"]["version"] for record in records
+        }),
         "memory_item": stored, "memory_deleted": True,
         "distinct_conversation_ids": conversation_ids,
+        "distinct_session_ids": [record["response"]["agent_session_id"] for record in records],
         "response_ids": [record["response"]["id"] for record in records],
         "cross_identity_verified": False,
         "notice": "Native item persistence/deletion verified. Review the recorded model answers separately.",
