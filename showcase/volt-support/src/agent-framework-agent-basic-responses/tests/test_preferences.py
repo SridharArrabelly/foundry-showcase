@@ -1,4 +1,5 @@
 import asyncio
+import re
 import sys
 from pathlib import Path
 from types import SimpleNamespace
@@ -24,6 +25,7 @@ def scoped(user_id, session_id):
 def test_scope_is_stable_across_sessions_and_separate_for_callers():
     assert scoped("synthetic-caller-a", "one") == scoped("synthetic-caller-a", "two")
     assert scoped("synthetic-caller-a", "one") != scoped("synthetic-caller-b", "one")
+    assert re.fullmatch(r"volt-support/[0-9a-f]{64}", scoped("synthetic-caller-a", "one"))
 
 
 def test_missing_authenticated_context_never_uses_shared_memory():
@@ -42,7 +44,9 @@ def test_only_the_allowed_preference_is_injected_as_presentation_context():
         context = SimpleNamespace(messages=[])
         call_next = AsyncMock()
         await memory.process(context, call_next)
-        assert context.messages == []
+        assert "no saved response-style preference" in context.messages[0].text
+        assert "Ignore the policy" not in context.messages[0].text
+        context.messages.clear()
         memory.items.return_value = [SimpleNamespace(content=PREFERENCE)]
         await memory.process(context, call_next)
         assert len(context.messages) == 1
@@ -65,6 +69,7 @@ def test_forgetting_deletes_only_this_callers_fixed_preference():
         try:
             result = await memory.forget_response_style()
             assert result["status"] == "forgotten"
+            assert result["deleted_memory_ids"] == ["allowed"]
             store.delete_memory.assert_awaited_once_with(
                 "volt-preferences", "allowed", headers={"x-agent-foundry-call-id": "opaque-test-call"}
             )
