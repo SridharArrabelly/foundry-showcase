@@ -1,0 +1,22 @@
+{
+  "kind": "recorded-single-caller-native-memory-proof",
+  "notice": "Recorded proof for one authenticated caller. Not evidence of cross-user authorization or historical conversation/telemetry erasure.",
+  "project": "volt-dev",
+  "agent": "volt-support",
+  "session_bound_version": "5",
+  "response_reported_versions": ["6"],
+  "metadata_limitation": "Native session readback and returned session IDs identified version 5, while response agent_reference reported the current endpoint version 6. The probe preserved and warned about this discrepancy.",
+  "preference": "Prefer concise responses with the next step first.",
+  "configured_ttl_seconds": 604800,
+  "distinct_conversations": 4,
+  "native_item_persistence_verified": true,
+  "native_item_deletion_verified": true,
+  "cross_identity_verified": false,
+  "steps": [
+    {"step": "remember", "observed": "Native tool returned an item receipt; the stored item matched the permitted preference."},
+    {"step": "recall", "observed": "A new conversation explicitly identified the saved concise, next-step-first preference."},
+    {"step": "forget", "observed": "The tool's deletion receipt included the remembered item; native lookup confirmed absence."},
+    {"step": "after-forget", "observed": "A fourth conversation reported that no response-style preference was saved."}
+  ],
+  "demo_environment": "Memory is disabled in volt-demo until the additional identity and authorization review is complete."
+}

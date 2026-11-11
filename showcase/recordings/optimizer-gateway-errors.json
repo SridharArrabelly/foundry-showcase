@@ -1,0 +1,20 @@
+[
+  {
+    "ApiId": "universal-llm-api",
+    "BackendResponseCode": "429",
+    "LastErrorReason": "",
+    "ProductId": "LLM-Volt-Support-DEV",
+    "Requests": "7",
+    "ResponseCode": "429",
+    "TableName": "PrimaryResult"
+  },
+  {
+    "ApiId": "universal-llm-api",
+    "BackendResponseCode": "None",
+    "LastErrorReason": "CircuitBreakerIsOpen",
+    "ProductId": "LLM-Volt-Support-DEV",
+    "Requests": "14",
+    "ResponseCode": "503",
+    "TableName": "PrimaryResult"
+  }
+]

@@ -26,6 +26,8 @@ def main() -> None:
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--reuse-response", action="append", default=[], metavar="CASE_ID=RESPONSE_ID")
     parser.add_argument("--pause-seconds", type=float, default=20)
+    parser.add_argument("--case", help="Run one selected case for the live walkthrough; the full release gate still requires all cases.")
+    parser.add_argument("--fresh", action="store_true", help="Require a new output directory and prohibit recorded-response reuse.")
     args = parser.parse_args()
     if args.pause_seconds < 0:
         parser.error("Pause must not be negative.")
@@ -33,6 +35,15 @@ def main() -> None:
     ids = [case["id"] for case in cases]
     if len(set(ids)) != len(ids) or any(not re.fullmatch(r"[a-z0-9-]+", value) for value in ids):
         raise ValueError("Case IDs must be unique lowercase identifiers.")
+    if args.case:
+        if args.case not in ids:
+            parser.error(f"Unknown case: {args.case}")
+        cases = [case for case in cases if case["id"] == args.case]
+        ids = [args.case]
+    if args.fresh and args.reuse_response:
+        parser.error("A fresh live invocation cannot reuse a recorded response.")
+    if args.fresh and args.out.exists():
+        raise FileExistsError("Fresh live capture requires a new output directory, not cached responses.")
     reused = dict(value.split("=", 1) for value in args.reuse_response)
     if not set(reused).issubset(ids):
         raise ValueError("A reused response must identify a case in this dataset.")
@@ -113,10 +124,12 @@ def main() -> None:
             row["local_business_score"] = grade({}, row)
             rows.append(row)
             print(f"{case['id']}: score={row['local_business_score']} response={response['id']}", flush=True)
+            if args.case:
+                print(output_text, flush=True)
             (args.out / "captured.jsonl").write_text(
                 "".join(json.dumps(item) + "\n" for item in rows), encoding="utf-8"
             )
-            if not was_cached and case["id"] not in reused:
+            if not was_cached and case["id"] not in reused and len(rows) < len(cases):
                 time.sleep(args.pause_seconds)
     print(f"Captured {len(rows)} responses; business passes: {sum(row['local_business_score'] for row in rows):g}/{len(rows)}")
 

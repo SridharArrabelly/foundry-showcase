@@ -18,35 +18,38 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--project-endpoint", required=True)
     parser.add_argument("--out", type=Path, required=True)
+    parser.add_argument("--evaluator-only", action="store_true", help="Do not create or inspect a Memory store.")
     args = parser.parse_args()
     code = (ROOT / "evaluators" / "business_contract.py").read_text(encoding="utf-8")
     code_hash = hashlib.sha256(code.encode()).hexdigest()
     with DefaultAzureCredential() as credential, AIProjectClient(
         endpoint=args.project_endpoint, credential=credential
     ) as project:
-        name = "volt-preferences"
-        try:
-            store = project.beta.memory_stores.get(name)
-        except ResourceNotFoundError:
-            store = project.beta.memory_stores.create(
-                name=name,
-                definition=MemoryStoreDefaultDefinition(
-                    chat_model="gpt-5.4-mini",
-                    embedding_model="text-embedding-3-small",
-                    options=MemoryStoreDefaultOptions(
-                        user_profile_enabled=True,
-                        chat_summary_enabled=False,
-                        procedural_memory_enabled=False,
-                        default_ttl_seconds=timedelta(days=7),
-                        user_profile_details=(
-                            "Only explicitly requested synthetic response-style preferences. "
-                            "Do not retain orders, device safety conclusions, authorization, "
-                            "policy facts, credentials, or personal/sensitive information."
+        store = None
+        if not args.evaluator_only:
+            name = "volt-preferences"
+            try:
+                store = project.beta.memory_stores.get(name)
+            except ResourceNotFoundError:
+                store = project.beta.memory_stores.create(
+                    name=name,
+                    definition=MemoryStoreDefaultDefinition(
+                        chat_model="gpt-5.4-mini",
+                        embedding_model="text-embedding-3-small",
+                        options=MemoryStoreDefaultOptions(
+                            user_profile_enabled=True,
+                            chat_summary_enabled=False,
+                            procedural_memory_enabled=False,
+                            default_ttl_seconds=timedelta(days=7),
+                            user_profile_details=(
+                                "Only explicitly requested synthetic response-style preferences. "
+                                "Do not retain orders, device safety conclusions, authorization, "
+                                "policy facts, credentials, or personal/sensitive information."
+                            ),
                         ),
                     ),
-                ),
-                description="Internal Volt showcase: synthetic response-style preferences only.",
-            )
+                    description="Internal Volt showcase: synthetic response-style preferences only.",
+                )
         evaluator_name = "volt_business_contract"
         try:
             matches = [
@@ -110,13 +113,13 @@ def main() -> None:
             )
         result = {
             "project_endpoint": args.project_endpoint,
-            "memory_store": store.as_dict(),
+            "memory_store": store.as_dict() if store else None,
             "evaluator": evaluator.as_dict(),
             "evaluator_source_sha256": code_hash,
         }
         args.out.parent.mkdir(parents=True, exist_ok=True)
         args.out.write_text(json.dumps(result, indent=2, default=str) + "\n", encoding="utf-8")
-        print(json.dumps({"memory_store": store.name, "evaluator": evaluator.name,
+        print(json.dumps({"memory_store": store.name if store else None, "evaluator": evaluator.name,
                           "evaluator_version": evaluator.version, "evidence": str(args.out)}))
 
 

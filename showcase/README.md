@@ -1,6 +1,6 @@
 # Volt Citadel internal enablement
 
-This is the separate, preview-inclusive 90-minute showcase under construction.
+This is the separate, preview-inclusive 90-minute showcase for presenter rehearsal.
 The original agent and presentation at the repository root are retained as a fallback.
 Nothing in this directory is a claim of customer-production readiness.
 
@@ -30,14 +30,67 @@ failed, 0 errored**, using the same evaluator and unchanged nine-case dataset.
 One invocation initially failed with a model-service error; its evidence was
 preserved and that case retried once. Business grading of completed responses
 is not an availability measurement. The native status is attached to the exact
-PR commit; the PR is ready for human review, not merged or promoted to DEMO.
+PR commit. After explicit human approval, PR #2 was merged into
+`feature/volt-citadel`, and the saved ZIP was promoted unchanged to
+`volt-demo` / `volt-support` v1. A fresh native DEMO evaluation also passed all
+nine cases. Issue #1 is closed. Neither `main` nor the original demo was changed.
 
 Native Memory now passes remember, cross-conversation recall, forget and native
 deletion checks for one authenticated caller. A second-identity test remains
 pending; do not claim independent per-user authorization from a scope string.
-Optimizer, DEMO promotion and the full release rehearsal remain unfinished.
-The replacement presentation has been built and visually reviewed, but its
-remaining live-demo bindings are still being completed.
+Memory is deliberately disabled in DEMO; its runtime has project-only access
+without the broader Memory account roles. DEMO's six business-tool checks, two
+IQ source documents and native guardrail marker have been verified.
+
+The approved Optimizer retry completed, but retained the baseline at a
+task-adherence score of **0.75**: screening found no accepted improvement.
+The requested limit was two candidates, not two completed candidates. None was
+applied. The first job failed after upstream model throttling and Citadel
+circuit-breaker responses. With approval, the mini deployment was increased
+from 10 to 50 capacity units (50 requests/minute and 50,000 tokens/minute).
+The pay-per-token SKU and model policy stayed unchanged; each APIM application
+contract still limits traffic to 20,000 TPM and 500,000 daily tokens.
+
+The deck has been visually reviewed and the technical journey exercised.
+A full human 90-minute timing rehearsal is still required. Cross-user Memory
+isolation and automated Insights findings are not claimed. Use the completed
+Optimizer run on stage: its measured duration was 18 minutes 23 seconds.
+
+## Start the presentation
+
+Open `presentation\citadel\Volt & Co - Governed and improving agents.pptx`
+in PowerPoint Presenter View. Use `Presenter manuscript.pdf` for the complete
+spoken script and `Source mapping and readiness.md` for preflight checks.
+`Recorded evidence.html` is the clearly labeled offline fallback, not a live UI.
+
+The default walkthrough uses real, completed issue/PR/evaluation evidence rather
+than pretending to create the already-merged fix again. Copilot assistance was
+local; cloud coding-agent dispatch was unavailable with the current credential.
+The runtime is Microsoft Agent Framework, not the Copilot SDK.
+
+For the live golden request, run from the repository root after setting up the
+agent environment below:
+
+```powershell
+$env:PYTHONIOENCODING = "utf-8"
+$python = ".\showcase\volt-support\src\agent-framework-agent-basic-responses\.venv\Scripts\python.exe"
+$source = ".\showcase\volt-support\src\agent-framework-agent-basic-responses"
+$out = ".\.runtime\live-" + (Get-Date -Format "yyyyMMdd-HHmmss")
+& $python .\showcase\scripts\capture_cases.py `
+  --project-endpoint "https://fdy-volt-citadel-261111.services.ai.azure.com/api/projects/volt-demo" `
+  --expected-version 1 --dataset "$source\.foundry\datasets\volt-regression.jsonl" `
+  --case replacement-recall --fresh --out $out --pause-seconds 0
+```
+
+`--fresh` refuses cached output and recorded-response reuse. Expect an `eligible`
+decision, human assessment rather than an executed replacement, and genuine policy
+citations. A one-case walkthrough is not the nine-case release gate.
+
+There is no ticket creation or human-handoff integration. Some recorded prose
+uses wording such as "I'm escalating"; that is not evidence that an escalation
+was executed. Clarify this boundary when presenting. The nine-case metric checks
+the decision, required tool evidence and reference, not every natural-language
+action claim.
 
 ## Environment and costs
 
@@ -118,8 +171,9 @@ provenance and isolation require additional verification before production.
 Memory also has a model-authorization dependency. The runtime and caller use
 project-scoped roles, while the project's managed identity needs model access on
 the Foundry account. This cost-controlled DEV/DEMO profile shares that account;
-it is not a hard production isolation boundary. Native Memory/model-service
-traffic is not covered by the customer agent's APIM token budget. Review separate
+it is not a hard production isolation boundary. Native Memory, IQ reasoning,
+evaluation and optimization model traffic is not automatically covered by the
+customer agent's APIM token budget. Review separate
 accounts and narrower role requirements before applying this profile to production.
 
 The Memory proof pins native sessions to v5, where Memory is enabled. The current
@@ -166,6 +220,53 @@ Existing evaluation receipts prevent accidental resubmission. Use new explicitly
 named output directories for a fresh rehearsal, rather than deleting evidence.
 Current source commit/package lineage is in the PR and native evaluation metadata;
 pass `--deployment-receipt` when validating a newly packaged candidate.
+
+## Governed promotion and observability
+
+`scripts\Deploy-AccessContracts.ps1 -Environment DEMO` prepares the separate
+DEMO products, subscriptions and connections. Connection names must be distinct
+across projects in this shared account: `volt-demo-models-LLM`,
+`volt-demo-business-tools`, and `volt-demo-policy-knowledge`. The toolbox retains
+the same four public tool labels. Do not reprovision these resources on stage.
+
+`scripts\promote_demo.py` defaults to a read-only preview. With explicit operator
+approval and `--execute`, it requires the exact merged PR, successful GitHub
+checks, the pinned native grader, all expected case results and the verified
+package hash. It uploads the saved ZIP rather than rebuilding the source. Its
+output deliberately remains `package-verified-smoke-pending` until
+`scripts\verify_demo_release.py --receipt <promotion.json> --runtime-evaluation
+<evaluation.json>` validates the separate native DEMO results and finalizes it as
+`runtime-verified`. This is an operator-run gate, not a claim
+that GitHub branch protection or environment approvals were configured.
+
+The current azd extension's `--from-package` path did not preserve the required
+`code-zip` artifact metadata. Promotion therefore uses the supported SDK code
+upload for existing agents and the same new-agent multipart route used by azd.
+The deployment receipt remains in `.runtime`; do not commit credentials or
+environment state when preparing another release.
+
+`scripts\trace_capture.py --capture <case.json> --out <trace.json>` queries only
+the time window and operation linked to a captured response. The verified DEMO
+golden response has 43 exported spans in `recordings\demo-trace.json`.
+Its AgentServer root lasted 23.409 seconds in one observation, not an SLA.
+The original defective response is preserved as native response/tool evidence;
+its recorded request identifier was not found as an exported App Insights trace.
+Do not substitute the fresh DEMO trace and label it as that earlier incident.
+
+`scripts\prepare_optimizer.py` creates the current supported request schema
+without submitting a job. Its four training and four validation prompts are
+separate from the unchanged nine-case business regression suite. Review the
+selected agent version and baseline instructions before another experiment.
+The completed run targets the original DEV v1; the checked-in prompt now contains
+the reviewed fix. Task-adherence scores are not interchangeable with business
+contract scores. Do not click **Deploy best candidate** on the completed
+no-improvement run: the retained result is the baseline, not a better candidate.
+
+The native Memory forget operation removes the matching Memory item, not
+historical conversations or telemetry. Known completed test sessions were stopped
+or already inactive; APIM, Search and other base resources continue billing.
+Any teardown needs explicit resource-owner approval and must not affect the
+original fallback resource group.
 
 ## Provenance
 

@@ -1,5 +1,5 @@
 import sys
-from copy import deepcopy
+import json
 from pathlib import Path
 
 import pytest
@@ -7,6 +7,15 @@ import pytest
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 from evaluate_captures import validate_case_coverage
 from promote_demo import validate_quality
+from capture_cases import main as capture_main
+import capture_cases
+
+
+@pytest.fixture(autouse=True)
+def forbid_cloud_calls(monkeypatch):
+    def reject(*args, **kwargs):
+        pytest.fail("A local gate test must not contact Foundry.")
+    monkeypatch.setattr(capture_cases, "AIProjectClient", reject)
 
 
 CASES = [
@@ -67,7 +76,6 @@ def test_promotion_rejects_another_commit_even_when_all_scores_pass():
 
 def test_promotion_rejects_pass_labels_with_a_weakened_threshold():
     run, items = release_evidence()
-    items = deepcopy(items)
     items[0]["results"][0]["score"] = 0.0
     with pytest.raises(ValueError, match="score 1"):
         validate_quality(run, items, CASES, "commit", "digest")
@@ -77,3 +85,27 @@ def test_promotion_rejects_missing_case_evidence_despite_all_pass_counts():
     run, items = release_evidence()
     with pytest.raises(ValueError, match="every expected case"):
         validate_quality(run, items[:1], CASES, "commit", "digest")
+
+
+def test_fresh_live_mode_refuses_cached_output(tmp_path, monkeypatch):
+    dataset = tmp_path / "cases.jsonl"
+    dataset.write_text(json.dumps(CASES[0]) + "\n", encoding="utf-8")
+    monkeypatch.setattr(sys, "argv", [
+        "capture_cases", "--project-endpoint", "https://example.services.ai.azure.com/api/projects/demo",
+        "--expected-version", "1", "--dataset", str(dataset), "--out", str(tmp_path), "--fresh",
+    ])
+    with pytest.raises(FileExistsError, match="new output directory"):
+        capture_main()
+
+
+def test_fresh_live_mode_refuses_recorded_response_reuse(tmp_path, monkeypatch):
+    dataset = tmp_path / "cases.jsonl"
+    dataset.write_text(json.dumps(CASES[0]) + "\n", encoding="utf-8")
+    monkeypatch.setattr(sys, "argv", [
+        "capture_cases", "--project-endpoint", "https://example.services.ai.azure.com/api/projects/demo",
+        "--expected-version", "1", "--dataset", str(dataset), "--out", str(tmp_path / "new"), "--fresh",
+        "--reuse-response", "replacement=caresp_recorded",
+    ])
+    with pytest.raises(SystemExit) as error:
+        capture_main()
+    assert error.value.code == 2

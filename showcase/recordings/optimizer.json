@@ -1,0 +1,45 @@
+{
+  "kind": "recorded-native-optimizer-outcome",
+  "notice": "Recorded service results, not a live run or a demonstrated quality improvement.",
+  "project": "volt-dev",
+  "agent": "volt-support",
+  "target_version": "1",
+  "job_id": "opt_bcc5008122ae4a88ab10bfa428ecf616",
+  "report_url": "https://ai.azure.com/nextgen/r/QLaHyjG1Q3S-okwXg2m5wA,rg-volt-citadel,,fdy-volt-citadel-261111,volt-dev/build/agents/volt-support/optimization/opt_bcc5008122ae4a88ab10bfa428ecf616",
+  "status": "succeeded",
+  "termination_reason": "candidate_screening_stalled",
+  "requested_max_candidates": 2,
+  "completed_candidate_count": 0,
+  "accepted_optimized_candidate": false,
+  "applied_candidate": false,
+  "metric": "task_adherence",
+  "baseline_score": 0.75,
+  "best_score": 0.75,
+  "training_cases": 4,
+  "validation_cases": 4,
+  "duration_ms": 1103126,
+  "reported_token_usage": {
+    "agent": 143266,
+    "evaluation": 49373,
+    "optimization": 14979
+  },
+  "job_agent_average_latency_ms": 20682,
+  "job_agent_call_count": 20,
+  "portal_baseline_average_latency_seconds": 11.1,
+  "measurement_boundary": "The baseline-row and job-wide averages describe different populations. Reported tokens are not a complete Azure invoice or a spending cap.",
+  "prior_job": {
+    "id": "opt_69c51eb68b4a43bc8c9d21b748f190c0",
+    "status": "failed",
+    "error_code": "optimization_failed",
+    "investigation": "Gateway logs showed upstream model 429 responses and subsequent circuit-breaker 503 responses."
+  },
+  "approved_remediation": {
+    "mini_capacity_before": 10,
+    "mini_capacity_after": 50,
+    "verified_model_requests_per_minute": 50,
+    "verified_model_tokens_per_minute": 50000,
+    "apim_tokens_per_minute_unchanged": 20000,
+    "apim_daily_token_quota_unchanged": 500000,
+    "retries_authorized": 1
+  }
+}

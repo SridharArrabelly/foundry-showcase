@@ -21,8 +21,10 @@ def main() -> None:
     if run["status"] != "completed" or run["result_counts"]["total"] != len(rows):
         raise ValueError("Only a complete native evaluation can be exported.")
     records = []
+    projects = set()
     for row in rows:
         captured = json.loads((args.capture_dir / f"{row['id']}.json").read_text(encoding="utf-8"))
+        projects.add(captured["project_endpoint"])
         raw = captured["response"]
         if json.loads(row["response"]).get("synthetic") is not True:
             raise ValueError("This exporter is restricted to the synthetic Volt fixture.")
@@ -36,6 +38,8 @@ def main() -> None:
             "observed_tools": json.loads(row["observed_tools"]),
             "protocol_output": raw["output"],
         })
+    if len(projects) != 1:
+        raise ValueError("A recording must identify one Foundry project.")
     failed_attempts = []
     for path in sorted((args.capture_dir / "failed-attempts").glob("*.json")):
         failed = json.loads(path.read_text(encoding="utf-8"))
@@ -48,6 +52,7 @@ def main() -> None:
     artifact = {
         "kind": "recorded-synthetic-evidence",
         "notice": "Recorded live calls, not a live runtime or a guarantee of future model behavior.",
+        "project_endpoint": next(iter(projects)),
         "eval_id": receipt["eval_id"], "run_id": receipt["run_id"],
         "report_url": run["report_url"], "native_counts": run["result_counts"],
         "evaluator_version": receipt["evaluator_version"],

@@ -1,6 +1,7 @@
 {
   "kind": "recorded-synthetic-evidence",
   "notice": "Recorded live calls, not a live runtime or a guarantee of future model behavior.",
+  "project_endpoint": "https://fdy-volt-citadel-261111.services.ai.azure.com/api/projects/volt-dev",
   "eval_id": "eval_5a3774acf4f347e1bd35ae30375d0f2d",
   "run_id": "evalrun_28da2cdf28224eb799a9a2e3d9f8672e",
   "report_url": "https://ai.azure.com/nextgen/r/QLaHyjG1Q3S-okwXg2m5wA,rg-volt-citadel,,fdy-volt-citadel-261111,volt-dev/build/evaluations/eval_5a3774acf4f347e1bd35ae30375d0f2d/run/evalrun_28da2cdf28224eb799a9a2e3d9f8672e",
@@ -13,6 +14,8 @@
   },
   "evaluator_version": "1",
   "evaluator_sha256": "6cc85f05058909a8f85573fa5580f6c4c0fe9c166c4a694d32f6c4ae329c0225",
+  "failed_invocation_attempts": [],
+  "quality_scope": "Business grading of completed responses, not an invocation availability rate.",
   "cases": [
     {
       "case": {

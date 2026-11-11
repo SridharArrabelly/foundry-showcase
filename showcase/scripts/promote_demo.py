@@ -31,14 +31,17 @@ def github(path: str) -> dict:
     return json.loads(result.stdout)
 
 
-def validate_quality(run: dict, items: list[dict], cases: list[dict], commit: str, digest: str) -> None:
+def validate_quality(run: dict, items: list[dict], cases: list[dict], commit: str | None, digest: str) -> None:
     counts = run["result_counts"]
     if (
         run["status"] != "completed" or counts["passed"] != len(cases)
         or counts["total"] != len(cases) or counts["failed"] or counts["errored"] or counts["skipped"]
     ):
         raise ValueError("Native business evaluation is not a complete all-pass result.")
-    if run["metadata"].get("source_commit") != commit or run["metadata"].get("code_content_hash") != digest:
+    if (
+        run["metadata"].get("code_content_hash") != digest
+        or (commit is not None and run["metadata"].get("source_commit") != commit)
+    ):
         raise ValueError("Native evaluation belongs to a different source commit or package.")
     rows = [item["datasource_item"] for item in items]
     validate_case_coverage(rows, cases)

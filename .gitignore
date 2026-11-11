@@ -9,3 +9,5 @@ __pycache__/
 evidence/
 .runtime/
 *.log
+showcase/volt-support/src/agent-framework-agent-basic-responses/.foundry/results/
+~$*

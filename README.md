@@ -1,5 +1,16 @@
 # Foundry showcase: Volt & Co
 
+## Current: 90-minute Citadel internal enablement
+
+Start with [the integrated showcase guide](showcase/README.md) and
+[the complete presenter manuscript](presentation/citadel/Presenter%20manuscript.md).
+The new deck, handout and offline evidence viewer are in `presentation/citadel`.
+This path uses Agent Framework / Responses, with GitHub Copilot for development.
+It preserves the original implementation below; do not run the root `azure.yaml`
+when preparing the Citadel showcase.
+
+## Original 50-minute fallback
+
 A 50-minute customer presentation and one coherent demo: build with GitHub
 Copilot, run a constrained Copilot SDK agent in Microsoft Foundry, evaluate
 behaviour, gate a release and turn reviewed operational evidence into a test.
