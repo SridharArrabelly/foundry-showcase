@@ -1,10 +1,10 @@
-name: Volt Citadel foundations
+name: Volt workshop quality
 on:
   pull_request:
-    paths: ["showcase/**", ".github/workflows/citadel-quality.yml"]
+    paths: ["agent/**", "tools/**", "evaluations/**", "infra/**", "scripts/**", "knowledge/**", ".github/workflows/citadel-quality.yml"]
   push:
-    branches: ["feature/volt-citadel"]
-    paths: ["showcase/**", ".github/workflows/citadel-quality.yml"]
+    branches: ["feature/**"]
+    paths: ["agent/**", "tools/**", "evaluations/**", "infra/**", "scripts/**", "knowledge/**", ".github/workflows/citadel-quality.yml"]
   workflow_dispatch:
 permissions:
   contents: read
@@ -18,29 +18,29 @@ jobs:
           python-version: "3.13"
       - uses: astral-sh/setup-uv@v6
       - name: Tool API and synthetic business rules
-        working-directory: showcase/tools
+        working-directory: tools
         run: uv run --locked python -m pytest -q
       - name: OpenAPI contract matches the validators
-        working-directory: showcase/tools
+        working-directory: tools
         run: |
           uv run --locked python ../scripts/build_tool_schema.py
           git diff --exit-code -- openapi.json
       - name: Hosted integration configuration
-        working-directory: showcase/volt-support/src/agent-framework-agent-basic-responses
+        working-directory: agent/src
         run: uv run --locked python -m pytest -q
       - name: Native business grader contract
-        working-directory: showcase/volt-support/src/agent-framework-agent-basic-responses
-        run: uv run --locked python -m pytest ../../../evaluators -q
+        working-directory: agent/src
+        run: uv run --locked python -m pytest ../../evaluations -q
       - name: Restore pinned Citadel templates
         shell: pwsh
-        run: ./showcase/scripts/Get-CitadelSource.ps1
+        run: ./scripts/Get-CitadelSource.ps1
       - name: Compile infrastructure
         run: |
-          az bicep build-params --file showcase/infra/hub.bicepparam --outfile .runtime/hub.parameters.json --only-show-errors
-          az bicep build --file showcase/infra/workload.bicep --outfile .runtime/workload.json --only-show-errors
-          az bicep build --file showcase/infra/guardrails.bicep --outfile .runtime/guardrails.json --only-show-errors
-          az bicep build --file showcase/infra/tools-api.bicep --outfile .runtime/tools-api.json --only-show-errors
-          az bicep build --file showcase/infra/tool-connection.bicep --outfile .runtime/tool-connection.json --only-show-errors
-          az bicep build --file showcase/infra/agent-access.bicep --outfile .runtime/agent-access.json --only-show-errors
-          az bicep build --file showcase/infra/knowledge-connection.bicep --outfile .runtime/knowledge-connection.json --only-show-errors
-          az bicep build --file showcase/infra/model-capacity.bicep --outfile .runtime/model-capacity.json --only-show-errors
+          az bicep build-params --file infra/hub.bicepparam --outfile .runtime/hub.parameters.json --only-show-errors
+          az bicep build --file infra/workload.bicep --outfile .runtime/workload.json --only-show-errors
+          az bicep build --file infra/guardrails.bicep --outfile .runtime/guardrails.json --only-show-errors
+          az bicep build --file infra/tools-api.bicep --outfile .runtime/tools-api.json --only-show-errors
+          az bicep build --file infra/tool-connection.bicep --outfile .runtime/tool-connection.json --only-show-errors
+          az bicep build --file infra/agent-access.bicep --outfile .runtime/agent-access.json --only-show-errors
+          az bicep build --file infra/knowledge-connection.bicep --outfile .runtime/knowledge-connection.json --only-show-errors
+          az bicep build --file infra/model-capacity.bicep --outfile .runtime/model-capacity.json --only-show-errors
