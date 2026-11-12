@@ -1,22 +1,22 @@
 {
   "method": "Count leading-curly-quote main-route paragraphs on visible slides 1\u201321, before each If branch; exclude stage directions, fenced/inline code, headings, backups, Q&A and appendices.",
   "tokenization": "Unicode word tokens; hyphenated/slashed terms count as one. Verbal expansion of numbers/IDs and unscripted commentary can add time.",
-  "manuscript_sha256": "18615de74f76588b4ee328d6c01a34d2a59738dc96e02d7d3572b5b5f0b3d73c",
-  "spoken_words": 5560,
+  "manuscript_sha256": "aee6e9c30a3912c5fdcd620c2f70b62021158f236d887a96c4b909b06d9f2915",
+  "spoken_words": 5562,
   "content_budget_minutes": 80,
   "qa_budget_excluded_minutes": 10,
   "booked_transitions_minutes": 6.0,
   "speech_minutes_by_words_per_minute": {
-    "120": 46.33,
-    "130": 42.77,
-    "140": 39.71
+    "120": 46.35,
+    "130": 42.78,
+    "140": 39.73
   },
   "remaining_for_non_narrated_demo_and_wait_minutes": {
-    "120": 27.67,
-    "130": 31.23,
-    "140": 34.29
+    "120": 27.65,
+    "130": 31.22,
+    "140": 34.27
   },
-  "first_six_slides_speech_minutes_at_130wpm": 11.75,
+  "first_six_slides_speech_minutes_at_130wpm": 11.76,
   "warnings": [
     "Demo-block narration overlaps interaction; do not count it twice as silent demonstration time.",
     "Cover and architecture/transition slots are locally tight; the first 13-minute block has almost no spare time at 130 wpm.",
@@ -55,12 +55,12 @@
     },
     {
       "slide": 4,
-      "spoken_words": 263,
+      "spoken_words": 265,
       "spoken_paragraphs": 8,
       "allocated_minutes": 2.0,
       "booked_transition_minutes": 0,
-      "speech_plus_transition_at_130wpm_minutes": 2.02,
-      "excess_before_silent_demo_at_130wpm_seconds": 1.4
+      "speech_plus_transition_at_130wpm_minutes": 2.04,
+      "excess_before_silent_demo_at_130wpm_seconds": 2.3
     },
     {
       "slide": 5,

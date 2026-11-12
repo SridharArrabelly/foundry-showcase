@@ -6,7 +6,7 @@ load the `microsoft-foundry` skill and its applicable workflow.
 
 - Use `feature/<short-description>` branches.
 - The runtime is Agent Framework / Responses in `agent/src`; Copilot assists development.
-- `tools/volt` owns current synthetic business fixtures. Do not import from `archive`.
+- `tools/volt` owns current synthetic business fixtures. Do not import historical code.
 - All customer data is synthetic and tools remain read-only.
 - Preserve evaluation expectations, case coverage and exact-artifact provenance.
 - Never label recorded evidence as live or infer execution from fluent prose.
@@ -16,5 +16,5 @@ load the `microsoft-foundry` skill and its applicable workflow.
 - Do not provision, redeploy, optimize, merge or change Azure resources merely to clean up files.
 - The verified release artifact and receipts in `.runtime` are historical evidence.
   Do not rebuild them and claim the hashes are unchanged.
-- `archive/50-minute-workshop` is reference material, not the current runtime or runbook.
-  Preserve the user's uncommitted changes to its original presentation.
+- The earlier 50-minute workshop is retained in Git history, not in this checkout.
+  Keep local recovery copies and private environment state out of Git.

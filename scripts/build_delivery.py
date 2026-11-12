@@ -54,8 +54,8 @@ def main() -> None:
 4. Follow docs/OPERATIONS.md for prerequisites, exact live commands and boundaries.
 5. The tested code ZIP and receipts are under .runtime. They contain no credentials.
 
-The full repository retains the original 50-minute demo; this bundle contains
-the current Citadel path and its shared synthetic Volt domain fixtures.
+This bundle contains the current Citadel workshop and its synthetic Volt fixtures.
+The earlier 50-minute workshop remains in Git history, not in the current checkout.
 
 Verified: DEV baseline 8/9, reviewed fix 9/9, unchanged ZIP promoted to DEMO with
 fresh native 9/9 results, native guardrail blocking, real IQ retrieval and traces.

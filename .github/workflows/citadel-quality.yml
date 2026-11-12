@@ -3,7 +3,7 @@ on:
   pull_request:
     paths: ["agent/**", "tools/**", "evaluations/**", "infra/**", "scripts/**", "knowledge/**", ".github/workflows/citadel-quality.yml"]
   push:
-    branches: ["feature/**"]
+    branches: ["main", "feature/**"]
     paths: ["agent/**", "tools/**", "evaluations/**", "infra/**", "scripts/**", "knowledge/**", ".github/workflows/citadel-quality.yml"]
   workflow_dispatch:
 permissions:

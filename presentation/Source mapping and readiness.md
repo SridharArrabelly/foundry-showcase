@@ -44,9 +44,9 @@ Narration overlaps the demonstrations: do not count it a second time.
 | `..\docs\OPERATIONS.md` | Authoritative setup and operational commands |
 | `..\.runtime\presentation-renders` | Generated slide/review images; not another source deck |
 
-Do not use the archived 50-minute slides or their old commands as the current
-workshop entry point. The user's edited older deck is preserved in
-`archive/50-minute-workshop/presentation`, not overwritten.
+The earlier 50-minute workshop is retained in Git history, not in this checkout.
+The user's edited older deck was preserved in a local recovery backup outside
+the repository. Use only the current workshop commands and slides here.
 
 ## Source mapping
 

@@ -35,13 +35,13 @@ scripts/               Setup, probes, capture, evaluation and release commands
 recordings/            Redacted records of actual completed runs
 presentation/          Current slides, full script, audience PDF and offline viewer
 docs/                  Current operational guide
-archive/               Earlier 50-minute workshop; not the current entry point
 .runtime/              Ignored local receipts, packages, renders and vendor checkout
 ```
 
 `foundry-showcase` is the Git root. There is no separate `demo` project wrapper or
 top-level `deliverables` source tree. Generated ZIPs belong under `.runtime/delivery`;
 they are distributions, not a second editable copy of the project.
+The earlier 50-minute workshop is available in Git history, not in this checkout.
 
 ## Local checks
 

@@ -88,7 +88,7 @@
 
 “A hosted agent gives you control of the application's runtime logic, while Foundry still supplies managed hosting. That is the choice for this demonstration because we want a deterministic decision adapter and the integration path we are inspecting.
 
-“Our runtime is Python Microsoft Agent Framework, exposing the Responses protocol. Protocol choice matters here because the hosted optimization path we intend to demonstrate requires Responses. The older Copilot SDK Invocations implementation is a separate fallback. It must not be presented as an optimizer-compatible substitute.
+“Our runtime is Python Microsoft Agent Framework, exposing the Responses protocol. Protocol choice matters here because the hosted optimization path we intend to demonstrate requires Responses. An earlier Copilot SDK Invocations implementation exists in Git history; it is not the runtime or a fallback for this workshop.
 
 “Tools, source control and CI are not, on their own, reasons to choose hosted. The real question is whether you need the custom runtime behavior and are prepared to own that code and its dependencies.
 
@@ -217,7 +217,7 @@ $out = ".\.runtime\live-" + (Get-Date -Format "yyyyMMdd-HHmmss")
 
 “In a real application, authorization of the customer and their order would be another boundary. Our synthetic fixture does not implement that customer-ownership check.”
 
-[24:00–26:30: switch to the prepared editor. Show only agent/src/main.py, settings.py and response_contract.py, one focused region each. Identify Agent Framework/Responses, the pinned Toolbox connection and the structured response boundary. Use the actual current folder tree, not the archived SDK sample. Do not read the entire implementation.]
+[24:00–26:30: switch to the prepared editor. Show only agent/src/main.py, settings.py and response_contract.py, one focused region each. Identify Agent Framework/Responses, the pinned Toolbox connection and the structured response boundary. Use the current folder tree. Do not read the entire implementation.]
 
 “This is our code, running on Foundry's hosted runtime. Copilot helps us develop it; it is not the customer-facing runtime. The model connection goes through our governed route, with no silent direct-model fallback.
 
@@ -782,7 +782,7 @@ $out = ".\.runtime\live-" + (Get-Date -Format "yyyyMMdd-HHmmss")
 
 **Is Copilot the agent runtime?**
 
-“No. GitHub Copilot is the development assistant in this route. The new customer runtime is Python Microsoft Agent Framework using Responses. The older Copilot SDK Invocations agent is a fallback implementation, not proof of hosted optimizer compatibility.”
+“No. GitHub Copilot is the development assistant in this route. The customer runtime is Python Microsoft Agent Framework using Responses. The earlier Copilot SDK Invocations implementation is historical, not part of this workshop or proof of hosted optimizer compatibility.”
 
 **Did the cloud coding agent make this fix?**
 
@@ -873,7 +873,7 @@ $out = ".\.runtime\live-" + (Get-Date -Format "yyyyMMdd-HHmmss")
 ## Appendix C — Final rehearsal checklist
 
 1. Rehearse the bound RB01–RB15 navigation, commands and fallbacks. Technical identities are filled; the optional RB05 negative-access drill needs real denial evidence or its concept-only branch. No unresolved human choice is silently treated as ready.
-2. Verify the served runtime is Agent Framework + Responses, and keep the older Invocations fallback explicitly separate.
+2. Verify the served runtime is Agent Framework + Responses; do not substitute the historical Invocations implementation.
 3. Use the commands in slides 9 and 20 for new DEMO requests: UTF-8 output, new timestamped directory, --case replacement-recall, --fresh and --expected-version 1. This invocation route was previously exercised; the revised full-session timing/navigation still needs rehearsal. One case is not the nine-case release gate.
 4. Retain the verified Toolbox v2 preflight evidence described below; separately verify the hosted agent's correlated invocation and model route.
 5. Verify the IQ references and passages. Do not infer grounding from service existence.

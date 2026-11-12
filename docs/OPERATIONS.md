@@ -1,8 +1,8 @@
 # Volt Citadel internal enablement
 
 This is the operational guide for the current, preview-inclusive 90-minute workshop.
-The earlier implementation and the user's edited presentation are preserved under
-`archive/50-minute-workshop`; they are not current setup instructions.
+The earlier implementation is retained in Git history, not in this checkout.
+Its setup instructions do not apply to the current workshop.
 Nothing here is a claim of customer-production readiness.
 
 ## What is implemented
