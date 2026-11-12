@@ -1,0 +1,24 @@
+<policies>
+  <inbound>
+    <base />
+    <validate-azure-ad-token tenant-id="b1cd5b73-a77b-4002-a5a6-1599e4c4ee37">
+      <audiences>
+        <audience>https://cognitiveservices.azure.com</audience>
+        <audience>https://cognitiveservices.azure.com/</audience>
+      </audiences>
+    </validate-azure-ad-token>
+    <set-variable name="allowedModels" value="gpt-5.4-mini" />
+    <choose>
+      <when condition="@(context.Request.Method == &quot;POST&quot;)">
+        <include-fragment fragment-id="set-llm-requested-model" />
+        <include-fragment fragment-id="validate-model-access" />
+        <llm-token-limit counter-key="@(context.Subscription.Id)" tokens-per-minute="20000"
+                         estimate-prompt-tokens="true" token-quota="500000" token-quota-period="Daily" />
+      </when>
+    </choose>
+    <set-variable name="enableResponseHeaders" value="@(true)" />
+  </inbound>
+  <backend><base /></backend>
+  <outbound><base /></outbound>
+  <on-error><base /></on-error>
+</policies>

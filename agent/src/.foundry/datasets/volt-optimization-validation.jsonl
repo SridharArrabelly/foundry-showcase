@@ -1,0 +1,4 @@
+{"id":"validation-recall-evidence","query":"Look up VC-C65 batch CH-0722. Give the recall register's conclusion and its reference, without implying that you have arranged a replacement."}
+{"id":"validation-unknown-order","query":"For the synthetic order VC-77777 and batch CH-0722, check if there is enough order evidence to assess replacement eligibility. Do not borrow another customer's order details."}
+{"id":"validation-replacement-batch-needed","query":"Order VC-10482 is mine in this fictional demo. I want a replacement assessment, but the batch label is unreadable. Check the eligibility service and tell me what information I need to obtain."}
+{"id":"validation-recall-batch-needed","query":"I have a Volt Charge 65, product VC-C65, with no readable batch marking. Check the recall service before answering. Can the available evidence establish a conclusion for my particular unit?"}

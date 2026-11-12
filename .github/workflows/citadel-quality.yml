@@ -1,0 +1,46 @@
+name: Volt workshop quality
+on:
+  pull_request:
+    paths: ["agent/**", "tools/**", "evaluations/**", "infra/**", "scripts/**", "knowledge/**", ".github/workflows/citadel-quality.yml"]
+  push:
+    branches: ["main", "feature/**"]
+    paths: ["agent/**", "tools/**", "evaluations/**", "infra/**", "scripts/**", "knowledge/**", ".github/workflows/citadel-quality.yml"]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  contracts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - uses: astral-sh/setup-uv@v6
+      - name: Tool API and synthetic business rules
+        working-directory: tools
+        run: uv run --locked python -m pytest -q
+      - name: OpenAPI contract matches the validators
+        working-directory: tools
+        run: |
+          uv run --locked python ../scripts/build_tool_schema.py
+          git diff --exit-code -- openapi.json
+      - name: Hosted integration configuration
+        working-directory: agent/src
+        run: uv run --locked python -m pytest -q
+      - name: Native business grader contract
+        working-directory: agent/src
+        run: uv run --locked python -m pytest ../../evaluations -q
+      - name: Restore pinned Citadel templates
+        shell: pwsh
+        run: ./scripts/Get-CitadelSource.ps1
+      - name: Compile infrastructure
+        run: |
+          az bicep build-params --file infra/hub.bicepparam --outfile .runtime/hub.parameters.json --only-show-errors
+          az bicep build --file infra/workload.bicep --outfile .runtime/workload.json --only-show-errors
+          az bicep build --file infra/guardrails.bicep --outfile .runtime/guardrails.json --only-show-errors
+          az bicep build --file infra/tools-api.bicep --outfile .runtime/tools-api.json --only-show-errors
+          az bicep build --file infra/tool-connection.bicep --outfile .runtime/tool-connection.json --only-show-errors
+          az bicep build --file infra/agent-access.bicep --outfile .runtime/agent-access.json --only-show-errors
+          az bicep build --file infra/knowledge-connection.bicep --outfile .runtime/knowledge-connection.json --only-show-errors
+          az bicep build --file infra/model-capacity.bicep --outfile .runtime/model-capacity.json --only-show-errors

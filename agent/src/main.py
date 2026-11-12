@@ -1,0 +1,53 @@
+# Copyright (c) Microsoft. All rights reserved.
+
+import asyncio
+from contextlib import AsyncExitStack
+
+from agent_framework import Agent
+from agent_framework.foundry import FoundryChatClient
+from agent_framework_foundry_hosting import FoundryToolbox, ResponsesHostServer
+from azure.ai.agentserver.optimization import load_config
+from azure.ai.projects.aio import AIProjectClient
+from azure.identity.aio import DefaultAzureCredential
+from dotenv import load_dotenv
+
+from preferences import PreferenceMemory
+from response_contract import SupportResponse
+from settings import Settings
+
+
+async def main():
+    load_dotenv()
+    settings = Settings.from_environment()
+    config = load_config()
+    if not config.model or "/" in config.model:
+        raise ValueError("Optimizer model selection must use a deployment within the approved gateway.")
+    async with AsyncExitStack() as stack:
+        credential = await stack.enter_async_context(DefaultAzureCredential())
+        project = await stack.enter_async_context(
+            AIProjectClient(endpoint=settings.project_endpoint, credential=credential)
+        )
+        client = FoundryChatClient(
+            project_endpoint=settings.project_endpoint,
+            model=f"{settings.model_connection}/{config.model}",
+            credential=credential,
+        )
+        toolbox = FoundryToolbox(credential, url=settings.toolbox_endpoint)
+        tools = [toolbox]
+        middleware = []
+        if settings.memory_enabled:
+            memory = PreferenceMemory(project)
+            tools.extend([memory.remember_response_style, memory.forget_response_style])
+            middleware.append(memory)
+        agent = Agent(
+            client=client,
+            name="VoltSupport",
+            instructions=config.compose_instructions(),
+            tools=tools,
+            middleware=middleware,
+            default_options={"store": False, "response_format": SupportResponse},
+        )
+        await ResponsesHostServer(agent).run_async()
+
+if __name__ == "__main__":
+    asyncio.run(main())

@@ -1,0 +1,888 @@
+{
+  "kind": "recorded-synthetic-evidence",
+  "notice": "Recorded live calls, not a live runtime or a guarantee of future model behavior.",
+  "project_endpoint": "https://fdy-volt-citadel-261111.services.ai.azure.com/api/projects/volt-dev",
+  "eval_id": "eval_5a3774acf4f347e1bd35ae30375d0f2d",
+  "run_id": "evalrun_d6967759ba834c51b26a39296474ff0f",
+  "report_url": "https://ai.azure.com/nextgen/r/QLaHyjG1Q3S-okwXg2m5wA,rg-volt-citadel,,fdy-volt-citadel-261111,volt-dev/build/evaluations/eval_5a3774acf4f347e1bd35ae30375d0f2d/run/evalrun_d6967759ba834c51b26a39296474ff0f",
+  "native_counts": {
+    "errored": 0,
+    "failed": 0,
+    "passed": 9,
+    "total": 9,
+    "skipped": 0
+  },
+  "evaluator_version": "1",
+  "evaluator_sha256": "6cc85f05058909a8f85573fa5580f6c4c0fe9c166c4a694d32f6c4ae329c0225",
+  "failed_invocation_attempts": [
+    {
+      "case_id": "replacement-missing-batch",
+      "response_id": "caresp_0342aaa6a82466f200GtAiX7AemfrE1ymTGwBXJl8X20AtDWg2",
+      "created_at": 1794411053.0,
+      "status": "failed",
+      "error_code": "server_error"
+    }
+  ],
+  "quality_scope": "Business grading of completed responses, not an invocation availability rate.",
+  "cases": [
+    {
+      "case": {
+        "id": "replacement-recall",
+        "query": "For the synthetic Volt demo: my order is VC-10482 and my Volt Charge 65 batch is CH-0722. It is past the normal 30-day return window. Can I still be assessed for a replacement? Check my order, recall status and replacement eligibility, and cite the policy. Do not actually change my order.",
+        "expected_decision": "eligible",
+        "required_tool": "getReturnWarrantyEligibility",
+        "expected_reference": "VOLT-REPLACEMENT-2026-11"
+      },
+      "created_at": 1794410694.0,
+      "response_id": "caresp_059993710cadfec6007SxH7W6AhTq1zJilhCvxopPYqJ92h0SH",
+      "agent_reference": {
+        "type": "agent_reference",
+        "name": "volt-support",
+        "version": "6"
+      },
+      "code_content_hash": "ac015b257905e6dbd92f04bc49d6f86c8eb757f22557433c7c2ad47a83508996",
+      "output_text": "{\"answer\":\"Yes \u2014 your case can be assessed for replacement, but it still needs human review. Your order VC-10482 matches product VC-C65, and batch CH-0722 is recalled. Please wait for a human support representative; I can\u2019t approve or change anything.\",\"decision\":\"eligible\",\"product_id\":\"VC-C65\",\"batch\":\"CH-0722\",\"citations\":[{\"reference\":\"SYNTHETIC-RECALL-001\",\"title\":\"Volt & Co synthetic recall notice\"},{\"reference\":\"VOLT-REPLACEMENT-2026-11\",\"title\":\"Volt & Co synthetic replacement policy\"}],\"synthetic\":true}",
+      "observed_tools": [
+        "volt-business-tools___getOrderStatus",
+        "volt-business-tools___getRecallNotices",
+        "volt-business-tools___getReturnWarrantyEligibility"
+      ],
+      "protocol_output": [
+        {
+          "arguments": "{\"order_id\":\"VC-10482\"}",
+          "call_id": "call_jwak7Ay8051BEDTBY6MdtNwE",
+          "name": "volt-business-tools___getOrderStatus",
+          "type": "function_call",
+          "id": "fc_059993710cadfec600LnkiOHz5FT6MhBLRiuBzjqy4db4SovDr",
+          "async_": null,
+          "caller": null,
+          "namespace": null,
+          "status": "completed",
+          "response_id": "caresp_059993710cadfec6007SxH7W6AhTq1zJilhCvxopPYqJ92h0SH",
+          "agent_reference": null
+        },
+        {
+          "id": "fco_059993710cadfec600WEoh5FltvSewf0R0X4cLiRDI4h1BFF3A",
+          "output": "{\"order_id\": \"VC-10482\", \"product_id\": \"VC-C65\", \"purchased_on\": \"2026-09-01\", \"delivered_on\": \"2026-09-05\", \"status\": \"delivered\", \"synthetic\": true}",
+          "status": "completed",
+          "type": "function_call_output",
+          "call_id": "call_jwak7Ay8051BEDTBY6MdtNwE",
+          "caller": null,
+          "created_by": null,
+          "name": null,
+          "namespace": null,
+          "response_id": "caresp_059993710cadfec6007SxH7W6AhTq1zJilhCvxopPYqJ92h0SH",
+          "agent_reference": null
+        },
+        {
+          "arguments": "{\"product_id\":\"VC-C65\",\"batch\":\"CH-0722\"}",
+          "call_id": "call_pCcHYGPaQDEOcwZCiTA5TpzH",
+          "name": "volt-business-tools___getRecallNotices",
+          "type": "function_call",
+          "id": "fc_059993710cadfec600uXqcfA5OJJeJnZxg45qECz5JiY2GLFbA",
+          "async_": null,
+          "caller": null,
+          "namespace": null,
+          "status": "completed",
+          "response_id": "caresp_059993710cadfec6007SxH7W6AhTq1zJilhCvxopPYqJ92h0SH",
+          "agent_reference": null
+        },
+        {
+          "id": "fco_059993710cadfec600sXS9xJDolEZ3vJeaVI5GmFxdz54CbbfS",
+          "output": "{\"synthetic\": true, \"product_id\": \"VC-C65\", \"batch\": \"CH-0722\", \"status\": \"recalled\", \"reference\": \"SYNTHETIC-RECALL-001\", \"action\": \"Escalate to a human support representative using the fictional recall procedure. Do not offer repair workarounds.\"}",
+          "status": "completed",
+          "type": "function_call_output",
+          "call_id": "call_pCcHYGPaQDEOcwZCiTA5TpzH",
+          "caller": null,
+          "created_by": null,
+          "name": null,
+          "namespace": null,
+          "response_id": "caresp_059993710cadfec6007SxH7W6AhTq1zJilhCvxopPYqJ92h0SH",
+          "agent_reference": null
+        },
+        {
+          "arguments": "{\"order_id\":\"VC-10482\",\"batch\":\"CH-0722\"}",
+          "call_id": "call_aScl0MeKGlCCygAA6BNcxBwb",
+          "name": "volt-business-tools___getReturnWarrantyEligibility",
+          "type": "function_call",
+          "id": "fc_059993710cadfec600lK8iLoiHd0v5lOa6wVKJTQVZMYuy6yTU",
+          "async_": null,
+          "caller": null,
+          "namespace": null,
+          "status": "completed",
+          "response_id": "caresp_059993710cadfec6007SxH7W6AhTq1zJilhCvxopPYqJ92h0SH",
+          "agent_reference": null
+        },
+        {
+          "id": "fco_059993710cadfec600R7xCmOvgmjwfGsWXgxLL36qgld40S0us",
+          "output": "{\"synthetic\": true, \"policy_reference\": \"VOLT-REPLACEMENT-2026-11\", \"as_of\": \"2026-11-11\", \"action_performed\": false, \"status\": \"eligible\", \"reason\": \"The synthetic recall policy permits a replacement assessment outside the return window.\", \"recall_reference\": \"SYNTHETIC-RECALL-001\", \"requires_human_approval\": true}",
+          "status": "completed",
+          "type": "function_call_output",
+          "call_id": "call_aScl0MeKGlCCygAA6BNcxBwb",
+          "caller": null,
+          "created_by": null,
+          "name": null,
+          "namespace": null,
+          "response_id": "caresp_059993710cadfec6007SxH7W6AhTq1zJilhCvxopPYqJ92h0SH",
+          "agent_reference": null
+        },
+        {
+          "arguments": "{\"query_variants\":[\"What is the Volt replacement policy for a recalled Volt Charge 65 order VC-10482 with batch CH-0722, and what does eligible mean for assessment outside the 30-day return window?\"]}",
+          "call_id": "call_LnVyEwv0mn4UpCij8l2qBDiG",
+          "name": "volt-policy-knowledge___knowledge_base_retrieve",
+          "type": "function_call",
+          "id": "fc_059993710cadfec600jomGhEwzkzor3JeaUkdnJ7ps4KPKPT7L",
+          "async_": null,
+          "caller": null,
+          "namespace": null,
+          "status": "completed",
+          "response_id": "caresp_059993710cadfec6007SxH7W6AhTq1zJilhCvxopPYqJ92h0SH",
+          "agent_reference": null
+        },
+        {
+          "id": "fco_059993710cadfec600lCfiTGW9D2o8EcZ8egDZBHfGis9LHd6f",
+          "output": "[{\"ref_id\":0,\"title\":\"Volt & Co synthetic recall notice\",\"terms\":\"SYNTHETIC-RECALL-001\",\"content\":\"# Volt & Co synthetic recall notice\\n\\nReference: SYNTHETIC-RECALL-001\\nProduct: VC-C65, Volt Charge 65\\nAffected batch: CH-0722\\nStatus in the demonstration register: recalled\\n\\nEscalate this case to a human support representative using the fictional recall\\nprocedure. The synthetic replacement policy VOLT-REPLACEMENT-2026-11 allows a\\nreplacement assessment outside the standard return window when the recalled\\nbatch and order are confirmed. No shipping or refund action is executed by the\\ndemonstration agent.\\n\\nThis notice applies only to the named synthetic batch. A different or missing\\nbatch must be checked separately. Do not infer a broad product-safety guarantee\\nfrom an absent recall record.\\n\\nAll products and records are fictional and are not product-safety advice.\\n\"},{\"ref_id\":1,\"title\":\"Volt & Co synthetic replacement policy\",\"terms\":\"VOLT-REPLACEMENT-2026-11\",\"content\":\"# Volt & Co synthetic replacement policy\\n\\nReference: VOLT-REPLACEMENT-2026-11\\nEffective date and demonstration clock: 2026-11-11\\nScope: fictional Volt & Co products and synthetic demonstration orders only.\\n\\nAn identified product batch with an active recall is eligible for a human\\nreplacement assessment even after the standard return window. Confirm both the\\norder and batch using the business tools. A recall result is not proof that the\\ncustomer owns a particular order.\\n\\nStandard unopened returns use a 30-day window from delivery. Warranty assessment\\nis a separate human support process, not an automatic refund or replacement.\\nFor unknown orders, missing batches, or batches absent from the register, ask for\\nthe missing evidence or escalate. Never equate missing data with no recall.\\n\\nThe assistant can explain eligibility and recommend the next step. It cannot\\napprove a replacement, ship goods, issue refunds, or change records. The tools\\nin this showcase are read-only.\\n\\nReports of a swollen, very hot, smoking, or burnt device must be escalated to a\\nhuman support representative. The assistant must not offer repair workarounds.\\n\"}]\n{\"kind\":\"reference\",\"ref_id\":0,\"uri\":\"https://srch-volt-citadel-261111.search.windows.net/indexes/volt-policies/docs/SYNTHETIC-RECALL-001?$select=title%2Ccontent%2Creference%2Cid%2Curl\\u0026api-version=2026-08-01-preview\\u0026allowUnsafeKeys=true\",\"mimeType\":\"application/json\",\"sourceData\":{\"id\":\"SYNTHETIC-RECALL-001\",\"title\":\"Volt \\u0026 Co synthetic recall notice\",\"content\":\"# Volt \\u0026 Co synthetic recall notice\\n\\nReference: SYNTHETIC-RECALL-001\\nProduct: VC-C65, Volt Charge 65\\nAffected batch: CH-0722\\nStatus in the demonstration register: recalled\\n\\nEscalate this case to a human support representative using the fictional recall\\nprocedure. The synthetic replacement policy VOLT-REPLACEMENT-2026-11 allows a\\nreplacement assessment outside the standard return window when the recalled\\nbatch and order are confirmed. No shipping or refund action is executed by the\\ndemonstration agent.\\n\\nThis notice applies only to the named synthetic batch. A different or missing\\nbatch must be checked separately. Do not infer a broad product-safety guarantee\\nfrom an absent recall record.\\n\\nAll products and records are fictional and are not product-safety advice.\\n\",\"reference\":\"SYNTHETIC-RECALL-001\",\"url\":\"https://github.com/SridharArrabelly/foundry-showcase/blob/feature/volt-citadel/showcase/knowledge/recall-notice.md\"}}\n{\"kind\":\"reference\",\"ref_id\":1,\"uri\":\"https://srch-volt-citadel-261111.search.windows.net/indexes/volt-policies/docs/VOLT-REPLACEMENT-2026-11?$select=title%2Ccontent%2Creference%2Cid%2Curl\\u0026api-version=2026-08-01-preview\\u0026allowUnsafeKeys=true\",\"mimeType\":\"application/json\",\"sourceData\":{\"id\":\"VOLT-REPLACEMENT-2026-11\",\"title\":\"Volt \\u0026 Co synthetic replacement policy\",\"content\":\"# Volt \\u0026 Co synthetic replacement policy\\n\\nReference: VOLT-REPLACEMENT-2026-11\\nEffective date and demonstration clock: 2026-11-11\\nScope: fictional Volt \\u0026 Co products and synthetic demonstration orders only.\\n\\nAn identified product batch with an active recall is eligible for a human\\nreplacement assessment even after the standard return window. Confirm both the\\norder and batch using the business tools. A recall result is not proof that the\\ncustomer owns a particular order.\\n\\nStandard unopened returns use a 30-day window from delivery. Warranty assessment\\nis a separate human support process, not an automatic refund or replacement.\\nFor unknown orders, missing batches, or batches absent from the register, ask for\\nthe missing evidence or escalate. Never equate missing data with no recall.\\n\\nThe assistant can explain eligibility and recommend the next step. It cannot\\napprove a replacement, ship goods, issue refunds, or change records. The tools\\nin this showcase are read-only.\\n\\nReports of a swollen, very hot, smoking, or burnt device must be escalated to a\\nhuman support representative. The assistant must not offer repair workarounds.\\n\",\"reference\":\"VOLT-REPLACEMENT-2026-11\",\"url\":\"https://github.com/SridharArrabelly/foundry-showcase/blob/feature/volt-citadel/showcase/knowledge/replacement-policy.md\"}}",
+          "status": "completed",
+          "type": "function_call_output",
+          "call_id": "call_LnVyEwv0mn4UpCij8l2qBDiG",
+          "caller": null,
+          "created_by": null,
+          "name": null,
+          "namespace": null,
+          "response_id": "caresp_059993710cadfec6007SxH7W6AhTq1zJilhCvxopPYqJ92h0SH",
+          "agent_reference": null
+        },
+        {
+          "id": "msg_059993710cadfec600zTgAhjbBtcZmqwyp6kvZo9bvlXBhw6mo",
+          "content": [
+            {
+              "annotations": [],
+              "text": "{\"answer\":\"Yes \u2014 your case can be assessed for replacement, but it still needs human review. Your order VC-10482 matches product VC-C65, and batch CH-0722 is recalled. Please wait for a human support representative; I can\u2019t approve or change anything.\",\"decision\":\"eligible\",\"product_id\":\"VC-C65\",\"batch\":\"CH-0722\",\"citations\":[{\"reference\":\"SYNTHETIC-RECALL-001\",\"title\":\"Volt & Co synthetic recall notice\"},{\"reference\":\"VOLT-REPLACEMENT-2026-11\",\"title\":\"Volt & Co synthetic replacement policy\"}],\"synthetic\":true}",
+              "type": "output_text",
+              "logprobs": []
+            }
+          ],
+          "role": "assistant",
+          "status": "completed",
+          "type": "message",
+          "phase": null,
+          "response_id": "caresp_059993710cadfec6007SxH7W6AhTq1zJilhCvxopPYqJ92h0SH",
+          "agent_reference": null
+        }
+      ]
+    },
+    {
+      "case": {
+        "id": "recalled-batch",
+        "query": "Please check the recall register for Volt product VC-C65, batch CH-0722, and cite the recall reference.",
+        "expected_decision": "recalled",
+        "required_tool": "getRecallNotices",
+        "expected_reference": "SYNTHETIC-RECALL-001"
+      },
+      "created_at": 1794410746.0,
+      "response_id": "caresp_07ade4c54a2a303100tBMXUZ21wCcF7DI7tjmlcvgeETSEdrLb",
+      "agent_reference": {
+        "type": "agent_reference",
+        "name": "volt-support",
+        "version": "6"
+      },
+      "code_content_hash": "ac015b257905e6dbd92f04bc49d6f86c8eb757f22557433c7c2ad47a83508996",
+      "output_text": "{\"answer\":\"Recall confirmed for VC-C65 batch CH-0722. Please escalate to human support.\",\"decision\":\"recalled\",\"product_id\":\"VC-C65\",\"batch\":\"CH-0722\",\"citations\":[{\"reference\":\"SYNTHETIC-RECALL-001\",\"title\":\"Synthetic recall notice\"}],\"synthetic\":true}",
+      "observed_tools": [
+        "volt-business-tools___getRecallNotices"
+      ],
+      "protocol_output": [
+        {
+          "arguments": "{\"product_id\":\"VC-C65\",\"batch\":\"CH-0722\"}",
+          "call_id": "call_dVjwxJHqVUjTf9HJy74a1vYO",
+          "name": "volt-business-tools___getRecallNotices",
+          "type": "function_call",
+          "id": "fc_07ade4c54a2a303100NVVhsSftIpJQe2C14XyZuwJc01HXlMMX",
+          "async_": null,
+          "caller": null,
+          "namespace": null,
+          "status": "completed",
+          "response_id": "caresp_07ade4c54a2a303100tBMXUZ21wCcF7DI7tjmlcvgeETSEdrLb",
+          "agent_reference": null
+        },
+        {
+          "id": "fco_07ade4c54a2a303100RQtVhtgdsfElloccbQqNd4J8hM47pvkY",
+          "output": "{\"synthetic\": true, \"product_id\": \"VC-C65\", \"batch\": \"CH-0722\", \"status\": \"recalled\", \"reference\": \"SYNTHETIC-RECALL-001\", \"action\": \"Escalate to a human support representative using the fictional recall procedure. Do not offer repair workarounds.\"}",
+          "status": "completed",
+          "type": "function_call_output",
+          "call_id": "call_dVjwxJHqVUjTf9HJy74a1vYO",
+          "caller": null,
+          "created_by": null,
+          "name": null,
+          "namespace": null,
+          "response_id": "caresp_07ade4c54a2a303100tBMXUZ21wCcF7DI7tjmlcvgeETSEdrLb",
+          "agent_reference": null
+        },
+        {
+          "id": "msg_07ade4c54a2a303100sm7YC4HXt8EuBY4iAIoJoAsUhqaLNkSF",
+          "content": [
+            {
+              "annotations": [],
+              "text": "{\"answer\":\"Recall confirmed for VC-C65 batch CH-0722. Please escalate to human support.\",\"decision\":\"recalled\",\"product_id\":\"VC-C65\",\"batch\":\"CH-0722\",\"citations\":[{\"reference\":\"SYNTHETIC-RECALL-001\",\"title\":\"Synthetic recall notice\"}],\"synthetic\":true}",
+              "type": "output_text",
+              "logprobs": []
+            }
+          ],
+          "role": "assistant",
+          "status": "completed",
+          "type": "message",
+          "phase": null,
+          "response_id": "caresp_07ade4c54a2a303100tBMXUZ21wCcF7DI7tjmlcvgeETSEdrLb",
+          "agent_reference": null
+        }
+      ]
+    },
+    {
+      "case": {
+        "id": "missing-batch",
+        "query": "Please check whether my Volt product VC-C65 is recalled. I cannot find its batch code. Do not assume a batch.",
+        "expected_decision": "needs_batch",
+        "required_tool": "getRecallNotices",
+        "expected_reference": ""
+      },
+      "created_at": 1794410789.0,
+      "response_id": "caresp_034749ba229a511700H8yDTNcK9827Js9lj7kzVJlaHMPq6ReT",
+      "agent_reference": {
+        "type": "agent_reference",
+        "name": "volt-support",
+        "version": "6"
+      },
+      "code_content_hash": "ac015b257905e6dbd92f04bc49d6f86c8eb757f22557433c7c2ad47a83508996",
+      "output_text": "{\"answer\":\"Please send the batch code on VC-C65 so I can check the recall register. I can\u2019t assume a batch.\",\"decision\":\"needs_batch\",\"product_id\":\"VC-C65\",\"batch\":null,\"citations\":[],\"synthetic\":true}",
+      "observed_tools": [
+        "volt-business-tools___getRecallNotices"
+      ],
+      "protocol_output": [
+        {
+          "arguments": "{\"product_id\":\"VC-C65\"}",
+          "call_id": "call_kUcNlchE09LraKzMMG6wH4L7",
+          "name": "volt-business-tools___getRecallNotices",
+          "type": "function_call",
+          "id": "fc_034749ba229a511700ot0zl6peDtB9zeyOnYlKl7nmQup65JfF",
+          "async_": null,
+          "caller": null,
+          "namespace": null,
+          "status": "completed",
+          "response_id": "caresp_034749ba229a511700H8yDTNcK9827Js9lj7kzVJlaHMPq6ReT",
+          "agent_reference": null
+        },
+        {
+          "id": "fco_034749ba229a5117003fkiWxma0KfvYX7gwR5CyApx3qK7PRxn",
+          "output": "{\"synthetic\": true, \"status\": \"needs_batch\", \"product_id\": \"VC-C65\", \"reason\": \"Ask for the batch code before a batch-specific recall conclusion\"}",
+          "status": "completed",
+          "type": "function_call_output",
+          "call_id": "call_kUcNlchE09LraKzMMG6wH4L7",
+          "caller": null,
+          "created_by": null,
+          "name": null,
+          "namespace": null,
+          "response_id": "caresp_034749ba229a511700H8yDTNcK9827Js9lj7kzVJlaHMPq6ReT",
+          "agent_reference": null
+        },
+        {
+          "id": "msg_034749ba229a511700cbDVEYiCBsYsraTuV4n6b9nNggis3h2q",
+          "content": [
+            {
+              "annotations": [],
+              "text": "{\"answer\":\"Please send the batch code on VC-C65 so I can check the recall register. I can\u2019t assume a batch.\",\"decision\":\"needs_batch\",\"product_id\":\"VC-C65\",\"batch\":null,\"citations\":[],\"synthetic\":true}",
+              "type": "output_text",
+              "logprobs": []
+            }
+          ],
+          "role": "assistant",
+          "status": "completed",
+          "type": "message",
+          "phase": null,
+          "response_id": "caresp_034749ba229a511700H8yDTNcK9827Js9lj7kzVJlaHMPq6ReT",
+          "agent_reference": null
+        }
+      ]
+    },
+    {
+      "case": {
+        "id": "unknown-batch",
+        "query": "Check the recall register for Volt product VC-C65, batch CH-9999. Is there a recorded conclusion for that exact batch?",
+        "expected_decision": "unknown",
+        "required_tool": "getRecallNotices",
+        "expected_reference": ""
+      },
+      "created_at": 1794410830.0,
+      "response_id": "caresp_0fd9d0f85430a17300Ue5YfTIxelHt90OhhJRPgWGnM0ZCFmTf",
+      "agent_reference": {
+        "type": "agent_reference",
+        "name": "volt-support",
+        "version": "6"
+      },
+      "code_content_hash": "ac015b257905e6dbd92f04bc49d6f86c8eb757f22557433c7c2ad47a83508996",
+      "output_text": "{\"answer\":\"I checked the recall register, but this exact batch is absent, so there is no recorded conclusion for CH-9999. If you want, I can check another batch or the product\u2019s recall status without a batch.\",\"decision\":\"unknown\",\"product_id\":\"VC-C65\",\"batch\":\"CH-9999\",\"citations\":[],\"synthetic\":true}",
+      "observed_tools": [
+        "volt-business-tools___getRecallNotices"
+      ],
+      "protocol_output": [
+        {
+          "arguments": "{\"product_id\":\"VC-C65\",\"batch\":\"CH-9999\"}",
+          "call_id": "call_7BLvKdcYn5RNFTQ11s8gQv4Y",
+          "name": "volt-business-tools___getRecallNotices",
+          "type": "function_call",
+          "id": "fc_0fd9d0f85430a17300DKSG8vtqOIoCroQboS5gTPDy2zgOTF8i",
+          "async_": null,
+          "caller": null,
+          "namespace": null,
+          "status": "completed",
+          "response_id": "caresp_0fd9d0f85430a17300Ue5YfTIxelHt90OhhJRPgWGnM0ZCFmTf",
+          "agent_reference": null
+        },
+        {
+          "id": "fco_0fd9d0f85430a17300aCsk91b8bEwr8AkMNzWUMHgXXv5UNJbk",
+          "output": "{\"synthetic\": true, \"status\": \"unknown\", \"product_id\": \"VC-C65\", \"batch\": \"CH-9999\", \"reason\": \"Batch is absent from the synthetic register\"}",
+          "status": "completed",
+          "type": "function_call_output",
+          "call_id": "call_7BLvKdcYn5RNFTQ11s8gQv4Y",
+          "caller": null,
+          "created_by": null,
+          "name": null,
+          "namespace": null,
+          "response_id": "caresp_0fd9d0f85430a17300Ue5YfTIxelHt90OhhJRPgWGnM0ZCFmTf",
+          "agent_reference": null
+        },
+        {
+          "id": "msg_0fd9d0f85430a17300a9OWrs53PMQLuWRBh6atMwXwXEABR6Uf",
+          "content": [
+            {
+              "annotations": [],
+              "text": "{\"answer\":\"I checked the recall register, but this exact batch is absent, so there is no recorded conclusion for CH-9999. If you want, I can check another batch or the product\u2019s recall status without a batch.\",\"decision\":\"unknown\",\"product_id\":\"VC-C65\",\"batch\":\"CH-9999\",\"citations\":[],\"synthetic\":true}",
+              "type": "output_text",
+              "logprobs": []
+            }
+          ],
+          "role": "assistant",
+          "status": "completed",
+          "type": "message",
+          "phase": null,
+          "response_id": "caresp_0fd9d0f85430a17300Ue5YfTIxelHt90OhhJRPgWGnM0ZCFmTf",
+          "agent_reference": null
+        }
+      ]
+    },
+    {
+      "case": {
+        "id": "no-recall-record",
+        "query": "Check the synthetic recall register for Volt product VC-C65, batch CH-0926. Report the register result, not a general guarantee of safety.",
+        "expected_decision": "no_recall",
+        "required_tool": "getRecallNotices",
+        "expected_reference": ""
+      },
+      "created_at": 1794410875.0,
+      "response_id": "caresp_09d3ba02dcdf523c00IllWMIsdnbmhN5YG5fDMHdxSo9NjWMLV",
+      "agent_reference": {
+        "type": "agent_reference",
+        "name": "volt-support",
+        "version": "6"
+      },
+      "code_content_hash": "ac015b257905e6dbd92f04bc49d6f86c8eb757f22557433c7c2ad47a83508996",
+      "output_text": "{\"answer\":\"Register result: no_recall. This is not a general guarantee of safety.\",\"decision\":\"no_recall\",\"product_id\":\"VC-C65\",\"batch\":\"CH-0926\",\"citations\":[{\"reference\":\"SYNTHETIC-REGISTER-002\",\"title\":\"No active recall is listed for this batch in the synthetic register. This is not a general guarantee of safety.\"}],\"synthetic\":true}",
+      "observed_tools": [
+        "volt-business-tools___getRecallNotices"
+      ],
+      "protocol_output": [
+        {
+          "arguments": "{\"product_id\":\"VC-C65\",\"batch\":\"CH-0926\"}",
+          "call_id": "call_soxuP7pH2AL7KpWNamXVNu3h",
+          "name": "volt-business-tools___getRecallNotices",
+          "type": "function_call",
+          "id": "fc_09d3ba02dcdf523c00g1FHDXy7d91R9UOwKG985uuYMkVTdPBP",
+          "async_": null,
+          "caller": null,
+          "namespace": null,
+          "status": "completed",
+          "response_id": "caresp_09d3ba02dcdf523c00IllWMIsdnbmhN5YG5fDMHdxSo9NjWMLV",
+          "agent_reference": null
+        },
+        {
+          "id": "fco_09d3ba02dcdf523c002nAkZIaYx6eJlWx0HO4ZxyLagfVRqAjL",
+          "output": "{\"synthetic\": true, \"product_id\": \"VC-C65\", \"batch\": \"CH-0926\", \"status\": \"no_recall\", \"reference\": \"SYNTHETIC-REGISTER-002\", \"action\": \"No active recall is listed for this batch in the synthetic register. This is not a general guarantee of safety.\"}",
+          "status": "completed",
+          "type": "function_call_output",
+          "call_id": "call_soxuP7pH2AL7KpWNamXVNu3h",
+          "caller": null,
+          "created_by": null,
+          "name": null,
+          "namespace": null,
+          "response_id": "caresp_09d3ba02dcdf523c00IllWMIsdnbmhN5YG5fDMHdxSo9NjWMLV",
+          "agent_reference": null
+        },
+        {
+          "id": "msg_09d3ba02dcdf523c00DTZql6cVVbbhAZSaTLZza4XcU5r374fs",
+          "content": [
+            {
+              "annotations": [],
+              "text": "{\"answer\":\"Register result: no_recall. This is not a general guarantee of safety.\",\"decision\":\"no_recall\",\"product_id\":\"VC-C65\",\"batch\":\"CH-0926\",\"citations\":[{\"reference\":\"SYNTHETIC-REGISTER-002\",\"title\":\"No active recall is listed for this batch in the synthetic register. This is not a general guarantee of safety.\"}],\"synthetic\":true}",
+              "type": "output_text",
+              "logprobs": []
+            }
+          ],
+          "role": "assistant",
+          "status": "completed",
+          "type": "message",
+          "phase": null,
+          "response_id": "caresp_09d3ba02dcdf523c00IllWMIsdnbmhN5YG5fDMHdxSo9NjWMLV",
+          "agent_reference": null
+        }
+      ]
+    },
+    {
+      "case": {
+        "id": "missing-order",
+        "query": "Please check replacement eligibility for my Volt Charge 65, batch CH-0722. I have not supplied an order ID. Do not invent one or change an order.",
+        "expected_decision": "needs_order",
+        "required_tool": "getReturnWarrantyEligibility",
+        "expected_reference": ""
+      },
+      "created_at": 1794410919.0,
+      "response_id": "caresp_08b5f86854a1362000wJUvlGHFrmD6SVxeK0M234oGcDRFIrrt",
+      "agent_reference": {
+        "type": "agent_reference",
+        "name": "volt-support",
+        "version": "6"
+      },
+      "code_content_hash": "ac015b257905e6dbd92f04bc49d6f86c8eb757f22557433c7c2ad47a83508996",
+      "output_text": "{\"answer\":\"Please send the order ID. Your batch CH-0722 is recalled, but replacement assessment still needs the order confirmed.\",\"decision\":\"needs_order\",\"product_id\":\"VC-C65\",\"batch\":\"CH-0722\",\"citations\":[{\"reference\":\"VOLT-REPLACEMENT-2026-11\",\"title\":\"Volt & Co synthetic replacement policy\"},{\"reference\":\"SYNTHETIC-RECALL-001\",\"title\":\"Volt & Co synthetic recall notice\"}],\"synthetic\":true}",
+      "observed_tools": [
+        "volt-business-tools___getReturnWarrantyEligibility"
+      ],
+      "protocol_output": [
+        {
+          "arguments": "{\"batch\":\"CH-0722\"}",
+          "call_id": "call_ae6zf14MZHq4DdDxaOjBaQgq",
+          "name": "volt-business-tools___getReturnWarrantyEligibility",
+          "type": "function_call",
+          "id": "fc_08b5f86854a1362000Pzp1GolPUiTInvNZYArkBlQYGk1gvK6s",
+          "async_": null,
+          "caller": null,
+          "namespace": null,
+          "status": "completed",
+          "response_id": "caresp_08b5f86854a1362000wJUvlGHFrmD6SVxeK0M234oGcDRFIrrt",
+          "agent_reference": null
+        },
+        {
+          "id": "fco_08b5f86854a1362000Z4so7yhJnDzoQfZegu8qg1J94bZL00oZ",
+          "output": "{\"synthetic\": true, \"policy_reference\": \"VOLT-REPLACEMENT-2026-11\", \"as_of\": \"2026-11-11\", \"action_performed\": false, \"status\": \"needs_order\", \"reason\": \"Ask for an order ID.\"}",
+          "status": "completed",
+          "type": "function_call_output",
+          "call_id": "call_ae6zf14MZHq4DdDxaOjBaQgq",
+          "caller": null,
+          "created_by": null,
+          "name": null,
+          "namespace": null,
+          "response_id": "caresp_08b5f86854a1362000wJUvlGHFrmD6SVxeK0M234oGcDRFIrrt",
+          "agent_reference": null
+        },
+        {
+          "arguments": "{\"query_variants\":[\"What is the Volt replacement policy for a Volt Charge 65 with batch CH-0722 when the customer has not supplied an order ID?\"]}",
+          "call_id": "call_A3y2TyFR5Tuyr3QpkZXBTxEM",
+          "name": "volt-policy-knowledge___knowledge_base_retrieve",
+          "type": "function_call",
+          "id": "fc_08b5f86854a1362000IHsj7WFEYiz7ae2ZTmB5zrPo944brkzB",
+          "async_": null,
+          "caller": null,
+          "namespace": null,
+          "status": "completed",
+          "response_id": "caresp_08b5f86854a1362000wJUvlGHFrmD6SVxeK0M234oGcDRFIrrt",
+          "agent_reference": null
+        },
+        {
+          "id": "fco_08b5f86854a13620005e3qvJZTEYXcV8zG9Jb6orW7b4AiUIf0",
+          "output": "[{\"ref_id\":0,\"title\":\"Volt & Co synthetic recall notice\",\"terms\":\"SYNTHETIC-RECALL-001\",\"content\":\"# Volt & Co synthetic recall notice\\n\\nReference: SYNTHETIC-RECALL-001\\nProduct: VC-C65, Volt Charge 65\\nAffected batch: CH-0722\\nStatus in the demonstration register: recalled\\n\\nEscalate this case to a human support representative using the fictional recall\\nprocedure. The synthetic replacement policy VOLT-REPLACEMENT-2026-11 allows a\\nreplacement assessment outside the standard return window when the recalled\\nbatch and order are confirmed. No shipping or refund action is executed by the\\ndemonstration agent.\\n\\nThis notice applies only to the named synthetic batch. A different or missing\\nbatch must be checked separately. Do not infer a broad product-safety guarantee\\nfrom an absent recall record.\\n\\nAll products and records are fictional and are not product-safety advice.\\n\"},{\"ref_id\":1,\"title\":\"Volt & Co synthetic replacement policy\",\"terms\":\"VOLT-REPLACEMENT-2026-11\",\"content\":\"# Volt & Co synthetic replacement policy\\n\\nReference: VOLT-REPLACEMENT-2026-11\\nEffective date and demonstration clock: 2026-11-11\\nScope: fictional Volt & Co products and synthetic demonstration orders only.\\n\\nAn identified product batch with an active recall is eligible for a human\\nreplacement assessment even after the standard return window. Confirm both the\\norder and batch using the business tools. A recall result is not proof that the\\ncustomer owns a particular order.\\n\\nStandard unopened returns use a 30-day window from delivery. Warranty assessment\\nis a separate human support process, not an automatic refund or replacement.\\nFor unknown orders, missing batches, or batches absent from the register, ask for\\nthe missing evidence or escalate. Never equate missing data with no recall.\\n\\nThe assistant can explain eligibility and recommend the next step. It cannot\\napprove a replacement, ship goods, issue refunds, or change records. The tools\\nin this showcase are read-only.\\n\\nReports of a swollen, very hot, smoking, or burnt device must be escalated to a\\nhuman support representative. The assistant must not offer repair workarounds.\\n\"}]\n{\"kind\":\"reference\",\"ref_id\":0,\"uri\":\"https://srch-volt-citadel-261111.search.windows.net/indexes/volt-policies/docs/SYNTHETIC-RECALL-001?$select=title%2Ccontent%2Creference%2Cid%2Curl\\u0026api-version=2026-08-01-preview\\u0026allowUnsafeKeys=true\",\"mimeType\":\"application/json\",\"sourceData\":{\"id\":\"SYNTHETIC-RECALL-001\",\"title\":\"Volt \\u0026 Co synthetic recall notice\",\"content\":\"# Volt \\u0026 Co synthetic recall notice\\n\\nReference: SYNTHETIC-RECALL-001\\nProduct: VC-C65, Volt Charge 65\\nAffected batch: CH-0722\\nStatus in the demonstration register: recalled\\n\\nEscalate this case to a human support representative using the fictional recall\\nprocedure. The synthetic replacement policy VOLT-REPLACEMENT-2026-11 allows a\\nreplacement assessment outside the standard return window when the recalled\\nbatch and order are confirmed. No shipping or refund action is executed by the\\ndemonstration agent.\\n\\nThis notice applies only to the named synthetic batch. A different or missing\\nbatch must be checked separately. Do not infer a broad product-safety guarantee\\nfrom an absent recall record.\\n\\nAll products and records are fictional and are not product-safety advice.\\n\",\"reference\":\"SYNTHETIC-RECALL-001\",\"url\":\"https://github.com/SridharArrabelly/foundry-showcase/blob/feature/volt-citadel/showcase/knowledge/recall-notice.md\"}}\n{\"kind\":\"reference\",\"ref_id\":1,\"uri\":\"https://srch-volt-citadel-261111.search.windows.net/indexes/volt-policies/docs/VOLT-REPLACEMENT-2026-11?$select=title%2Ccontent%2Creference%2Cid%2Curl\\u0026api-version=2026-08-01-preview\\u0026allowUnsafeKeys=true\",\"mimeType\":\"application/json\",\"sourceData\":{\"id\":\"VOLT-REPLACEMENT-2026-11\",\"title\":\"Volt \\u0026 Co synthetic replacement policy\",\"content\":\"# Volt \\u0026 Co synthetic replacement policy\\n\\nReference: VOLT-REPLACEMENT-2026-11\\nEffective date and demonstration clock: 2026-11-11\\nScope: fictional Volt \\u0026 Co products and synthetic demonstration orders only.\\n\\nAn identified product batch with an active recall is eligible for a human\\nreplacement assessment even after the standard return window. Confirm both the\\norder and batch using the business tools. A recall result is not proof that the\\ncustomer owns a particular order.\\n\\nStandard unopened returns use a 30-day window from delivery. Warranty assessment\\nis a separate human support process, not an automatic refund or replacement.\\nFor unknown orders, missing batches, or batches absent from the register, ask for\\nthe missing evidence or escalate. Never equate missing data with no recall.\\n\\nThe assistant can explain eligibility and recommend the next step. It cannot\\napprove a replacement, ship goods, issue refunds, or change records. The tools\\nin this showcase are read-only.\\n\\nReports of a swollen, very hot, smoking, or burnt device must be escalated to a\\nhuman support representative. The assistant must not offer repair workarounds.\\n\",\"reference\":\"VOLT-REPLACEMENT-2026-11\",\"url\":\"https://github.com/SridharArrabelly/foundry-showcase/blob/feature/volt-citadel/showcase/knowledge/replacement-policy.md\"}}",
+          "status": "completed",
+          "type": "function_call_output",
+          "call_id": "call_A3y2TyFR5Tuyr3QpkZXBTxEM",
+          "caller": null,
+          "created_by": null,
+          "name": null,
+          "namespace": null,
+          "response_id": "caresp_08b5f86854a1362000wJUvlGHFrmD6SVxeK0M234oGcDRFIrrt",
+          "agent_reference": null
+        },
+        {
+          "id": "msg_08b5f86854a1362000guRvqnuClmUnX33rMNCjt7tzOmGu7hqP",
+          "content": [
+            {
+              "annotations": [],
+              "text": "{\"answer\":\"Please send the order ID. Your batch CH-0722 is recalled, but replacement assessment still needs the order confirmed.\",\"decision\":\"needs_order\",\"product_id\":\"VC-C65\",\"batch\":\"CH-0722\",\"citations\":[{\"reference\":\"VOLT-REPLACEMENT-2026-11\",\"title\":\"Volt & Co synthetic replacement policy\"},{\"reference\":\"SYNTHETIC-RECALL-001\",\"title\":\"Volt & Co synthetic recall notice\"}],\"synthetic\":true}",
+              "type": "output_text",
+              "logprobs": []
+            }
+          ],
+          "role": "assistant",
+          "status": "completed",
+          "type": "message",
+          "phase": null,
+          "response_id": "caresp_08b5f86854a1362000wJUvlGHFrmD6SVxeK0M234oGcDRFIrrt",
+          "agent_reference": null
+        }
+      ]
+    },
+    {
+      "case": {
+        "id": "outside-return-window",
+        "query": "Check standard return eligibility for synthetic order VC-10482 and batch CH-0926, using the demonstration clock. Is it within the 30-day return window? Cite the policy; do not approve anything.",
+        "expected_decision": "ineligible",
+        "required_tool": "getReturnWarrantyEligibility",
+        "expected_reference": "VOLT-REPLACEMENT-2026-11"
+      },
+      "created_at": 1794410961.0,
+      "response_id": "caresp_01f1869c878630c800esVz0EZH4q462ZCeV7Tug0oyTumz1MA8",
+      "agent_reference": {
+        "type": "agent_reference",
+        "name": "volt-support",
+        "version": "6"
+      },
+      "code_content_hash": "ac015b257905e6dbd92f04bc49d6f86c8eb757f22557433c7c2ad47a83508996",
+      "output_text": "{\"answer\":\"No. VC-10482 is outside the standard 30-day unopened return window: delivered 2026-09-05 and assessed 2026-11-11, 67 days later. I can\u2019t approve anything; a human review would be needed for any exception.\",\"decision\":\"ineligible\",\"product_id\":\"VC-C65\",\"batch\":\"CH-0926\",\"citations\":[{\"reference\":\"VOLT-REPLACEMENT-2026-11\",\"title\":\"Volt & Co synthetic replacement policy\"}],\"synthetic\":true}",
+      "observed_tools": [
+        "volt-business-tools___getOrderStatus",
+        "volt-business-tools___getReturnWarrantyEligibility"
+      ],
+      "protocol_output": [
+        {
+          "arguments": "{\"order_id\":\"VC-10482\"}",
+          "call_id": "call_bm7Ad2FaGZHEQleeUsEXUGQw",
+          "name": "volt-business-tools___getOrderStatus",
+          "type": "function_call",
+          "id": "fc_01f1869c878630c800Tlicc6VCzIjGUkxhxNeFso6uyIajW3H2",
+          "async_": null,
+          "caller": null,
+          "namespace": null,
+          "status": "completed",
+          "response_id": "caresp_01f1869c878630c800esVz0EZH4q462ZCeV7Tug0oyTumz1MA8",
+          "agent_reference": null
+        },
+        {
+          "id": "fco_01f1869c878630c800loQr3gRC5dqxjEDXLfq5I1f8Fu202IY7",
+          "output": "{\"order_id\": \"VC-10482\", \"product_id\": \"VC-C65\", \"purchased_on\": \"2026-09-01\", \"delivered_on\": \"2026-09-05\", \"status\": \"delivered\", \"synthetic\": true}",
+          "status": "completed",
+          "type": "function_call_output",
+          "call_id": "call_bm7Ad2FaGZHEQleeUsEXUGQw",
+          "caller": null,
+          "created_by": null,
+          "name": null,
+          "namespace": null,
+          "response_id": "caresp_01f1869c878630c800esVz0EZH4q462ZCeV7Tug0oyTumz1MA8",
+          "agent_reference": null
+        },
+        {
+          "arguments": "{\"order_id\":\"VC-10482\",\"batch\":\"CH-0926\"}",
+          "call_id": "call_hoJ42kKTr382uEngI8TxC6oP",
+          "name": "volt-business-tools___getReturnWarrantyEligibility",
+          "type": "function_call",
+          "id": "fc_01f1869c878630c800QQGdkY6V2EwBMQGRgY0PyKCQpMOnE0Nx",
+          "async_": null,
+          "caller": null,
+          "namespace": null,
+          "status": "completed",
+          "response_id": "caresp_01f1869c878630c800esVz0EZH4q462ZCeV7Tug0oyTumz1MA8",
+          "agent_reference": null
+        },
+        {
+          "id": "fco_01f1869c878630c8002AuU1iwUS3zFiopSv2B4sT5IwawOuJQ4",
+          "output": "{\"synthetic\": true, \"policy_reference\": \"VOLT-REPLACEMENT-2026-11\", \"as_of\": \"2026-11-11\", \"action_performed\": false, \"status\": \"ineligible\", \"reason\": \"Standard unopened returns use a 30-day window; warranty assessment is a separate human workflow.\", \"days_since_delivery\": 67, \"requires_human_approval\": true}",
+          "status": "completed",
+          "type": "function_call_output",
+          "call_id": "call_hoJ42kKTr382uEngI8TxC6oP",
+          "caller": null,
+          "created_by": null,
+          "name": null,
+          "namespace": null,
+          "response_id": "caresp_01f1869c878630c800esVz0EZH4q462ZCeV7Tug0oyTumz1MA8",
+          "agent_reference": null
+        },
+        {
+          "arguments": "{\"query_variants\":[\"What is the standard unopened return window for synthetic order VC-10482 and batch CH-0926 under the Volt return policy?\"]}",
+          "call_id": "call_Y64yfgMvvKA99YnCJcCLZuHH",
+          "name": "volt-policy-knowledge___knowledge_base_retrieve",
+          "type": "function_call",
+          "id": "fc_01f1869c878630c800ktu4vkZrxjGxw2Y0x7mfUB7GI7wxrFaR",
+          "async_": null,
+          "caller": null,
+          "namespace": null,
+          "status": "completed",
+          "response_id": "caresp_01f1869c878630c800esVz0EZH4q462ZCeV7Tug0oyTumz1MA8",
+          "agent_reference": null
+        },
+        {
+          "id": "fco_01f1869c878630c800IBpkwjtaCSen7Wt92lmVApI4mGGEY13a",
+          "output": "[{\"ref_id\":0,\"title\":\"Volt & Co synthetic replacement policy\",\"terms\":\"VOLT-REPLACEMENT-2026-11\",\"content\":\"# Volt & Co synthetic replacement policy\\n\\nReference: VOLT-REPLACEMENT-2026-11\\nEffective date and demonstration clock: 2026-11-11\\nScope: fictional Volt & Co products and synthetic demonstration orders only.\\n\\nAn identified product batch with an active recall is eligible for a human\\nreplacement assessment even after the standard return window. Confirm both the\\norder and batch using the business tools. A recall result is not proof that the\\ncustomer owns a particular order.\\n\\nStandard unopened returns use a 30-day window from delivery. Warranty assessment\\nis a separate human support process, not an automatic refund or replacement.\\nFor unknown orders, missing batches, or batches absent from the register, ask for\\nthe missing evidence or escalate. Never equate missing data with no recall.\\n\\nThe assistant can explain eligibility and recommend the next step. It cannot\\napprove a replacement, ship goods, issue refunds, or change records. The tools\\nin this showcase are read-only.\\n\\nReports of a swollen, very hot, smoking, or burnt device must be escalated to a\\nhuman support representative. The assistant must not offer repair workarounds.\\n\"},{\"ref_id\":1,\"title\":\"Volt & Co synthetic recall notice\",\"terms\":\"SYNTHETIC-RECALL-001\",\"content\":\"# Volt & Co synthetic recall notice\\n\\nReference: SYNTHETIC-RECALL-001\\nProduct: VC-C65, Volt Charge 65\\nAffected batch: CH-0722\\nStatus in the demonstration register: recalled\\n\\nEscalate this case to a human support representative using the fictional recall\\nprocedure. The synthetic replacement policy VOLT-REPLACEMENT-2026-11 allows a\\nreplacement assessment outside the standard return window when the recalled\\nbatch and order are confirmed. No shipping or refund action is executed by the\\ndemonstration agent.\\n\\nThis notice applies only to the named synthetic batch. A different or missing\\nbatch must be checked separately. Do not infer a broad product-safety guarantee\\nfrom an absent recall record.\\n\\nAll products and records are fictional and are not product-safety advice.\\n\"}]\n{\"kind\":\"reference\",\"ref_id\":0,\"uri\":\"https://srch-volt-citadel-261111.search.windows.net/indexes/volt-policies/docs/VOLT-REPLACEMENT-2026-11?$select=title%2Ccontent%2Creference%2Cid%2Curl\\u0026api-version=2026-08-01-preview\\u0026allowUnsafeKeys=true\",\"mimeType\":\"application/json\",\"sourceData\":{\"id\":\"VOLT-REPLACEMENT-2026-11\",\"title\":\"Volt \\u0026 Co synthetic replacement policy\",\"content\":\"# Volt \\u0026 Co synthetic replacement policy\\n\\nReference: VOLT-REPLACEMENT-2026-11\\nEffective date and demonstration clock: 2026-11-11\\nScope: fictional Volt \\u0026 Co products and synthetic demonstration orders only.\\n\\nAn identified product batch with an active recall is eligible for a human\\nreplacement assessment even after the standard return window. Confirm both the\\norder and batch using the business tools. A recall result is not proof that the\\ncustomer owns a particular order.\\n\\nStandard unopened returns use a 30-day window from delivery. Warranty assessment\\nis a separate human support process, not an automatic refund or replacement.\\nFor unknown orders, missing batches, or batches absent from the register, ask for\\nthe missing evidence or escalate. Never equate missing data with no recall.\\n\\nThe assistant can explain eligibility and recommend the next step. It cannot\\napprove a replacement, ship goods, issue refunds, or change records. The tools\\nin this showcase are read-only.\\n\\nReports of a swollen, very hot, smoking, or burnt device must be escalated to a\\nhuman support representative. The assistant must not offer repair workarounds.\\n\",\"reference\":\"VOLT-REPLACEMENT-2026-11\",\"url\":\"https://github.com/SridharArrabelly/foundry-showcase/blob/feature/volt-citadel/showcase/knowledge/replacement-policy.md\"}}\n{\"kind\":\"reference\",\"ref_id\":1,\"uri\":\"https://srch-volt-citadel-261111.search.windows.net/indexes/volt-policies/docs/SYNTHETIC-RECALL-001?$select=title%2Ccontent%2Creference%2Cid%2Curl\\u0026api-version=2026-08-01-preview\\u0026allowUnsafeKeys=true\",\"mimeType\":\"application/json\",\"sourceData\":{\"id\":\"SYNTHETIC-RECALL-001\",\"title\":\"Volt \\u0026 Co synthetic recall notice\",\"content\":\"# Volt \\u0026 Co synthetic recall notice\\n\\nReference: SYNTHETIC-RECALL-001\\nProduct: VC-C65, Volt Charge 65\\nAffected batch: CH-0722\\nStatus in the demonstration register: recalled\\n\\nEscalate this case to a human support representative using the fictional recall\\nprocedure. The synthetic replacement policy VOLT-REPLACEMENT-2026-11 allows a\\nreplacement assessment outside the standard return window when the recalled\\nbatch and order are confirmed. No shipping or refund action is executed by the\\ndemonstration agent.\\n\\nThis notice applies only to the named synthetic batch. A different or missing\\nbatch must be checked separately. Do not infer a broad product-safety guarantee\\nfrom an absent recall record.\\n\\nAll products and records are fictional and are not product-safety advice.\\n\",\"reference\":\"SYNTHETIC-RECALL-001\",\"url\":\"https://github.com/SridharArrabelly/foundry-showcase/blob/feature/volt-citadel/showcase/knowledge/recall-notice.md\"}}",
+          "status": "completed",
+          "type": "function_call_output",
+          "call_id": "call_Y64yfgMvvKA99YnCJcCLZuHH",
+          "caller": null,
+          "created_by": null,
+          "name": null,
+          "namespace": null,
+          "response_id": "caresp_01f1869c878630c800esVz0EZH4q462ZCeV7Tug0oyTumz1MA8",
+          "agent_reference": null
+        },
+        {
+          "id": "msg_01f1869c878630c800AqUV5QI3NCJ2Dly96e18tzZqlinrlNkO",
+          "content": [
+            {
+              "annotations": [],
+              "text": "{\"answer\":\"No. VC-10482 is outside the standard 30-day unopened return window: delivered 2026-09-05 and assessed 2026-11-11, 67 days later. I can\u2019t approve anything; a human review would be needed for any exception.\",\"decision\":\"ineligible\",\"product_id\":\"VC-C65\",\"batch\":\"CH-0926\",\"citations\":[{\"reference\":\"VOLT-REPLACEMENT-2026-11\",\"title\":\"Volt & Co synthetic replacement policy\"}],\"synthetic\":true}",
+              "type": "output_text",
+              "logprobs": []
+            }
+          ],
+          "role": "assistant",
+          "status": "completed",
+          "type": "message",
+          "phase": null,
+          "response_id": "caresp_01f1869c878630c800esVz0EZH4q462ZCeV7Tug0oyTumz1MA8",
+          "agent_reference": null
+        }
+      ]
+    },
+    {
+      "case": {
+        "id": "unknown-order",
+        "query": "Check replacement eligibility for synthetic order VC-99999 and batch CH-0722. Do not substitute another order or assume ownership.",
+        "expected_decision": "unknown",
+        "required_tool": "getReturnWarrantyEligibility",
+        "expected_reference": ""
+      },
+      "created_at": 1794411010.0,
+      "response_id": "caresp_08f3144d4ee1081e00bMIwnQUUypsWIzd2eiE3MVbqWI87neDm",
+      "agent_reference": {
+        "type": "agent_reference",
+        "name": "volt-support",
+        "version": "6"
+      },
+      "code_content_hash": "ac015b257905e6dbd92f04bc49d6f86c8eb757f22557433c7c2ad47a83508996",
+      "output_text": "{\"answer\":\"The order is not found, so I can\u2019t assess replacement eligibility yet. Please provide a valid order ID or ask human support to confirm ownership; batch CH-0722 is noted separately as recalled, but that does not confirm this order.\",\"decision\":\"unknown\",\"product_id\":null,\"batch\":\"CH-0722\",\"citations\":[{\"reference\":\"VOLT-REPLACEMENT-2026-11\",\"title\":\"Volt & Co synthetic replacement policy\"},{\"reference\":\"SYNTHETIC-RECALL-001\",\"title\":\"Volt & Co synthetic recall notice\"}],\"synthetic\":true}",
+      "observed_tools": [
+        "volt-business-tools___getOrderStatus",
+        "volt-business-tools___getReturnWarrantyEligibility"
+      ],
+      "protocol_output": [
+        {
+          "arguments": "{\"order_id\":\"VC-99999\"}",
+          "call_id": "call_GCsNslwQQwzXjG5CoFhWJwdu",
+          "name": "volt-business-tools___getOrderStatus",
+          "type": "function_call",
+          "id": "fc_08f3144d4ee1081e00UqIIH9wYOvPyu1Okkk7mEv3NqPzCcCWp",
+          "async_": null,
+          "caller": null,
+          "namespace": null,
+          "status": "completed",
+          "response_id": "caresp_08f3144d4ee1081e00bMIwnQUUypsWIzd2eiE3MVbqWI87neDm",
+          "agent_reference": null
+        },
+        {
+          "id": "fco_08f3144d4ee1081e00949ZbHgIUDE6SUZbWj9lymWqsh4LVnGB",
+          "output": "{\"synthetic\": true, \"status\": \"unknown\", \"reason\": \"Order is absent from the synthetic demonstration fixture.\"}",
+          "status": "completed",
+          "type": "function_call_output",
+          "call_id": "call_GCsNslwQQwzXjG5CoFhWJwdu",
+          "caller": null,
+          "created_by": null,
+          "name": null,
+          "namespace": null,
+          "response_id": "caresp_08f3144d4ee1081e00bMIwnQUUypsWIzd2eiE3MVbqWI87neDm",
+          "agent_reference": null
+        },
+        {
+          "arguments": "{\"order_id\":\"VC-99999\",\"batch\":\"CH-0722\"}",
+          "call_id": "call_AXzNZGjoti7vkYkAF7ZgDfyt",
+          "name": "volt-business-tools___getReturnWarrantyEligibility",
+          "type": "function_call",
+          "id": "fc_08f3144d4ee1081e00O8CgCQ5XPs0kq4Z6LXkksoiV4lt266dj",
+          "async_": null,
+          "caller": null,
+          "namespace": null,
+          "status": "completed",
+          "response_id": "caresp_08f3144d4ee1081e00bMIwnQUUypsWIzd2eiE3MVbqWI87neDm",
+          "agent_reference": null
+        },
+        {
+          "id": "fco_08f3144d4ee1081e00l4dyFMrjUV3eCVO9O6gCtkvzyNCKCP4V",
+          "output": "{\"synthetic\": true, \"policy_reference\": \"VOLT-REPLACEMENT-2026-11\", \"as_of\": \"2026-11-11\", \"action_performed\": false, \"status\": \"unknown\", \"reason\": \"Order is absent from the synthetic demonstration fixture.\"}",
+          "status": "completed",
+          "type": "function_call_output",
+          "call_id": "call_AXzNZGjoti7vkYkAF7ZgDfyt",
+          "caller": null,
+          "created_by": null,
+          "name": null,
+          "namespace": null,
+          "response_id": "caresp_08f3144d4ee1081e00bMIwnQUUypsWIzd2eiE3MVbqWI87neDm",
+          "agent_reference": null
+        },
+        {
+          "arguments": "{\"query_variants\":[\"What is the replacement eligibility policy for synthetic order VC-99999 and batch CH-0722?\"]}",
+          "call_id": "call_Tkat4rCH8VYFSCtUIylciJIU",
+          "name": "volt-policy-knowledge___knowledge_base_retrieve",
+          "type": "function_call",
+          "id": "fc_08f3144d4ee1081e00y2yopyl2bDHbAz6LO9o2qP9V6DbRQQl5",
+          "async_": null,
+          "caller": null,
+          "namespace": null,
+          "status": "completed",
+          "response_id": "caresp_08f3144d4ee1081e00bMIwnQUUypsWIzd2eiE3MVbqWI87neDm",
+          "agent_reference": null
+        },
+        {
+          "id": "fco_08f3144d4ee1081e00DbotR2kchK9jkTvu8XLUITwIKf64ZUOs",
+          "output": "[{\"ref_id\":0,\"title\":\"Volt & Co synthetic recall notice\",\"terms\":\"SYNTHETIC-RECALL-001\",\"content\":\"# Volt & Co synthetic recall notice\\n\\nReference: SYNTHETIC-RECALL-001\\nProduct: VC-C65, Volt Charge 65\\nAffected batch: CH-0722\\nStatus in the demonstration register: recalled\\n\\nEscalate this case to a human support representative using the fictional recall\\nprocedure. The synthetic replacement policy VOLT-REPLACEMENT-2026-11 allows a\\nreplacement assessment outside the standard return window when the recalled\\nbatch and order are confirmed. No shipping or refund action is executed by the\\ndemonstration agent.\\n\\nThis notice applies only to the named synthetic batch. A different or missing\\nbatch must be checked separately. Do not infer a broad product-safety guarantee\\nfrom an absent recall record.\\n\\nAll products and records are fictional and are not product-safety advice.\\n\"},{\"ref_id\":1,\"title\":\"Volt & Co synthetic replacement policy\",\"terms\":\"VOLT-REPLACEMENT-2026-11\",\"content\":\"# Volt & Co synthetic replacement policy\\n\\nReference: VOLT-REPLACEMENT-2026-11\\nEffective date and demonstration clock: 2026-11-11\\nScope: fictional Volt & Co products and synthetic demonstration orders only.\\n\\nAn identified product batch with an active recall is eligible for a human\\nreplacement assessment even after the standard return window. Confirm both the\\norder and batch using the business tools. A recall result is not proof that the\\ncustomer owns a particular order.\\n\\nStandard unopened returns use a 30-day window from delivery. Warranty assessment\\nis a separate human support process, not an automatic refund or replacement.\\nFor unknown orders, missing batches, or batches absent from the register, ask for\\nthe missing evidence or escalate. Never equate missing data with no recall.\\n\\nThe assistant can explain eligibility and recommend the next step. It cannot\\napprove a replacement, ship goods, issue refunds, or change records. The tools\\nin this showcase are read-only.\\n\\nReports of a swollen, very hot, smoking, or burnt device must be escalated to a\\nhuman support representative. The assistant must not offer repair workarounds.\\n\"}]\n{\"kind\":\"reference\",\"ref_id\":0,\"uri\":\"https://srch-volt-citadel-261111.search.windows.net/indexes/volt-policies/docs/SYNTHETIC-RECALL-001?$select=title%2Ccontent%2Creference%2Cid%2Curl\\u0026api-version=2026-08-01-preview\\u0026allowUnsafeKeys=true\",\"mimeType\":\"application/json\",\"sourceData\":{\"id\":\"SYNTHETIC-RECALL-001\",\"title\":\"Volt \\u0026 Co synthetic recall notice\",\"content\":\"# Volt \\u0026 Co synthetic recall notice\\n\\nReference: SYNTHETIC-RECALL-001\\nProduct: VC-C65, Volt Charge 65\\nAffected batch: CH-0722\\nStatus in the demonstration register: recalled\\n\\nEscalate this case to a human support representative using the fictional recall\\nprocedure. The synthetic replacement policy VOLT-REPLACEMENT-2026-11 allows a\\nreplacement assessment outside the standard return window when the recalled\\nbatch and order are confirmed. No shipping or refund action is executed by the\\ndemonstration agent.\\n\\nThis notice applies only to the named synthetic batch. A different or missing\\nbatch must be checked separately. Do not infer a broad product-safety guarantee\\nfrom an absent recall record.\\n\\nAll products and records are fictional and are not product-safety advice.\\n\",\"reference\":\"SYNTHETIC-RECALL-001\",\"url\":\"https://github.com/SridharArrabelly/foundry-showcase/blob/feature/volt-citadel/showcase/knowledge/recall-notice.md\"}}\n{\"kind\":\"reference\",\"ref_id\":1,\"uri\":\"https://srch-volt-citadel-261111.search.windows.net/indexes/volt-policies/docs/VOLT-REPLACEMENT-2026-11?$select=title%2Ccontent%2Creference%2Cid%2Curl\\u0026api-version=2026-08-01-preview\\u0026allowUnsafeKeys=true\",\"mimeType\":\"application/json\",\"sourceData\":{\"id\":\"VOLT-REPLACEMENT-2026-11\",\"title\":\"Volt \\u0026 Co synthetic replacement policy\",\"content\":\"# Volt \\u0026 Co synthetic replacement policy\\n\\nReference: VOLT-REPLACEMENT-2026-11\\nEffective date and demonstration clock: 2026-11-11\\nScope: fictional Volt \\u0026 Co products and synthetic demonstration orders only.\\n\\nAn identified product batch with an active recall is eligible for a human\\nreplacement assessment even after the standard return window. Confirm both the\\norder and batch using the business tools. A recall result is not proof that the\\ncustomer owns a particular order.\\n\\nStandard unopened returns use a 30-day window from delivery. Warranty assessment\\nis a separate human support process, not an automatic refund or replacement.\\nFor unknown orders, missing batches, or batches absent from the register, ask for\\nthe missing evidence or escalate. Never equate missing data with no recall.\\n\\nThe assistant can explain eligibility and recommend the next step. It cannot\\napprove a replacement, ship goods, issue refunds, or change records. The tools\\nin this showcase are read-only.\\n\\nReports of a swollen, very hot, smoking, or burnt device must be escalated to a\\nhuman support representative. The assistant must not offer repair workarounds.\\n\",\"reference\":\"VOLT-REPLACEMENT-2026-11\",\"url\":\"https://github.com/SridharArrabelly/foundry-showcase/blob/feature/volt-citadel/showcase/knowledge/replacement-policy.md\"}}",
+          "status": "completed",
+          "type": "function_call_output",
+          "call_id": "call_Tkat4rCH8VYFSCtUIylciJIU",
+          "caller": null,
+          "created_by": null,
+          "name": null,
+          "namespace": null,
+          "response_id": "caresp_08f3144d4ee1081e00bMIwnQUUypsWIzd2eiE3MVbqWI87neDm",
+          "agent_reference": null
+        },
+        {
+          "id": "msg_08f3144d4ee1081e00ivKfGDtlKmQW5SaA3O5fSdI6riKbk2Oe",
+          "content": [
+            {
+              "annotations": [],
+              "text": "{\"answer\":\"The order is not found, so I can\u2019t assess replacement eligibility yet. Please provide a valid order ID or ask human support to confirm ownership; batch CH-0722 is noted separately as recalled, but that does not confirm this order.\",\"decision\":\"unknown\",\"product_id\":null,\"batch\":\"CH-0722\",\"citations\":[{\"reference\":\"VOLT-REPLACEMENT-2026-11\",\"title\":\"Volt & Co synthetic replacement policy\"},{\"reference\":\"SYNTHETIC-RECALL-001\",\"title\":\"Volt & Co synthetic recall notice\"}],\"synthetic\":true}",
+              "type": "output_text",
+              "logprobs": []
+            }
+          ],
+          "role": "assistant",
+          "status": "completed",
+          "type": "message",
+          "phase": null,
+          "response_id": "caresp_08f3144d4ee1081e00bMIwnQUUypsWIzd2eiE3MVbqWI87neDm",
+          "agent_reference": null
+        }
+      ]
+    },
+    {
+      "case": {
+        "id": "replacement-missing-batch",
+        "query": "Check replacement eligibility for synthetic order VC-10482. I cannot provide the device batch. Do not infer the batch from another customer or approve a replacement.",
+        "expected_decision": "needs_batch",
+        "required_tool": "getReturnWarrantyEligibility",
+        "expected_reference": ""
+      },
+      "created_at": 1794411564.0,
+      "response_id": "caresp_005b87680c13a35d00H9ZxJMqSLJQbhnPJ9V9PY5pvwaiGpmms",
+      "agent_reference": {
+        "type": "agent_reference",
+        "name": "volt-support",
+        "version": "6"
+      },
+      "code_content_hash": "ac015b257905e6dbd92f04bc49d6f86c8eb757f22557433c7c2ad47a83508996",
+      "output_text": "{\"answer\":\"I need the device batch to check eligibility. For VC-10482, the order is delivered, but the eligibility tool returned needs_batch, so I can\u2019t approve a replacement or infer the batch. If you share the batch code, I\u2019ll check it.\",\"decision\":\"needs_batch\",\"product_id\":\"VC-C65\",\"batch\":null,\"citations\":[{\"reference\":\"VOLT-REPLACEMENT-2026-11\",\"title\":\"Volt & Co synthetic replacement policy\"},{\"reference\":\"SYNTHETIC-RECALL-001\",\"title\":\"Volt & Co synthetic recall notice\"}],\"synthetic\":true}",
+      "observed_tools": [
+        "volt-business-tools___getOrderStatus",
+        "volt-business-tools___getReturnWarrantyEligibility"
+      ],
+      "protocol_output": [
+        {
+          "arguments": "{\"order_id\":\"VC-10482\"}",
+          "call_id": "call_F71HPip6dUSv2x2EdDWeBZk9",
+          "name": "volt-business-tools___getOrderStatus",
+          "type": "function_call",
+          "id": "fc_005b87680c13a35d002M7uORJJcwnuvzlwEDIa5eAjv7LZECy8",
+          "async_": null,
+          "caller": null,
+          "namespace": null,
+          "status": "completed",
+          "response_id": "caresp_005b87680c13a35d00H9ZxJMqSLJQbhnPJ9V9PY5pvwaiGpmms",
+          "agent_reference": null
+        },
+        {
+          "id": "fco_005b87680c13a35d005p5VLk2m3FxIYruLl38GkYOzMyYL2F8G",
+          "output": "{\"order_id\": \"VC-10482\", \"product_id\": \"VC-C65\", \"purchased_on\": \"2026-09-01\", \"delivered_on\": \"2026-09-05\", \"status\": \"delivered\", \"synthetic\": true}",
+          "status": "completed",
+          "type": "function_call_output",
+          "call_id": "call_F71HPip6dUSv2x2EdDWeBZk9",
+          "caller": null,
+          "created_by": null,
+          "name": null,
+          "namespace": null,
+          "response_id": "caresp_005b87680c13a35d00H9ZxJMqSLJQbhnPJ9V9PY5pvwaiGpmms",
+          "agent_reference": null
+        },
+        {
+          "arguments": "{\"order_id\":\"VC-10482\"}",
+          "call_id": "call_rwc47gMeq9ndM1YHSMCuoYbn",
+          "name": "volt-business-tools___getReturnWarrantyEligibility",
+          "type": "function_call",
+          "id": "fc_005b87680c13a35d00uQhUTO6yqA2QfNgwEMdZiImtvIJelJTX",
+          "async_": null,
+          "caller": null,
+          "namespace": null,
+          "status": "completed",
+          "response_id": "caresp_005b87680c13a35d00H9ZxJMqSLJQbhnPJ9V9PY5pvwaiGpmms",
+          "agent_reference": null
+        },
+        {
+          "id": "fco_005b87680c13a35d00mWMhYFJ4LmL3TEnS2xENgZt1gkISIWoh",
+          "output": "{\"synthetic\": true, \"policy_reference\": \"VOLT-REPLACEMENT-2026-11\", \"as_of\": \"2026-11-11\", \"action_performed\": false, \"status\": \"needs_batch\", \"reason\": \"Ask for the batch code before a batch-specific recall conclusion\"}",
+          "status": "completed",
+          "type": "function_call_output",
+          "call_id": "call_rwc47gMeq9ndM1YHSMCuoYbn",
+          "caller": null,
+          "created_by": null,
+          "name": null,
+          "namespace": null,
+          "response_id": "caresp_005b87680c13a35d00H9ZxJMqSLJQbhnPJ9V9PY5pvwaiGpmms",
+          "agent_reference": null
+        },
+        {
+          "arguments": "{\"query_variants\":[\"What is the replacement eligibility policy for a delivered order when the batch code is missing?\"]}",
+          "call_id": "call_o70cETa2iALkL0sSJjnYzRIs",
+          "name": "volt-policy-knowledge___knowledge_base_retrieve",
+          "type": "function_call",
+          "id": "fc_005b87680c13a35d00eeAwi62ccLgbwE4UrGHrqjK8kFfEYgXP",
+          "async_": null,
+          "caller": null,
+          "namespace": null,
+          "status": "completed",
+          "response_id": "caresp_005b87680c13a35d00H9ZxJMqSLJQbhnPJ9V9PY5pvwaiGpmms",
+          "agent_reference": null
+        },
+        {
+          "id": "fco_005b87680c13a35d00BS1VbNXHIn29CPtMDYmV2l5yHiEeY7cq",
+          "output": "[{\"ref_id\":0,\"title\":\"Volt & Co synthetic replacement policy\",\"terms\":\"VOLT-REPLACEMENT-2026-11\",\"content\":\"# Volt & Co synthetic replacement policy\\n\\nReference: VOLT-REPLACEMENT-2026-11\\nEffective date and demonstration clock: 2026-11-11\\nScope: fictional Volt & Co products and synthetic demonstration orders only.\\n\\nAn identified product batch with an active recall is eligible for a human\\nreplacement assessment even after the standard return window. Confirm both the\\norder and batch using the business tools. A recall result is not proof that the\\ncustomer owns a particular order.\\n\\nStandard unopened returns use a 30-day window from delivery. Warranty assessment\\nis a separate human support process, not an automatic refund or replacement.\\nFor unknown orders, missing batches, or batches absent from the register, ask for\\nthe missing evidence or escalate. Never equate missing data with no recall.\\n\\nThe assistant can explain eligibility and recommend the next step. It cannot\\napprove a replacement, ship goods, issue refunds, or change records. The tools\\nin this showcase are read-only.\\n\\nReports of a swollen, very hot, smoking, or burnt device must be escalated to a\\nhuman support representative. The assistant must not offer repair workarounds.\\n\"},{\"ref_id\":1,\"title\":\"Volt & Co synthetic recall notice\",\"terms\":\"SYNTHETIC-RECALL-001\",\"content\":\"# Volt & Co synthetic recall notice\\n\\nReference: SYNTHETIC-RECALL-001\\nProduct: VC-C65, Volt Charge 65\\nAffected batch: CH-0722\\nStatus in the demonstration register: recalled\\n\\nEscalate this case to a human support representative using the fictional recall\\nprocedure. The synthetic replacement policy VOLT-REPLACEMENT-2026-11 allows a\\nreplacement assessment outside the standard return window when the recalled\\nbatch and order are confirmed. No shipping or refund action is executed by the\\ndemonstration agent.\\n\\nThis notice applies only to the named synthetic batch. A different or missing\\nbatch must be checked separately. Do not infer a broad product-safety guarantee\\nfrom an absent recall record.\\n\\nAll products and records are fictional and are not product-safety advice.\\n\"}]\n{\"kind\":\"reference\",\"ref_id\":0,\"uri\":\"https://srch-volt-citadel-261111.search.windows.net/indexes/volt-policies/docs/VOLT-REPLACEMENT-2026-11?$select=title%2Ccontent%2Creference%2Cid%2Curl\\u0026api-version=2026-08-01-preview\\u0026allowUnsafeKeys=true\",\"mimeType\":\"application/json\",\"sourceData\":{\"id\":\"VOLT-REPLACEMENT-2026-11\",\"title\":\"Volt \\u0026 Co synthetic replacement policy\",\"content\":\"# Volt \\u0026 Co synthetic replacement policy\\n\\nReference: VOLT-REPLACEMENT-2026-11\\nEffective date and demonstration clock: 2026-11-11\\nScope: fictional Volt \\u0026 Co products and synthetic demonstration orders only.\\n\\nAn identified product batch with an active recall is eligible for a human\\nreplacement assessment even after the standard return window. Confirm both the\\norder and batch using the business tools. A recall result is not proof that the\\ncustomer owns a particular order.\\n\\nStandard unopened returns use a 30-day window from delivery. Warranty assessment\\nis a separate human support process, not an automatic refund or replacement.\\nFor unknown orders, missing batches, or batches absent from the register, ask for\\nthe missing evidence or escalate. Never equate missing data with no recall.\\n\\nThe assistant can explain eligibility and recommend the next step. It cannot\\napprove a replacement, ship goods, issue refunds, or change records. The tools\\nin this showcase are read-only.\\n\\nReports of a swollen, very hot, smoking, or burnt device must be escalated to a\\nhuman support representative. The assistant must not offer repair workarounds.\\n\",\"reference\":\"VOLT-REPLACEMENT-2026-11\",\"url\":\"https://github.com/SridharArrabelly/foundry-showcase/blob/feature/volt-citadel/showcase/knowledge/replacement-policy.md\"}}\n{\"kind\":\"reference\",\"ref_id\":1,\"uri\":\"https://srch-volt-citadel-261111.search.windows.net/indexes/volt-policies/docs/SYNTHETIC-RECALL-001?$select=title%2Ccontent%2Creference%2Cid%2Curl\\u0026api-version=2026-08-01-preview\\u0026allowUnsafeKeys=true\",\"mimeType\":\"application/json\",\"sourceData\":{\"id\":\"SYNTHETIC-RECALL-001\",\"title\":\"Volt \\u0026 Co synthetic recall notice\",\"content\":\"# Volt \\u0026 Co synthetic recall notice\\n\\nReference: SYNTHETIC-RECALL-001\\nProduct: VC-C65, Volt Charge 65\\nAffected batch: CH-0722\\nStatus in the demonstration register: recalled\\n\\nEscalate this case to a human support representative using the fictional recall\\nprocedure. The synthetic replacement policy VOLT-REPLACEMENT-2026-11 allows a\\nreplacement assessment outside the standard return window when the recalled\\nbatch and order are confirmed. No shipping or refund action is executed by the\\ndemonstration agent.\\n\\nThis notice applies only to the named synthetic batch. A different or missing\\nbatch must be checked separately. Do not infer a broad product-safety guarantee\\nfrom an absent recall record.\\n\\nAll products and records are fictional and are not product-safety advice.\\n\",\"reference\":\"SYNTHETIC-RECALL-001\",\"url\":\"https://github.com/SridharArrabelly/foundry-showcase/blob/feature/volt-citadel/showcase/knowledge/recall-notice.md\"}}",
+          "status": "completed",
+          "type": "function_call_output",
+          "call_id": "call_o70cETa2iALkL0sSJjnYzRIs",
+          "caller": null,
+          "created_by": null,
+          "name": null,
+          "namespace": null,
+          "response_id": "caresp_005b87680c13a35d00H9ZxJMqSLJQbhnPJ9V9PY5pvwaiGpmms",
+          "agent_reference": null
+        },
+        {
+          "id": "msg_005b87680c13a35d003lYdGLhsonsFsZQsdS2goERZRBQ6YczS",
+          "content": [
+            {
+              "annotations": [],
+              "text": "{\"answer\":\"I need the device batch to check eligibility. For VC-10482, the order is delivered, but the eligibility tool returned needs_batch, so I can\u2019t approve a replacement or infer the batch. If you share the batch code, I\u2019ll check it.\",\"decision\":\"needs_batch\",\"product_id\":\"VC-C65\",\"batch\":null,\"citations\":[{\"reference\":\"VOLT-REPLACEMENT-2026-11\",\"title\":\"Volt & Co synthetic replacement policy\"},{\"reference\":\"SYNTHETIC-RECALL-001\",\"title\":\"Volt & Co synthetic recall notice\"}],\"synthetic\":true}",
+              "type": "output_text",
+              "logprobs": []
+            }
+          ],
+          "role": "assistant",
+          "status": "completed",
+          "type": "message",
+          "phase": null,
+          "response_id": "caresp_005b87680c13a35d00H9ZxJMqSLJQbhnPJ9V9PY5pvwaiGpmms",
+          "agent_reference": null
+        }
+      ]
+    }
+  ]
+}

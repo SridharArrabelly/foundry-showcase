@@ -1,0 +1,28 @@
+diff --git a/bicep/infra/modules/apim/inference-api.bicep b/bicep/infra/modules/apim/inference-api.bicep
+--- a/bicep/infra/modules/apim/inference-api.bicep
++++ b/bicep/infra/modules/apim/inference-api.bicep
+@@ -196,7 +196,9 @@
+-    largeLanguageModel: {
++    largeLanguageModel: azureMonitorLogSettings.largeLanguageModel.logs == 'disabled' ? {
++      logs: 'disabled'
++    } : {
+       logs: azureMonitorLogSettings.largeLanguageModel.logs
+       requests: {
+         messages: azureMonitorLogSettings.largeLanguageModel.requests.messages
+         maxSizeInBytes: azureMonitorLogSettings.largeLanguageModel.requests.maxSizeInBytes
+       }
+       responses: {
+diff --git a/bicep/infra/modules/apim/unified-ai-api.bicep b/bicep/infra/modules/apim/unified-ai-api.bicep
+--- a/bicep/infra/modules/apim/unified-ai-api.bicep
++++ b/bicep/infra/modules/apim/unified-ai-api.bicep
+@@ -197,7 +197,9 @@
+-    largeLanguageModel: {
++    largeLanguageModel: azureMonitorLogSettings.largeLanguageModel.logs == 'disabled' ? {
++      logs: 'disabled'
++    } : {
+       logs: azureMonitorLogSettings.largeLanguageModel.logs
+       requests: {
+         messages: azureMonitorLogSettings.largeLanguageModel.requests.messages
+         maxSizeInBytes: azureMonitorLogSettings.largeLanguageModel.requests.maxSizeInBytes
+       }
+       responses: {

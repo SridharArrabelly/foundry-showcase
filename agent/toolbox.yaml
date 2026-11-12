@@ -1,0 +1,4 @@
+description: Versioned Volt support capabilities. Synthetic business data and policy grounding only.
+connections:
+  - name: volt-policy-knowledge
+  - name: volt-business-tools

@@ -1,0 +1,17 @@
+[project]
+name = "volt-support-agent"
+version = "0.1.0"
+description = "Synthetic Volt support on Microsoft Foundry with governed tools and policy evidence."
+requires-python = ">=3.13"
+dependencies = [
+    "agent-framework-foundry",
+    "agent-framework-foundry-hosting>=1.0.0b260813",
+    "azure-ai-agentserver-optimization>=1.0.0b1",
+    "azure-ai-projects>=2.10.0",
+    "debugpy",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.2.0",
+]
