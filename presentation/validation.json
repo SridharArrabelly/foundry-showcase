@@ -1,11 +1,11 @@
 {
-  "slides": 24,
-  "visible": 22,
+  "slides": 26,
+  "visible": 24,
   "hidden": [
-    23,
-    24
+    25,
+    26
   ],
-  "notes": "Full manuscript embedded in every slide",
+  "notes": "Speaker notes and delivery clocks embedded in every slide",
   "source_slide_27": "excluded",
   "unused_source_audio": "removed",
   "textual_checks": "passed",

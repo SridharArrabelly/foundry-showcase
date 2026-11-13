@@ -1,10 +1,9 @@
 # Demo runbook — "Can we defend this release?"
 
-**Candidate runbook for the supplied 26-slide deck**, not the current 24-slide
-repository deck. Local source copies are in
-`.runtime\incoming\cowork-review-20261113`. The supplied presentation is
-rights-managed and remains local with its protection intact; it has not replaced
-the repository presentation.
+**Runbook for the current 26-slide deck:**
+`presentation\Can we defend this release - Foundry SE Showcase.pptx`.
+The user supplied a General/public copy; it replaces the previous presentation.
+Demo entry/return pairs are **8/9, 13/14, 16/17 and 20/21**. Backups 25–26 are hidden.
 
 **Activation pending:** the steps below describe the intended post-activation
 route. No new DEV/DEMO release, failed/passing live PR gate, red-team scorecard
@@ -25,7 +24,7 @@ request from a previous recorded run" and open the recorded tab. Never present a
 
 ---
 
-## Demo 1 — Build and trace (inner loop) · 8 min · deck slide 8
+## Demo 1 — Build and trace (inner loop) · 17:00–25:00 · slide 8 → return 9
 
 **Question:** Can we explain how this answer was produced?
 
@@ -61,7 +60,7 @@ Fallback: `presentation/Recorded evidence.html` → golden DEMO trace (43 spans)
 
 ---
 
-## Demo 2 — Prove it (inner loop) · 8 min · deck slide 13
+## Demo 2 — Prove it (inner loop) · 32:00–40:00 · slide 13 → return 14
 
 **Question:** What does "passing" actually establish?
 
@@ -89,7 +88,7 @@ terminal, red-team scorecard, guardrail probe output, Optimizer run.
 
 ---
 
-## Demo 3 — The gate (Bridge 1) · 8 min · deck slide 16
+## Demo 3 — The gate (Bridge 1) · 42:00–50:00 · slide 16 → return 17
 
 **Question:** Can we defend this exact artifact?
 
@@ -112,7 +111,7 @@ Pre-staged before the session (a gate run takes up to 45 min):
 
 ---
 
-## Demo 4 — Production teaches development (Bridge 2) · 10 min · deck slide 20
+## Demo 4 — Production teaches development (Bridge 2) · 60:00–70:00 · slide 20 → return 21
 
 **Question:** What did production teach us to test next?
 

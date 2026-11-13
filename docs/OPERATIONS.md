@@ -69,12 +69,13 @@ Optimizer run on stage: its measured duration was 18 minutes 23 seconds.
 
 ## Start the presentation
 
-Open `presentation\Volt & Co - Governed and improving agents.pptx`
-in PowerPoint Presenter View. Use `Presenter manuscript.pdf` for the complete
-spoken script and `Source mapping and readiness.md` for preflight checks.
+Open `presentation\Can we defend this release - Foundry SE Showcase.pptx`
+in PowerPoint Presenter View. Use `Presenter manuscript.pdf` for the matching
+speaker notes, `docs\DEMO-RUNBOOK.md` for commands and transitions, and
+`Source mapping and readiness.md` for preflight checks.
 `Recorded evidence.html` is the clearly labeled offline fallback, not a live UI.
-The four visible demo cards are slides **7, 12, 15 and 19**, returning to
-**8, 13, 16 and 20**. The pre-activation route distinguishes historical cloud
+The four visible demo cards are slides **8, 13, 16 and 20**, returning to
+**9, 14, 17 and 21**. The pre-activation route distinguishes historical cloud
 results from local v2 tests. A fresh corrected escalation request in Demo 4
 requires a separately approved and verified v2 deployment; never use v1 as its proof.
 
