@@ -1,0 +1,98 @@
+name: Agent release to DEMO
+
+# The outer loop: a merge to main promotes the exact ZIP the PR gate evaluated,
+# after a second human approval on the "volt-demo-promotion" environment.
+# Nothing is rebuilt; the promoted bytes are the evaluated bytes.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      pull_request:
+        description: Merged PR whose evaluated candidate should be promoted
+        required: true
+        type: number
+
+permissions:
+  contents: read
+
+concurrency:
+  group: volt-approved-live-release
+  cancel-in-progress: false
+
+env:
+  GH_TOKEN: ${{ github.token }}
+  VOLT_LIVE_GATE_ENABLED: ${{ vars.VOLT_LIVE_GATE_ENABLED }}
+
+jobs:
+  promote:
+    if: vars.VOLT_LIVE_GATE_ENABLED == 'true'
+    environment: volt-demo-promotion   # required reviewer = release approval
+    timeout-minutes: 45
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      checks: read
+      actions: read
+      pull-requests: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - uses: astral-sh/setup-uv@v6
+      - name: Resolve the merged PR, its evaluated head and its gate run
+        id: lineage
+        run: |
+          if [ -n "${{ inputs.pull_request }}" ]; then PR="${{ inputs.pull_request }}";
+          else
+            PR=$(gh api "repos/$GITHUB_REPOSITORY/commits/$GITHUB_SHA/pulls" --jq "[.[] | select(.merged_at != null and .base.ref == \"main\" and .merge_commit_sha == \"$GITHUB_SHA\")] | if length == 1 then .[0].number else empty end")
+          fi
+          test -n "$PR" || { echo "No merged PR found for ${GITHUB_SHA}"; exit 1; }
+          HEAD=$(gh pr view "$PR" --json headRefOid --jq .headRefOid)
+          RUN=$(gh run list --workflow agent-pr-gate.yml --commit "$HEAD" --event pull_request --status success --json databaseId --jq '.[0].databaseId')
+          test -n "$RUN" || { echo "No successful PR gate run for $HEAD - refusing to promote"; exit 1; }
+          echo "pr=$PR" >> "$GITHUB_OUTPUT"; echo "head=$HEAD" >> "$GITHUB_OUTPUT"; echo "run=$RUN" >> "$GITHUB_OUTPUT"
+      - name: Use the evaluated source for dataset and evaluator identity
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.lineage.outputs.head }}
+      - name: Fetch the evaluated case file from the PR gate run
+        uses: actions/download-artifact@v4
+        with:
+          name: volt-case-file-${{ steps.lineage.outputs.head }}
+          path: .runtime/case-file
+          run-id: ${{ steps.lineage.outputs.run }}
+          github-token: ${{ github.token }}
+      - name: Require merged exact PR and actual DEMO approval controls
+        env:
+          VOLT_GATE_READ_TOKEN: ${{ secrets.VOLT_GATE_READ_TOKEN }}
+        working-directory: agent/src
+        run: uv run --locked python ../../scripts/live_gate_preflight.py --pull-request "${{ steps.lineage.outputs.pr }}" --expected-commit "${{ steps.lineage.outputs.head }}" --environment volt-demo-promotion
+      - uses: azure/login@v2
+        with:
+          client-id: ${{ vars.VOLT_DEMO_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      - name: Promote the evaluated ZIP without rebuilding
+        working-directory: agent/src
+        run: |
+          uv run --locked python ../../scripts/promote_demo.py \
+            --package ../../.runtime/case-file/candidate/agent.zip \
+            --deployment-receipt ../../.runtime/case-file/candidate/deployment.json \
+            --evaluation-receipt ../../.runtime/case-file/dev/native-evaluation.json \
+            --action-judgments ../../.runtime/case-file/dev/action-judgments.json \
+            --expected-commit "${{ steps.lineage.outputs.head }}" --pull-request "${{ steps.lineage.outputs.pr }}" \
+            --required-check contracts --contract-version v2 --out ../../.runtime/case-file/promotion.json --execute
+      - name: Verify post-promotion behaviour in DEMO
+        working-directory: agent/src
+        run: uv run --locked python ../../scripts/validate_live_release.py --environment demo --deployment-receipt ../../.runtime/case-file/promotion.json --out ../../.runtime/case-file/demo --execute
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: volt-release-${{ steps.lineage.outputs.head }}
+          path: .runtime/case-file
+          if-no-files-found: error
+          retention-days: 90

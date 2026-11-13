@@ -18,7 +18,14 @@ from settings import Settings
 
 
 def create_support_agent(client, tools, instructions, memory=None):
-    middleware = [EvidenceContract()] if memory is None else [memory]
+    """The business evidence contract is never optional.
+
+    Previously, enabling Memory *replaced* the EvidenceContract middleware, so a
+    Memory-enabled build could emit model-written decisions. Memory now runs
+    outside the contract: it may shape context, but the customer-facing decision
+    is always rendered from this run's tool evidence.
+    """
+    middleware = [EvidenceContract()] if memory is None else [memory, EvidenceContract()]
     return Agent(
         client=client, name="VoltSupport", instructions=instructions,
         tools=tools, middleware=middleware,

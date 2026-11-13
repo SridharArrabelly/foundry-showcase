@@ -72,6 +72,6 @@ def test_v2_preserves_all_original_cases_and_expectations():
     folder = ROOT / "agent/src/.foundry/datasets"
     original = [json.loads(line) for line in (folder / "volt-regression.jsonl").read_text().splitlines()]
     updated = [json.loads(line) for line in (folder / "volt-regression-v2.jsonl").read_text().splitlines()]
-    assert len(updated) == len(original) + 1
+    assert len(updated) == len(original) + 2
     for before, after in zip(original, updated):
         assert all(after[key] == value for key, value in before.items())

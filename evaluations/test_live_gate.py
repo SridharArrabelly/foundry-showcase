@@ -6,10 +6,11 @@ import zipfile
 from pathlib import Path
 
 import pytest
+import yaml
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 from promote_demo import REPO, validate_pr_checks
-from live_gate_preflight import validate_environment
+from live_gate_preflight import validate_environment, validate_workflow_context
 from score_action_claims import RUBRIC, CALIBRATION, verify_action_gate
 from validate_live_release import DEV, DEMO, validation_endpoint
 import prepare_candidate
@@ -24,6 +25,58 @@ def test_current_main_target_uses_contracts_and_rejects_stale_green_rerun():
         validate_pr_checks(pr, [success, {**success, "id": 2, "conclusion": "failure"}], "abc")
     with pytest.raises(ValueError, match="trusted"):
         validate_pr_checks({**pr, "head": {"sha": "abc", "repo": {"full_name": "fork/untrusted"}}}, [success], "abc")
+
+
+def test_workflow_context_binds_pr_events_to_the_reviewed_head_and_dev_only():
+    env = {"GITHUB_REPOSITORY": REPO, "GITHUB_EVENT_NAME": "pull_request",
+           "GITHUB_REF": "refs/pull/5/merge"}
+    event = {"number": 5, "pull_request": {
+        "head": {"sha": "head", "repo": {"full_name": REPO}}, "base": {"ref": "main"}}}
+    validate_workflow_context("volt-dev-evaluation", 5, "head", env=env, event=event)
+    for environment, number, commit in [
+        ("volt-demo-promotion", 5, "head"), ("volt-dev-evaluation", 6, "head"),
+        ("volt-dev-evaluation", 5, "stale"),
+    ]:
+        with pytest.raises(ValueError, match="PR event"):
+            validate_workflow_context(environment, number, commit, env=env, event=event)
+    fork = copy.deepcopy(event)
+    fork["pull_request"]["head"]["repo"]["full_name"] = "fork/untrusted"
+    with pytest.raises(ValueError, match="PR event"):
+        validate_workflow_context("volt-dev-evaluation", 5, "head", env=env, event=fork)
+
+
+def test_release_push_and_scheduled_watch_have_distinct_trusted_contexts():
+    env = {"GITHUB_REPOSITORY": REPO, "GITHUB_REF": "refs/heads/main",
+           "GITHUB_EVENT_NAME": "push", "GITHUB_SHA": "merged"}
+    validate_workflow_context("volt-demo-promotion", pr={"merge_commit_sha": "merged"}, env=env)
+    with pytest.raises(ValueError, match="exact merged PR"):
+        validate_workflow_context("volt-demo-promotion", pr={"merge_commit_sha": "old"}, env=env)
+    scheduled = {**env, "GITHUB_EVENT_NAME": "schedule"}
+    validate_workflow_context("volt-demo-monitoring", env=scheduled)
+    with pytest.raises(ValueError, match="monitoring only"):
+        validate_workflow_context("volt-dev-evaluation", env=scheduled)
+    with pytest.raises(ValueError, match="from main"):
+        validate_workflow_context("volt-demo-monitoring", env={**scheduled, "GITHUB_REF": "refs/heads/feature"})
+
+
+def test_automatic_workflows_cannot_reach_azure_before_explicit_activation():
+    workflows = Path(__file__).resolve().parents[1] / ".github/workflows"
+    for filename, job_name in [
+        ("agent-pr-gate.yml", "live-evaluation"), ("agent-release.yml", "promote"),
+        ("production-watch.yml", "watch"),
+    ]:
+        workflow = yaml.load((workflows / filename).read_text(), Loader=yaml.BaseLoader)
+        job = workflow["jobs"][job_name]
+        assert "vars.VOLT_LIVE_GATE_ENABLED == 'true'" in job["if"]
+        assert workflow["env"]["VOLT_LIVE_GATE_ENABLED"] == "${{ vars.VOLT_LIVE_GATE_ENABLED }}"
+        steps = job["steps"]
+        preflight = next(i for i, step in enumerate(steps) if "live_gate_preflight.py" in step.get("run", ""))
+        login = next(i for i, step in enumerate(steps) if step.get("uses") == "azure/login@v2")
+        assert preflight < login
+        if job_name == "watch":
+            assert "vars.VOLT_PRODUCTION_WATCH_ENABLED == 'true'" in job["if"]
+    gate = yaml.load((workflows / "agent-pr-gate.yml").read_text(), Loader=yaml.BaseLoader)
+    assert "paths" not in gate["on"]["pull_request"]
 
 
 def test_an_environment_name_is_not_an_approval_gate():

@@ -11,6 +11,10 @@ The evidence-first revision adds a locally tested business response boundary,
 additive v2 evaluation and an opt-in behavioral workflow. It has not been
 deployed or cloud-validated. [Release activation and remaining approvals](RELEASE-GATE.md)
 are separate from the historical results below.
+The follow-up keeps the contract enabled even with Memory, adds a second
+customer-language escalation case, and introduces automatic PR/release and
+scheduled-check workflows. Their activation flags remain unset; merging code
+alone does not authorize or activate Azure work.
 
 - Pinned Citadel Governance Hub parameters for a small, single-region deployment.
 - Separate Foundry `volt-dev` and production-like `volt-demo` projects.

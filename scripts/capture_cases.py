@@ -18,6 +18,27 @@ from observed_tools import successful_business_tools, successful_business_calls
 from business_contract_v2 import grade as grade_v2
 
 
+def invoke_versioned(project, client, agent, expected_version, query):
+    session = project.agents.create_session(
+        agent_name=agent,
+        version_indicator=VersionRefIndicator(agent_version=expected_version),
+    )
+    if session.version_indicator.agent_version != expected_version:
+        raise RuntimeError("The created session is not bound to the requested version.")
+    conversation = client.conversations.create()
+    result = client.responses.create(
+        input=query, conversation={"id": conversation.id},
+        extra_body={"agent_session_id": session.agent_session_id},
+    )
+    data = result.model_dump(mode="json")
+    if data.get("agent_session_id") != session.agent_session_id:
+        raise RuntimeError("The response did not use the requested version-bound session.")
+    reference = data.get("agent_reference") or {}
+    if reference.get("name") != agent or reference.get("version") != expected_version:
+        raise RuntimeError("Unexpected serving version; refusing to mislabel the result.")
+    return result
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--project-endpoint", required=True)
@@ -86,19 +107,7 @@ def main() -> None:
                     if not user_texts or user_texts[-1] != case["query"]:
                         raise ValueError("Existing response input does not match the selected case.")
                 else:
-                    session = project.agents.create_session(
-                        agent_name=args.agent,
-                        version_indicator=VersionRefIndicator(agent_version=args.expected_version),
-                    )
-                    if session.version_indicator.agent_version != args.expected_version:
-                        raise RuntimeError("The created session is not bound to the requested version.")
-                    conversation = client.conversations.create()
-                    result = client.responses.create(
-                        input=case["query"], conversation={"id": conversation.id},
-                        extra_body={"agent_session_id": session.agent_session_id},
-                    )
-                    if result.model_dump().get("agent_session_id") != session.agent_session_id:
-                        raise RuntimeError("The response did not use the requested version-bound session.")
+                    result = invoke_versioned(project, client, args.agent, args.expected_version, case["query"])
                 response = result.model_dump(mode="json")
                 output_text = result.output_text
                 record = {

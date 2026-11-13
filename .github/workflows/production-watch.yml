@@ -1,0 +1,83 @@
+name: Production watch (scheduled evaluation)
+
+# Operate: re-score the explicitly configured DEMO version on a schedule.
+# Uses the same capture + native evaluator as the
+# release gate. Switch DATASET/EVAL_ID to v2 once the v2 grader is registered.
+
+on:
+  schedule:
+    - cron: "0 6 * * 1"     # Mondays 06:00 UTC
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  id-token: write
+  issues: write
+
+concurrency:
+  group: volt-approved-live-release
+  cancel-in-progress: false
+
+env:
+  PROJECT_ENDPOINT: ${{ vars.VOLT_DEMO_PROJECT_ENDPOINT }}
+  EXPECTED_VERSION: ${{ vars.VOLT_DEMO_AGENT_VERSION }}
+  EVAL_ID: ${{ vars.VOLT_DEMO_EVAL_ID }}
+  DATASET: agent/src/.foundry/datasets/volt-regression.jsonl
+  GH_TOKEN: ${{ github.token }}
+  VOLT_LIVE_GATE_ENABLED: ${{ vars.VOLT_LIVE_GATE_ENABLED }}
+  VOLT_PRODUCTION_WATCH_ENABLED: ${{ vars.VOLT_PRODUCTION_WATCH_ENABLED }}
+
+jobs:
+  watch:
+    if: vars.VOLT_LIVE_GATE_ENABLED == 'true' && vars.VOLT_PRODUCTION_WATCH_ENABLED == 'true'
+    environment: volt-demo-monitoring
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - uses: astral-sh/setup-uv@v6
+      - name: Verify explicit activation, approvals and monitoring configuration
+        env:
+          VOLT_GATE_READ_TOKEN: ${{ secrets.VOLT_GATE_READ_TOKEN }}
+        working-directory: agent/src
+        run: |
+          uv run --locked python ../../scripts/live_gate_preflight.py --environment volt-demo-monitoring
+          test "$PROJECT_ENDPOINT" = "https://fdy-volt-citadel-261111.services.ai.azure.com/api/projects/volt-demo"
+          [[ "$EXPECTED_VERSION" =~ ^[0-9]+$ ]]
+          [[ "$EVAL_ID" == eval_* ]]
+      - uses: azure/login@v2
+        with:
+          client-id: ${{ vars.VOLT_DEMO_MONITOR_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      - name: Capture fresh responses from the configured DEMO version
+        id: capture
+        working-directory: agent/src
+        run: |
+          OUT=../../.runtime/watch-$(date -u +%Y%m%d-%H%M%S)
+          echo "OUT=$OUT" >> "$GITHUB_ENV"
+          uv sync --locked --python 3.13
+          uv run python ../../scripts/capture_cases.py --project-endpoint "$PROJECT_ENDPOINT" \
+            --expected-version "$EXPECTED_VERSION" --dataset "../../$DATASET" --fresh --out "$OUT" --pause-seconds 20
+      - name: Score them with the native business evaluator
+        id: score
+        working-directory: agent/src
+        run: |
+          uv run python ../../scripts/evaluate_captures.py --project-endpoint "$PROJECT_ENDPOINT" \
+            --captures "$OUT/captured.jsonl" --dataset "../../$DATASET" --label "Production watch" \
+            --out "$OUT/evaluation.json" --eval-id "$EVAL_ID" --require-all-pass
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: volt-production-watch-${{ github.run_id }}
+          path: .runtime
+          retention-days: 90
+      - name: A failing watch becomes an issue (Bridge 2 starts here)
+        if: failure() && (steps.capture.outcome == 'failure' || steps.score.outcome == 'failure')
+        run: |
+          RUN_URL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          gh issue create --title "Scheduled synthetic check failed for DEMO v$EXPECTED_VERSION" \
+            --body "Automated monitoring report. The pinned-version capture or evaluation failed. Case file: $RUN_URL. Determine whether this is an operational failure or a behavioral regression before creating a new test. This is a fixed synthetic v1 dataset, not sampled production traffic or an action-truthfulness gate."

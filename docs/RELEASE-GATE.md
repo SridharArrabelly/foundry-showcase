@@ -6,8 +6,9 @@ have not changed. Its immutable ZIP and receipts remain historical evidence.
 
 ## What changed
 
-The old repair changed instructions only. The new Memory-disabled business path
-registers `EvidenceContract` in the real Agent construction. It buffers model
+The old repair changed instructions only. The business path always
+registers `EvidenceContract` in the real Agent construction, including when
+Memory supplies context. It buffers model
 output, selects matching current-run tool calls/results, enforces the decision
 and renders a constrained response before customer text leaves the Responses
 stream. Contradictory, missing or malformed evidence produces an explicitly
@@ -19,12 +20,15 @@ system. It cites approved references actually supplied by the business result;
 IQ retrieval remains a separate inspectable source, not a basis for inventing a
 tool decision. Response buffering adds time to first customer text.
 
-DEV Memory is a separate exercise that retains its existing middleware; it does
-not use the business-only renderer. The v2 release gate rejects Memory-enabled
-packages. No cross-user Memory guarantee is added.
+DEV Memory now runs outside the contract and cannot bypass its renderer.
+Memory-only requests have no business tool evidence and return `unavailable`;
+the prior native Memory records are historical, not proof of the new response UX.
+The v2 release gate still rejects Memory-enabled packages. No cross-user Memory
+guarantee is added.
 
 V1 dataset, grader and recordings remain unchanged. V2 adds exact tool arguments,
-returned status consistency and an escalation-request case. The code check for
+returned status consistency and two customer-language escalation cases (11 total).
+The code check for
 unsupported action phrases is intentionally a regression sentinel, not a semantic
 safety classifier. The separate model rubric must also pass its eight positive/
 negative calibration examples and every captured case before promotion.
@@ -60,16 +64,27 @@ Do not configure these or run the live workflow without separate approval.
    Credentials are not source files; token creation also requires approval.
 6. Require the exact `volt/live-behavior` status on `main`, alongside current CI.
    Set repository variable `VOLT_LIVE_GATE_ENABLED=true` only after approval.
-7. Approve a bounded trial: one candidate, ten fresh cases, one native business
-   evaluation, eight calibration prompts and ten model-rubric judgments.
-   Promotion performs another independent ten-case/native/rubric validation.
+7. Approve a bounded trial: one candidate, eleven fresh cases, one native business
+   evaluation, eight calibration prompts and eleven model-rubric judgments.
+   Promotion performs another independent eleven-case/native/rubric validation.
    No retries, optimizer jobs, role changes or recurring evaluation are implicit.
 
-The manual workflow takes a same-repository PR number, exact 40-character head
-SHA and optional promotion flag. It runs only from reviewed `main`, validates
-the head again before Azure login, serializes live runs, and requires environment
-approval. Fork PRs and draft PRs are rejected. This is intentionally opt-in,
-not automatic execution of every PR's code with deployment credentials.
+All cloud jobs are disabled unless `VOLT_LIVE_GATE_ENABLED=true`. With separately
+approved activation, `agent-pr-gate.yml` evaluates same-repository, non-draft PRs
+after local checks and a real environment approval. It validates the PR event,
+head and target, rather than incorrectly requiring a main-branch event.
+It runs for every PR, including workflow/docs changes, so a required status
+cannot remain pending merely because a path filter skipped the workflow.
+This also means each approved PR run incurs the full bounded evaluation cost.
+
+`agent-release.yml` resolves the exact merged PR for a main push, downloads
+its successful gate artifact, and uses the evaluated head's dataset and grader
+for promotion. Both stages still require human approval before Azure login.
+The manual `behavioral-release.yml` remains available from reviewed `main`.
+All four cloud workflows share one concurrency group and never cancel a live run.
+Choose one promotion route per candidate. Do not approve both a manual promotion
+and the automatic release for the same PR; concurrency serializes work but is
+not a deployment deduplication mechanism.
 
 To include promotion in one run, approve DEV first, wait for the real behavioral
 status, merge the exact PR, then approve the queued DEMO environment job. If the
@@ -96,13 +111,49 @@ ZIP without rebuilding. `verify_demo_release.py` checks independent DEMO results
 
 The Actions artifact is the case file: candidate ZIP/hash/source receipt, native
 evaluator registration, captured responses, native case results, rubric and
-calibration verdicts, and promotion/post-release receipts. Artifacts have seven-day
-retention; export the reviewed sanitized subset before expiration. These responses
+calibration verdicts, and promotion/post-release receipts. Workflows request 90-day
+retention, subject to repository/organization policy; export the reviewed sanitized
+subset before expiration. These responses
 are synthetic but should still be treated as operational evidence.
 
 Historical command reproduction needs explicit `--contract-version v1`,
 `--base-branch feature/volt-citadel`, `--required-check contracts` and
 `--required-check tool-contract`. Do not rerun an already completed promotion.
+
+## Optional scans and scheduled checks
+
+The preview red-team script now invokes the real version-pinned agent through
+the same helper as business captures. It preserves target response IDs and rejects
+failed or mismatched responses and missing scorecards. It uses isolated PEP 723
+dependencies, not the hosted agent's runtime environment:
+
+```powershell
+uv run --python 3.13 --script .\scripts\run_red_team.py --check-sdk
+# Only after separate usage approval; replace the version with a verified DEV version.
+uv run --python 3.13 --script .\scripts\run_red_team.py --execute `
+  --expected-version <DEV-version> --objectives 1 --max-target-calls 20 `
+  --out .\.runtime\redteam-<unique-run>
+```
+
+Default scope: four content-risk categories, one objective per category, baseline
+plus EASY/Jailbreak strategies, at most 20 target calls and a 30-minute scan timeout.
+Objective generation, transformation and grading incur additional usage; the
+target-call limit is not a spending cap. Completion is not a zero-attack-success
+claim. This is not a business-rule evaluation. Source:
+[official Microsoft red-team SDK guide](https://learn.microsoft.com/azure/foundry/how-to/develop/run-scans-ai-red-teaming-agent).
+
+Local adapter tests pass. Full SDK installation is currently blocked by a
+missing wheel on the configured mirror and TLS handshake failures on the public
+package host. No SDK scan, scorecard or native calibration is claimed.
+
+`production-watch.yml` additionally requires `VOLT_PRODUCTION_WATCH_ENABLED=true`,
+the protected `volt-demo-monitoring` environment, a separately scoped OIDC identity
+and verified DEMO endpoint/version/evaluation variables. It replays the fixed
+synthetic v1 dataset against the explicitly pinned version; it does not sample
+real traffic, prove the endpoint-current version, or detect all action claims.
+Only capture/scoring failures open an issue; authentication/setup failures remain
+workflow failures, not invented production incidents. The issue has no dependency
+on a label that may not exist. Activation and recurring costs need separate approval.
 
 ## Remaining approvals and evidence
 

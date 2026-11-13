@@ -1,0 +1,106 @@
+name: Agent PR gate
+
+# Bridge 1, made automatic: every same-repository PR that changes agent behaviour is
+# evaluated against a fresh DEV deployment before it can merge. A human still approves
+# the "volt-dev-evaluation" environment before Azure credentials are issued, so
+# untrusted code never receives deployment credentials unreviewed.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: volt-approved-live-release
+  cancel-in-progress: false
+
+env:
+  PR_NUMBER: ${{ github.event.pull_request.number }}
+  CANDIDATE_SHA: ${{ github.event.pull_request.head.sha }}
+  GH_TOKEN: ${{ github.token }}
+  VOLT_LIVE_GATE_ENABLED: ${{ vars.VOLT_LIVE_GATE_ENABLED }}
+
+jobs:
+  unit-and-contract-tests:
+    if: github.event.pull_request.draft == false && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - uses: astral-sh/setup-uv@v6
+      - name: Read-only tool rules (no cloud)
+        working-directory: tools
+        run: uv run --locked python -m pytest -q
+      - name: Runtime contract and evaluator unit tests (no cloud)
+        working-directory: agent/src
+        run: |
+          uv sync --locked --python 3.13
+          uv run python -m pytest -q
+          uv run python -m pytest ../../evaluations -q
+
+  live-evaluation:
+    if: vars.VOLT_LIVE_GATE_ENABLED == 'true'
+    needs: unit-and-contract-tests
+    environment: volt-dev-evaluation   # required reviewer = the human gate before credentials
+    timeout-minutes: 45
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      checks: read
+      id-token: write
+      statuses: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - uses: astral-sh/setup-uv@v6
+      - name: Verify trusted source and protection rules
+        env:
+          VOLT_GATE_READ_TOKEN: ${{ secrets.VOLT_GATE_READ_TOKEN }}
+        working-directory: agent/src
+        run: uv run --locked python ../../scripts/live_gate_preflight.py --pull-request "$PR_NUMBER" --expected-commit "$CANDIDATE_SHA" --environment volt-dev-evaluation
+      - name: Mark the exact commit pending
+        run: gh api "repos/$GITHUB_REPOSITORY/statuses/$CANDIDATE_SHA" -f state=pending -f context=volt/live-behavior -f description="Business contract + action-truthfulness evaluation running"
+      - uses: azure/login@v2
+        with:
+          client-id: ${{ vars.VOLT_DEV_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      - name: Package once and deploy the candidate to DEV
+        working-directory: agent/src
+        run: uv run --locked python ../../scripts/prepare_candidate.py --expected-commit "$CANDIDATE_SHA" --out ../../.runtime/case-file/candidate --deploy
+      - name: Evaluate fresh candidate responses (code grader + calibrated rubric)
+        working-directory: agent/src
+        run: uv run --locked python ../../scripts/validate_live_release.py --environment dev --deployment-receipt ../../.runtime/case-file/candidate/deployment.json --out ../../.runtime/case-file/dev --execute
+      - name: Preserve the case file (including partial failures)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: volt-case-file-${{ github.event.pull_request.head.sha }}
+          path: .runtime/case-file
+          if-no-files-found: warn
+          retention-days: 90          # a case file you can reopen at the next audit, not next week
+      - name: Publish the verdict on the commit and the PR
+        if: always()
+        env:
+          OUTCOME: ${{ job.status }}
+        run: |
+          STATE=failure
+          if [ "$OUTCOME" = success ] && [ -f .runtime/case-file/dev/summary.json ]; then STATE=success; fi
+          RUN_URL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          gh api "repos/$GITHUB_REPOSITORY/statuses/$CANDIDATE_SHA" -f state="$STATE" -f context=volt/live-behavior -f target_url="$RUN_URL" -f description="Business contract + action rubric: $STATE"
+          SUMMARY="(no summary produced)"
+          if [ -f .runtime/case-file/dev/summary.json ]; then SUMMARY=$(python3 -c "import json;d=json.load(open('.runtime/case-file/dev/summary.json'));print(json.dumps(d,indent=2)[:3000])"); fi
+          printf '### Automated agent gate: **%s** for `%s`\n\n```json\n%s\n```\n\n[Case file and run](%s). Synthetic, bounded evidence; not an availability guarantee.\n' "$STATE" "$CANDIDATE_SHA" "$SUMMARY" "$RUN_URL" > comment.md
+          gh pr comment "$PR_NUMBER" --body-file comment.md
