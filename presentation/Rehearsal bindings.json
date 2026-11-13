@@ -1,5 +1,5 @@
 {
-  "status": "Final DEMO v1 fresh runtime cases and its own native evaluator v1 completed 9/9; same ZIP/native hash, DEMO guardrail and fresh AppInsights root verified. Old incident uses native capture/tool sequence plus failed evaluation, not a verified exported AppInsights span. Optimizer retained baseline; human timing rehearsal and cross-user Memory proof remain.",
+  "status": "Evidence-first v2 implemented locally; cloud activation, semantic calibration and new deployment proof pending. All v1 facts below are historical and unchanged.",
   "authoring_date": "2026-11-11",
   "rules": [
     "Use only verified commands, links, identities, run IDs and screenshots.",
@@ -20,7 +20,7 @@
       "eligibility"
     ],
     "curated_iq_tools": 1,
-    "working_directory": "demo repository root",
+    "working_directory": "foundry-showcase repository root",
     "command": ".\\agent\\src\\.venv\\Scripts\\python.exe .\\scripts\\probe_toolbox.py --project-endpoint https://fdy-volt-citadel-261111.services.ai.azure.com/api/projects/volt-dev --version 2 --out .\\.runtime\\volt-tool-retrieval.json",
     "evidence_path": ".\\.runtime\\volt-tool-retrieval.json",
     "passed_cases": [
@@ -122,13 +122,13 @@
     "merged": true,
     "merge_commit": "04a2197",
     "merge_target_branch": "feature/volt-citadel",
-    "main_untouched": true,
+    "main_untouched_at_historical_pr2_merge": true,
     "merged_branch_ci_run": "43065816204",
     "merged_branch_ci_url": "https://github.com/SridharArrabelly/foundry-showcase/actions/runs/43065816204",
     "merged_branch_ci_success": true,
     "user_authorized_merge_and_demo_promotion": true,
     "status_as_of": "2026-11-11T19:18:26+02:00",
-    "status_note": "Merged into feature/volt-citadel, not main. Same saved ZIP deployed to DEMO; nine fresh runtime cases and DEMO's own native evaluation passed. Presentation author performed no Git/Azure actions.",
+    "status_note": "PR #2 merged into feature/volt-citadel. PR #3 later merged the workshop into main. Same saved ZIP deployed to DEMO; nine fresh runtime cases and DEMO's own native evaluation passed. These remain historical v1 results.",
     "cloud_copilot_dispatch": {
       "status": "FAILED_BEFORE_START",
       "execution_started": false,
@@ -297,15 +297,15 @@
     "runtime_evaluation_receipt": "agent\\src\\.foundry\\results\\demo-v1\\evaluation.json",
     "documented_receipt_verification_command": ".\\agent\\src\\.venv\\Scripts\\python.exe .\\scripts\\verify_demo_release.py --receipt .\\.runtime\\volt-demo-release.json --runtime-evaluation .\\agent\\src\\.foundry\\results\\demo-v1\\evaluation.json",
     "receipt_verifier_note": "Reads completed native evaluation and native target/grader; writes the receipt. Does not rerun the agent. Authorized operator contingency/documentation only, not a stage action or GitHub-enforced protection.",
-    "documented_operator_command": ".\\agent\\src\\.venv\\Scripts\\python.exe .\\scripts\\promote_demo.py --package .\\.runtime\\volt-candidate-1d01eaa.zip --deployment-receipt .\\.runtime\\volt-candidate-package.json --evaluation-receipt .\\agent\\src\\.foundry\\results\\candidate-v6\\native-evaluation.json --expected-commit 1d01eaae455ac0b2aa39da0f5a57d5543017a5e2 --pull-request 2 --out .\\.runtime\\volt-demo-release.json --execute",
-    "command_note": "Flags verified from static argparse and input/receipt paths inspected locally. Document existing authorized operation; do not rerun. Existing output receipt prevents duplicate execution.",
+    "documented_operator_command": ".\\agent\\src\\.venv\\Scripts\\python.exe .\\scripts\\promote_demo.py --package .\\.runtime\\volt-candidate-1d01eaa.zip --deployment-receipt .\\.runtime\\volt-candidate-package.json --evaluation-receipt .\\agent\\src\\.foundry\\results\\candidate-v6\\native-evaluation.json --expected-commit 1d01eaae455ac0b2aa39da0f5a57d5543017a5e2 --pull-request 2 --contract-version v1 --base-branch feature/volt-citadel --required-check contracts --required-check tool-contract --out .\\.runtime\\volt-demo-release.json --execute",
+    "command_note": "Current CLI compatibility flags for the historical v1 operation. Do not rerun. Existing output receipt prevents duplicate execution.",
     "rollback_verified": false,
     "performed_by_presentation_author": false
   },
   "fresh_demo_single_case": {
     "verified_and_successfully_rehearsed_by_implementation_owner": true,
     "readme_section": "docs\\OPERATIONS.md — Start the presentation",
-    "working_directory": "demo repository root (foundry-showcase)",
+    "working_directory": "foundry-showcase repository root",
     "project_endpoint": "https://fdy-volt-citadel-261111.services.ai.azure.com/api/projects/volt-demo",
     "expected_version": 1,
     "case": "replacement-recall",
@@ -330,11 +330,11 @@
     "backend_read_only": true,
     "ticket_or_handoff_tool_exists": false,
     "ticket_or_handoff_created": false,
-    "spoken_caveat": "That wording is advisory; no ticket or handoff was created. Our nine-case metric validates decision/tool/reference, not every natural-language action claim.",
+    "spoken_caveat": "That is an unsupported action claim; no ticket or handoff was created. The historical nine-case metric validates decision/tool/reference, not every natural-language action claim.",
     "newer_fresh_rehearsal_wording": "More cautious; does not erase the earlier recorded limitation",
     "presentation_locations": [
-      "Slide 7 recorded comparison",
-      "Slide 20 recorded golden/fallback answer"
+      "Slides 16–18 released finding and feedback",
+      "Slide 19 recorded finding and local regression"
     ],
     "source": "docs\\OPERATIONS.md — Start the presentation",
     "new_issue_or_model_deployment": false
@@ -453,7 +453,7 @@
     {
       "id": "RB01",
       "slides": [
-        9
+        7
       ],
       "purpose": "Workspace and versioned configuration",
       "verified": true,
@@ -464,13 +464,13 @@
       ],
       "version_ids": {},
       "remaining": "Human screen/timing rehearsal, not file-path discovery",
-      "fallback_capture": null
+      "fallback_capture": null,
+      "binding_scope": "Historical v1 evidence unless explicitly identified as local v2. Consult current manuscript for stage actions."
     },
     {
       "id": "RB02",
       "slides": [
-        9,
-        20
+        7
       ],
       "purpose": "Historical baseline hosted execution through Responses",
       "verified": true,
@@ -488,12 +488,13 @@
       "evidence_ref": "hosted_journey",
       "remaining": "Rehearse navigation and preserve the preview metadata warning; session pinning itself is verified",
       "fallback_capture": "recordings\\baseline-v1.json",
-      "latency_cutoff_seconds": 30
+      "latency_cutoff_seconds": 30,
+      "binding_scope": "Historical v1 evidence unless explicitly identified as local v2. Consult current manuscript for stage actions."
     },
     {
       "id": "RB03",
       "slides": [
-        9
+        7
       ],
       "purpose": "Toolbox contract and actual MCP invocation",
       "verified": true,
@@ -508,12 +509,13 @@
       "preflight_evidence": ".\\.runtime\\volt-tool-retrieval.json",
       "evidence_ref": "hosted_journey",
       "remaining": "Rehearse portal navigation; do not confuse four executed tools with business-contract correctness",
-      "fallback_capture": null
+      "fallback_capture": null,
+      "binding_scope": "Historical v1 evidence unless explicitly identified as local v2. Consult current manuscript for stage actions."
     },
     {
       "id": "RB04",
       "slides": [
-        9
+        7
       ],
       "purpose": "Recorded IQ/source-citation evidence",
       "verified": true,
@@ -528,12 +530,14 @@
       },
       "evidence_ref": "hosted_journey",
       "remaining": "Optional live Knowledge pane navigation is a human rehearsal choice; no verified baseline AppInsights span",
-      "fallback_capture": "Recorded evidence.html"
+      "fallback_capture": "Recorded evidence.html",
+      "binding_scope": "Historical v1 evidence unless explicitly identified as local v2. Consult current manuscript for stage actions."
     },
     {
       "id": "RB05",
       "slides": [
-        13
+        6,
+        10
       ],
       "purpose": "APIM permitted calls and optional restricted-consumer drill",
       "verified": false,
@@ -545,12 +549,14 @@
       ],
       "version_ids": {},
       "remaining": "Optional negative-access proof or choose concept-only branch",
-      "fallback_capture": null
+      "fallback_capture": null,
+      "binding_scope": "Historical v1 evidence unless explicitly identified as local v2. Consult current manuscript for stage actions."
     },
     {
       "id": "RB06",
       "slides": [
-        13
+        10,
+        12
       ],
       "purpose": "Verified native harmless-marker input guardrail enforcement",
       "verified": true,
@@ -562,13 +568,13 @@
       "version_ids": {},
       "evidence_ref": "guardrail_proof",
       "remaining": "Rehearse policy/version navigation and recheck any new deployment",
-      "fallback_capture": ".\\.runtime\\volt-guardrail-proof.json"
+      "fallback_capture": ".\\.runtime\\volt-guardrail-proof.json",
+      "binding_scope": "Historical v1 evidence unless explicitly identified as local v2. Consult current manuscript for stage actions."
     },
     {
       "id": "RB07",
       "slides": [
-        13,
-        22
+        23
       ],
       "purpose": "Verified single-caller native Memory lifecycle; cross-user proof pending",
       "verified": true,
@@ -585,12 +591,13 @@
       "live_command_bound": true,
       "cross_user_isolation_verified": false,
       "remaining": "Human timing rehearsal and second genuine authenticated identity; no raw private evidence in offline viewer",
-      "fallback_capture": null
+      "fallback_capture": null,
+      "binding_scope": "Historical v1 evidence unless explicitly identified as local v2. Consult current manuscript for stage actions."
     },
     {
       "id": "RB08",
       "slides": [
-        16
+        12
       ],
       "purpose": "Verified independent DEV/DEMO native business results",
       "verified": true,
@@ -610,12 +617,14 @@
       "candidate_ref": "candidate_evaluation",
       "release_ref": "demo_release",
       "remaining": "Human 90-minute timing rehearsal",
-      "fallback_capture": "Recorded evidence.html"
+      "fallback_capture": "Recorded evidence.html",
+      "binding_scope": "Historical v1 evidence unless explicitly identified as local v2. Consult current manuscript for stage actions."
     },
     {
       "id": "RB09",
       "slides": [
-        16
+        11,
+        12
       ],
       "purpose": "Verified native Optimizer baseline-only outcome",
       "verified": true,
@@ -628,12 +637,15 @@
       ],
       "version_ids": {},
       "outcome_ref": "optimizer_outcome",
-      "fallback_capture": "Recorded evidence.html"
+      "fallback_capture": "Recorded evidence.html",
+      "binding_scope": "Historical v1 evidence unless explicitly identified as local v2. Consult current manuscript for stage actions."
     },
     {
       "id": "RB10",
       "slides": [
-        20
+        16,
+        17,
+        19
       ],
       "purpose": "Native captured baseline response/tool sequence and failed evaluation",
       "verified": true,
@@ -649,12 +661,14 @@
         "toolbox": 2
       },
       "remaining": "Automated Insights findings/monitor are not configured",
-      "fallback_capture": "Recorded evidence.html"
+      "fallback_capture": "Recorded evidence.html",
+      "binding_scope": "Historical v1 evidence unless explicitly identified as local v2. Consult current manuscript for stage actions."
     },
     {
       "id": "RB11",
       "slides": [
-        20
+        18,
+        19
       ],
       "purpose": "Regression dataset and evaluator provenance",
       "verified": true,
@@ -668,12 +682,14 @@
       },
       "expected_decision": "eligible",
       "remaining": "Human timing/code-view rehearsal",
-      "fallback_capture": "Recorded evidence.html"
+      "fallback_capture": "Recorded evidence.html",
+      "binding_scope": "Historical v1 evidence unless explicitly identified as local v2. Consult current manuscript for stage actions."
     },
     {
       "id": "RB12",
       "slides": [
-        20
+        15,
+        19
       ],
       "purpose": "Merged exact PR and actual local Copilot assistance",
       "verified": true,
@@ -688,12 +704,14 @@
       },
       "issue_pr_ref": "corrective_issue_pr",
       "remaining": "Presentation author performs no merge or deployment actions",
-      "fallback_capture": null
+      "fallback_capture": null,
+      "binding_scope": "Historical v1 evidence unless explicitly identified as local v2. Consult current manuscript for stage actions."
     },
     {
       "id": "RB13",
       "slides": [
-        20
+        14,
+        15
       ],
       "purpose": "DEV v6 candidate provenance and native business result",
       "verified": true,
@@ -710,12 +728,13 @@
       "candidate_ref": "candidate_evaluation",
       "operator_pre_promotion_gate_passed": true,
       "remaining": "Human screen/timing rehearsal",
-      "fallback_capture": "Recorded evidence.html"
+      "fallback_capture": "Recorded evidence.html",
+      "binding_scope": "Historical v1 evidence unless explicitly identified as local v2. Consult current manuscript for stage actions."
     },
     {
       "id": "RB14",
       "slides": [
-        20
+        15
       ],
       "purpose": "User-approved operator promotion and runtime-verified receipt",
       "verified": true,
@@ -733,12 +752,13 @@
       "release_ref": "demo_release",
       "remaining": "Rollback drill not demonstrated; no replay of completed promotion",
       "fallback_capture": "Recorded evidence.html",
-      "fallback_decision_clock": "72:00"
+      "fallback_decision_clock": "72:00",
+      "binding_scope": "Historical v1 evidence unless explicitly identified as local v2. Consult current manuscript for stage actions."
     },
     {
       "id": "RB15",
       "slides": [
-        20
+        7
       ],
       "purpose": "Rehearsed fresh single-case DEMO command, separate nine-case gate and prior golden trace",
       "verified": true,
@@ -759,39 +779,60 @@
         "demo_agent": 1
       },
       "remaining": "Full human 90-minute rehearsal; no automatic Insights or new-response trace-correlation claim",
-      "fallback_capture": "Recorded evidence.html"
+      "fallback_capture": "Recorded evidence.html",
+      "binding_scope": "Historical v1 evidence unless explicitly identified as local v2. Consult current manuscript for stage actions."
     }
   ],
   "presentation_flow": {
-    "visible_slides": 21,
+    "visible_slides": 22,
     "hidden_backups": [
-      22,
-      23
+      23,
+      24
     ],
     "demo_entry_return_pairs": [
       [
-        9,
-        10
+        7,
+        8
       ],
       [
-        13,
-        14
+        12,
+        13
       ],
       [
-        16,
-        17
+        15,
+        16
       ],
       [
-        20,
-        21
+        19,
+        20
       ]
     ],
     "fresh_request_slides": [
-      9,
-      20
+      7
     ],
-    "prepared_jobs_are_not_live_execution": true,
-    "git_root": "C:\\Users\\sarrabelly\\Documents\\GitHub\\foundry-showcase",
+    "corrected_escalation_cloud_demo": "pending approved v2 deployment; use local host test until then",
     "historical_package_not_rebuilt": true
+  },
+  "reviewer_source": {
+    "url": "https://onedrive.cloud.microsoft/:p:/a@3wd7z4b6/S/cQqcmS2qKIDnQbWAX3_QQjI_EgUC2eDOq6LllEwyqTs4S8z6zA?isSPOFile=1",
+    "authoritative_for_review_numbers": true,
+    "online_slide_content_verified": false,
+    "local_visual_source_is_not_assumed_identical": true,
+    "user_supplied_local_copy": "C:\\Users\\sarrabelly\\OneDrive - Microsoft\\00FY27\\AI Roadshow FY27\\Foundry Agent Platform Workshop v1.0.0.pptx",
+    "local_sha256": "e3e4c79391b114f14968bb990812b757a3c200a13079f7e03ef4109bcbb2ec47",
+    "local_slides": 198,
+    "local_hidden_slides": 35,
+    "local_slides_with_notes": 105,
+    "principal_review_references_verified_against_local_copy": true,
+    "older_downloads_copy_is_identical": false
+  },
+  "v2_readiness": {
+    "runtime": "local Agent and Responses HTTP stream tests",
+    "native_evaluation": "not run",
+    "semantic_judge_calibration": "not run",
+    "workflow": "implemented, explicit activation required",
+    "protection_and_oidc": "not configured by this revision",
+    "demo_promotion": "not performed",
+    "incident": "recordings/escalation-finding.json"
   }
 }

@@ -14,6 +14,14 @@ HEADERS = {"Foundry-Features": "Evaluations=V1Preview"}
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def contract_source(version):
+    return ROOT / "evaluations" / ("business_contract_v2.py" if version == "v2" else "business_contract.py")
+
+
+def evaluator_name(version):
+    return "volt_business_contract_v2" if version == "v2" else "volt_business_contract"
+
+
 def validate_case_coverage(rows: list[dict], cases: list[dict]) -> None:
     expected = {case["id"]: case for case in cases}
     if not cases or len(expected) != len(cases):
@@ -36,6 +44,7 @@ def main() -> None:
     parser.add_argument("--evaluator-version", default="1")
     parser.add_argument("--deployment-receipt", type=Path)
     parser.add_argument("--require-all-pass", action="store_true")
+    parser.add_argument("--contract-version", choices=["v1", "v2"], default="v1")
     args = parser.parse_args()
     if args.out.exists():
         raise FileExistsError(f"Evaluation receipt already exists: {args.out}; inspect it instead of submitting twice.")
@@ -60,13 +69,13 @@ def main() -> None:
         ):
             raise ValueError("Deployment receipt does not identify the captured immutable package.")
         lineage["source_commit"] = deployment["source_commit"]
-    code = (ROOT / "evaluations" / "business_contract.py").read_text(encoding="utf-8")
+    code = contract_source(args.contract_version).read_text(encoding="utf-8")
     source_hash = hashlib.sha256(code.encode()).hexdigest()
     with DefaultAzureCredential() as credential, AIProjectClient(
         endpoint=args.project_endpoint, credential=credential
     ) as project, project.get_openai_client(default_headers=HEADERS) as client:
         evaluator = project.evaluators.get_version(
-            name="volt_business_contract", version=args.evaluator_version, headers=HEADERS
+            name=evaluator_name(args.contract_version), version=args.evaluator_version, headers=HEADERS
         )
         if hashlib.sha256(evaluator.definition.code_text.encode()).hexdigest() != source_hash:
             raise RuntimeError("The selected remote evaluator differs from the checked-in grader.")
@@ -75,6 +84,8 @@ def main() -> None:
             "required_tool", "expected_reference", "response_id", "agent_name",
             "agent_version", "code_content_hash",
         )
+        if args.contract_version == "v2":
+            fields += ("observed_calls", "expected_arguments")
         if args.eval_id:
             evaluation = client.evals.retrieve(args.eval_id)
             existing = evaluation.model_dump(mode="json")
@@ -125,6 +136,8 @@ def main() -> None:
             "eval_id": evaluation.id, "run_id": run.id, "label": args.label,
             "evaluator_version": evaluator.version, "evaluator_sha256": source_hash,
             "input_count": len(rows), "run": run.model_dump(mode="json"),
+            "contract_version": args.contract_version,
+            "dataset_sha256": hashlib.sha256(args.dataset.read_bytes()).hexdigest(),
         }
         args.out.parent.mkdir(parents=True, exist_ok=True)
         args.out.write_text(json.dumps(receipt, indent=2) + "\n", encoding="utf-8")

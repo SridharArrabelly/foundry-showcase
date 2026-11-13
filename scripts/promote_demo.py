@@ -3,6 +3,7 @@
 import argparse
 import hashlib
 import json
+import os
 import shutil
 import subprocess
 from pathlib import Path
@@ -14,21 +15,33 @@ from azure.ai.projects.models import HostedAgentDefinition
 from azure.core.exceptions import ResourceNotFoundError
 from azure.identity import DefaultAzureCredential
 
-from evaluate_captures import HEADERS, ROOT, validate_case_coverage
+from evaluate_captures import HEADERS, ROOT, validate_case_coverage, contract_source, evaluator_name
+from score_action_claims import verify_action_gate
 
 REPO = "SridharArrabelly/foundry-showcase"
 DEV = "https://fdy-volt-citadel-261111.services.ai.azure.com/api/projects/volt-dev"
 DEMO = "https://fdy-volt-citadel-261111.services.ai.azure.com/api/projects/volt-demo"
 
 
-def github(path: str) -> dict:
+def github(path: str, *, token: str | None = None) -> dict:
     executable = shutil.which("gh")
     if not executable:
         raise RuntimeError("The approved GitHub CLI account is required.")
     result = subprocess.run(
         [executable, "api", f"repos/{REPO}/{path}"], capture_output=True, text=True, check=True,
+        env={**os.environ, "GH_TOKEN": token} if token else None,
     )
     return json.loads(result.stdout)
+
+
+def github_checks(commit):
+    checks, page = [], 1
+    while True:
+        batch = github(f"commits/{commit}/check-runs?per_page=100&page={page}")["check_runs"]
+        checks.extend(batch)
+        if len(batch) < 100:
+            return checks
+        page += 1
 
 
 def validate_quality(run: dict, items: list[dict], cases: list[dict], commit: str | None, digest: str) -> None:
@@ -57,6 +70,24 @@ def validate_quality(run: dict, items: list[dict], cases: list[dict], commit: st
             raise ValueError("Every native business result must explicitly pass with score 1.")
 
 
+def validate_pr_checks(pr, checks, commit, base_branch="main", required_checks=("contracts",)):
+    if (pr["head"]["sha"] != commit or pr["base"]["ref"] != base_branch
+            or pr["head"]["repo"]["full_name"] != REPO or pr.get("draft")):
+        raise ValueError("The PR does not match the trusted repository, reviewed commit and target.")
+    latest = {}
+    for check in checks:
+        if check.get("app", {}).get("slug") != "github-actions":
+            continue
+        name = check["name"]
+        if name not in latest or check["id"] > latest[name]["id"]:
+            latest[name] = check
+    if not required_checks or any(
+        name not in latest or latest[name]["status"] != "completed"
+        or latest[name]["conclusion"] != "success" for name in required_checks
+    ):
+        raise ValueError("Latest required GitHub checks have not passed on this commit.")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--package", type=Path, required=True)
@@ -66,6 +97,10 @@ def main() -> None:
     parser.add_argument("--pull-request", type=int, required=True)
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--execute", action="store_true", help="Requires explicit operator approval and a merged PR.")
+    parser.add_argument("--base-branch", default="main")
+    parser.add_argument("--required-check", action="append")
+    parser.add_argument("--contract-version", choices=["v1", "v2"], default="v2")
+    parser.add_argument("--action-judgments", type=Path)
     args = parser.parse_args()
     if args.execute and args.out.exists():
         raise FileExistsError("A promotion receipt already exists; inspect it rather than submitting again.")
@@ -80,15 +115,17 @@ def main() -> None:
     ):
         raise ValueError("The ZIP must match the verified, Memory-disabled source deployment receipt.")
     pr = github(f"pulls/{args.pull_request}")
-    if pr["head"]["sha"] != args.expected_commit or pr["base"]["ref"] != "feature/volt-citadel":
-        raise ValueError("The selected PR does not match the reviewed source and target branch.")
-    checks = github(f"commits/{args.expected_commit}/check-runs")["check_runs"]
-    successful = {check["name"] for check in checks if check["status"] == "completed" and check["conclusion"] == "success"}
-    if not {"contracts", "tool-contract"}.issubset(successful):
-        raise ValueError("The expected GitHub CI checks have not passed on this commit.")
-    cases_path = ROOT / "agent" / "src" / ".foundry" / "datasets" / "volt-regression.jsonl"
+    checks = github_checks(args.expected_commit)
+    validate_pr_checks(pr, checks, args.expected_commit, args.base_branch, args.required_check or ("contracts",))
+    dataset_name = "volt-regression-v2.jsonl" if args.contract_version == "v2" else "volt-regression.jsonl"
+    cases_path = ROOT / "agent" / "src" / ".foundry" / "datasets" / dataset_name
     cases = [json.loads(line) for line in cases_path.read_text(encoding="utf-8").splitlines() if line.strip()]
-    grader_hash = hashlib.sha256((ROOT / "evaluations" / "business_contract.py").read_text(encoding="utf-8").encode()).hexdigest()
+    grader_hash = hashlib.sha256(contract_source(args.contract_version).read_text(encoding="utf-8").encode()).hexdigest()
+    if args.contract_version == "v2":
+        if not args.action_judgments:
+            raise ValueError("V2 promotion requires calibrated model action judgments.")
+        action_evidence = json.loads(args.action_judgments.read_text(encoding="utf-8"))
+        verify_action_gate(action_evidence, cases, args.expected_commit, digest)
     with DefaultAzureCredential() as credential, AIProjectClient(
         endpoint=DEV, credential=credential, allow_preview=True
     ) as source, source.get_openai_client(default_headers=HEADERS) as eval_client, AIProjectClient(
@@ -96,16 +133,21 @@ def main() -> None:
     ) as target:
         run = eval_client.evals.runs.retrieve(evaluation["run_id"], eval_id=evaluation["eval_id"])
         items = list(eval_client.evals.runs.output_items.list(run_id=run.id, eval_id=evaluation["eval_id"]))
-        validate_quality(run.model_dump(mode="json"), [item.model_dump(mode="json") for item in items], cases, args.expected_commit, digest)
+        native_items = [item.model_dump(mode="json") for item in items]
+        validate_quality(run.model_dump(mode="json"), native_items, cases, args.expected_commit, digest)
+        if args.contract_version == "v2" and {
+            row["id"]: row["response_id"] for row in action_evidence["cases"]
+        } != {item["datasource_item"]["id"]: item["datasource_item"]["response_id"] for item in native_items}:
+            raise ValueError("Model rubric and native grader scored different responses.")
         group = eval_client.evals.retrieve(evaluation["eval_id"]).model_dump(mode="json")
         criteria = group["testing_criteria"]
         if (
-            len(criteria) != 1 or criteria[0].get("evaluator_name") != "volt_business_contract"
-            or criteria[0].get("evaluator_version") != "1"
+            len(criteria) != 1 or criteria[0].get("evaluator_name") != evaluator_name(args.contract_version)
+            or criteria[0].get("evaluator_version") != evaluation["evaluator_version"]
             or run.metadata.get("evaluator_sha256") != grader_hash
         ):
             raise ValueError("The native run does not use the pinned business evaluator.")
-        remote_grader = source.evaluators.get_version("volt_business_contract", "1", headers=HEADERS)
+        remote_grader = source.evaluators.get_version(evaluator_name(args.contract_version), evaluation["evaluator_version"], headers=HEADERS)
         if hashlib.sha256(remote_grader.definition.code_text.encode()).hexdigest() != grader_hash:
             raise ValueError("The remote grader differs from the checked-in business contract.")
         version = source.agents.get_version(deployment["agent_name"], deployment["agent_version"])
@@ -131,6 +173,9 @@ def main() -> None:
             "model_connection": environment["VOLT_MODEL_CONNECTION"],
             "toolbox_endpoint": environment["TOOLBOX_ENDPOINT"], "memory_enabled": False,
             "operation": "new-version" if exists else "create-agent",
+            "contract_version": args.contract_version,
+            "evaluator_version": evaluation["evaluator_version"],
+            "dataset_sha256": hashlib.sha256(cases_path.read_bytes()).hexdigest(),
         }
         if not args.execute:
             print(json.dumps(receipt, indent=2))

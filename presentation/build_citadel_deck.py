@@ -1,4 +1,4 @@
-"""Adapt the user-supplied workshop without changing it or the existing deck."""
+"""Build the current workshop from the unchanged user-supplied reference deck."""
 from copy import deepcopy
 from pathlib import Path
 import re
@@ -14,38 +14,11 @@ from pptx.oxml.xmlchemy import OxmlElement
 from pptx.util import Inches, Pt
 
 ROOT = Path(__file__).parent
-SOURCE = Path(r"C:\Users\sarrabelly\Downloads\Foundry Agent Platform Workshop v1.0.0.pptx")
+SOURCE = Path(r"C:\Users\sarrabelly\OneDrive - Microsoft\00FY27\AI Roadshow FY27\Foundry Agent Platform Workshop v1.0.0.pptx")
 OUTPUT = ROOT / "Volt & Co - Governed and improving agents.pptx"
 PURPLE, AZURE, INK = "5230BC", "0078D4", "201B36"
 VIOLET, PALE, TEAL, WHITE, MUTED = "EDE7FE", "F5F7FC", "087D87", "FFFFFF", "4F5265"
 FONT = "Segoe UI"
-SLIDE_SOURCES = [1, 15, 9, 33, 31, 6, 47, 141, 57, 128, 115, 83, 98, 185, 159, None, 198, 113, 163]
-DEMOS = {
-    8: (1, "Make the answer useful", "Can we justify a replacement assessment?",
-        "15–27 MIN · NEW REQUEST + PLATFORM INSPECTION",
-        [("Run", "Terminal · released DEMO v1"),
-         ("Inspect", "Foundry · Toolbox + IQ"),
-         ("Explain", "Facts, policy and the next step")],
-        10, "A useful answer still needs boundaries."),
-    11: (2, "Govern the capabilities", "What may the agent access and remember?",
-         "30–45 MIN · LIVE CONFIGURATION + VERIFIED PRIOR PROOFS",
-         [("Control", "APIM · live configuration"),
-          ("Enforce", "Recorded guardrail proof"),
-          ("Remember", "Recorded DEV Memory proof")],
-         14, "Governance is not proof of correctness."),
-    13: (3, "Measure before improving", "Did the change actually improve behavior?",
-         "47–57 MIN · INSPECT COMPLETED NATIVE RUNS",
-         [("Compare", "Foundry · baseline vs candidate"),
-          ("Investigate", "One failed business decision"),
-          ("Decide", "Optimizer · no accepted gain")],
-         17, "Evidence gives us a precise repair."),
-    16: (4, "Close the loop", "Can we follow one fix all the way to serving?",
-         "60–78 MIN · REVIEWED REPAIR + NEW DEMO REQUEST",
-         [("Trace", "Captured failure + reviewed case"),
-          ("Review", "GitHub + editor · real patch"),
-          ("Verify", "Completed gate + new request")],
-         21, "Return to the four things we proved."),
-}
 
 
 def inch(v):
@@ -231,40 +204,122 @@ def prune_slide(slide):
             slide.notes_slide.part.drop_rel(rid)
 
 
+
+STAGES = ["BUILD", "PROVE", "RELEASE", "OPERATE", "IMPROVE"]
+TITLES = [
+    "Can we defend this release?", "One agent. Two loops. Four demonstrations.",
+    "Two loops. One improving service.", "One customer. One accountable answer.",
+    "The harness runs the loop. We own the contract.", "Where Citadel and Foundry meet",
+    "Demo 1 · Build and inspect", "A useful answer is only the beginning.",
+    "Three ways to judge the same behavior", "Name the boundary. Show its evidence.",
+    "Optimization is an experiment, not a promise.", "Demo 2 · Prove the contract",
+    "Bridge 1 · Candidate + evidence + approval", "A case file you can reopen",
+    "Demo 3 · Inspect the release gate", "The release passed. The contract missed something.",
+    "Observe the request, not just the aggregate.", "Bridge 2 · A finding becomes a test",
+    "Demo 4 · Turn the finding into a repair", "The architecture decisions we can explain",
+    "Your next POC: one decision, one evidence chain.", "Useful. Defensible. Improving.",
+    "Memory is a separate, narrow experiment.", "Identity follows responsibility.",
+]
+
+
+def tracker(slide, current):
+    for index, stage in enumerate(STAGES):
+        x = .5 + index * 2.48
+        chip(slide, stage, x, 6.69, 2.25,
+             PURPLE if stage == current else PALE,
+             WHITE if stage == current else MUTED, 11)
+
+
+def cards(slide, number, subtitle, entries, stage=None, status=None):
+    clear(slide)
+    title(slide, TITLES[number - 1], subtitle, number, stage or "The workshop", status)
+    if number in (9, 14, 20, 21, 22):
+        if number == 22:
+            rect(slide, .5, 2.05, 12.33, 4.42, INK, radius=True)
+        for index, (heading, text) in enumerate(entries):
+            y = 2.2 + index * 1.4
+            color = (PURPLE, AZURE, TEAL)[index]
+            if number != 22:
+                rect(slide, .5, y, 12.33, 1.16, VIOLET if index == 0 else PALE, radius=True)
+            circle(slide, str(index + 1), .78, y + .24, .52, color, 18)
+            add_text(slide, heading, 1.6, y + .2, 3.2, .9, 24,
+                     WHITE if number == 22 else color, True)
+            add_text(slide, text, 5.0, y + .19, 7.45, .8, 21,
+                     WHITE if number == 22 else INK)
+        if stage:
+            tracker(slide, stage)
+        return
+    width = (12.33 - .35 * (len(entries) - 1)) / len(entries)
+    for index, (heading, text) in enumerate(entries):
+        x = .5 + index * (width + .35)
+        rect(slide, x, 2.25, width, 3.78, VIOLET if index == 0 else WHITE,
+             PURPLE if index != 2 else TEAL, True)
+        circle(slide, str(index + 1), x + .24, 2.52, .43, PURPLE)
+        add_text(slide, heading, x + .25, 3.19, width - .5, .95, 25, INK, True)
+        add_text(slide, text, x + .25, 4.27, width - .5, 1.42, 19, MUTED)
+    if stage:
+        tracker(slide, stage)
+
+
+def demo(slide, number, which, question, mode, steps, back, stage):
+    clear(slide)
+    chip(slide, f"DEMO {which} · LEAVE THE SLIDES", .5, .5, 5, PURPLE, WHITE, 14)
+    add_text(slide, TITLES[number - 1].split(" · ", 1)[1], .5, 1.18, 12.0, .8, 39, INK, True)
+    add_text(slide, mode, .5, 2.08, 12.0, .42, 14, PURPLE, True)
+    rect(slide, .5, 2.85, 5.7, 2.75, INK, radius=True)
+    add_text(slide, question, .85, 3.45, 5.0, 1.7, 31, WHITE, True)
+    for index, (head, detail) in enumerate(steps):
+        y = 2.83 + index * .98
+        circle(slide, str(index + 1), 6.72, y + .02, .44, PURPLE, 15)
+        add_text(slide, head, 7.4, y, 5, .43, 22, INK, True)
+        add_text(slide, detail, 7.4, y + .46, 5, .45, 17, MUTED)
+    rect(slide, .5, 5.99, 12.33, .57, TEAL, radius=True)
+    add_text(slide, f"RETURN TO SLIDE {back:02} · Debrief before the next question",
+             .78, 6.13, 11.8, .33, 18, WHITE, True)
+    tracker(slide, stage)
+    footer(slide, number, f"Demo {which}")
+
+
 def make_deck():
     prs = Presentation(SOURCE)
-    selected = {i: prs.slides[i - 1] for i in SLIDE_SOURCES if i is not None}
-    keep = {s.part for s in selected.values()}
-    for sid in list(prs.slides._sldIdLst):
-        if prs.part.related_part(sid.rId) not in keep:
-            prs.part.drop_rel(sid.rId)
-            prs.slides._sldIdLst.remove(sid)
-    # Structural changes first: keep original master/layout/theme relationships.
-    new = prs.slides.add_slide(selected[159].slide_layout)
-    selected[None] = new
-    demo_slides = {after: prs.slides.add_slide(selected[159].slide_layout) for after in DEMOS}
-    ids_by_part = {prs.part.related_part(i.rId): i for i in prs.slides._sldIdLst}
-    for i in list(prs.slides._sldIdLst):
-        prs.slides._sldIdLst.remove(i)
-    for position, n in enumerate(SLIDE_SOURCES, 1):
-        prs.slides._sldIdLst.append(ids_by_part[selected[n].part])
-        if position in demo_slides:
-            prs.slides._sldIdLst.append(ids_by_part[demo_slides[position].part])
-    for i, slide in enumerate(prs.slides):
-        slide._element.set("show", "0" if i >= 21 else "1")
+    selected = {i: prs.slides[i - 1] for i in [1, 15, 6, 159]}
+    layout = selected[159].slide_layout
+    content = {}
+    for n in range(1, 25):
+        content[n] = selected[{1: 1, 3: 15, 6: 6}[n]] if n in (1, 3, 6) else prs.slides.add_slide(layout)
+    ids = {prs.part.related_part(item.rId): item for item in prs.slides._sldIdLst}
+    keep = {slide.part for slide in content.values()}
+    for item in list(prs.slides._sldIdLst):
+        if prs.part.related_part(item.rId) not in keep:
+            prs.part.drop_rel(item.rId)
+        prs.slides._sldIdLst.remove(item)
+    for n, slide in content.items():
+        prs.slides._sldIdLst.append(ids[slide.part])
+        slide._element.set("show", "0" if n > 22 else "1")
         restyle_source(slide)
-        for tag in ["p:timing", "p:transition"]:
-            for el in list(slide._element.findall(tag, slide._element.nsmap)):
-                slide._element.remove(el)
-
-    s = selected[1]
+        for tag in ("p:timing", "p:transition"):
+            for element in list(slide._element.findall(tag, slide._element.nsmap)):
+                slide._element.remove(element)
+    s = content[1]
     clear(s)
-    add_text(s, "VOLT & CO  /  INTERNAL ENABLEMENT", .5, 1.8, 11, .38, 17, PURPLE, True)
-    add_text(s, "From useful agent\nto governed service", .5, 2.45, 11.6, 1.55, 43, INK, True)
-    add_text(s, "Microsoft Foundry + Citadel", .5, 4.22, 9, .45, 23, PURPLE)
-    add_text(s, "One customer journey. Two learning loops.", .5, 4.82, 9, .4, 18, INK)
-    add_text(s, "80 minutes of content  +  10 minutes of Q&A", .5, 5.3, 9, .35, 14, MUTED)
-
+    add_text(s, "VOLT & CO / MICROSOFT FOUNDRY + CITADEL", .5, 1.6, 11, .45, 17, PURPLE, True)
+    add_text(s, "Can we defend\nthis release?", .5, 2.42, 11.6, 1.8, 48, INK, True)
+    add_text(s, "One customer. Two loops. Evidence at every handoff.", .5, 4.55, 11.5, .6, 24, PURPLE)
+    add_text(s, "80 minutes of content + 10 minutes Q&A", .5, 5.2, 10, .4, 17, MUTED)
+    s = content[2]
+    clear(s)
+    title(s, TITLES[1], "Follow the lifecycle—not a catalogue of features.", 2, "Run of show")
+    agenda = [("00–10", "WHY + THE SYSTEM", "A trust question; two loops and two bridges"),
+              ("10–25", "DEMO 1 · BUILD", "Hosted agent, Toolbox, IQ, gateway and trace"),
+              ("25–40", "DEMO 2 · PROVE", "Business evidence, judges, controls and optimization"),
+              ("40–50", "DEMO 3 · RELEASE", "Candidate, case file and approval boundary"),
+              ("50–70", "OPERATE → DEMO 4 · IMPROVE", "A real escaped claim becomes a regression"),
+              ("70–90", "DECISIONS + NEXT POC + Q&A", "Ten minutes reserved for your questions")]
+    for i, (clock, head, detail) in enumerate(agenda):
+        y = 2.05 + i * .72
+        chip(s, clock, .5, y, 1.45, PURPLE, WHITE, 13)
+        add_text(s, head, 2.2, y - .02, 4.2, .4, 18, INK, True)
+        add_text(s, detail, 6.55, y, 6.0, .55, 17, MUTED)
     s = selected[15]
     replace(s, 2, "Two loops. One improving service.", 32, INK, True)
     replace(s, 4, "Build and prove in DEV. Release and learn in production-like DEMO.", 16, PURPLE)
@@ -316,69 +371,7 @@ def make_deck():
         shape.top, shape.height = inch(4.39 + i * .29), inch(.27)
     replace(s, 67, "Source workshop lifecycle diagram · adapted for synthetic DEV / DEMO", 10, MUTED)
     # Keep the source artwork and both bridges; enlarge the shortened text for projection.
-    footer(s, 2, "The lifecycle")
-
-    s = selected[9]
-    clear(s)
-    title(s, "One customer. One support journey.",
-          "Volt Charge 65  /  batch CH-0722  /  order VC-10482", 3, "The customer")
-    rect(s, .5, 2.0, 4.0, 4.62, INK, radius=True)
-    chip(s, "SYNTHETIC CUSTOMER CASE", .78, 2.28, 3.42, PURPLE, WHITE, 12)
-    add_text(s, "“Can I get a\nreplacement?”", .8, 2.98, 3.42, 1.35, 32, WHITE, True)
-    add_text(s, "Outside the standard\n30-day return window.", .8, 4.62, 3.35, .9, 22, WHITE)
-    add_text(s, "A recall and a return window\nare not the same decision.", .8, 5.75, 3.3, .65, 16, "D8D0F5")
-    steps = [
-        ("1", "Establish the facts", "Recall, order and eligibility tools", PURPLE),
-        ("2", "Ground the policy", "Foundry IQ returns a source citation", AZURE),
-        ("3", "Choose a responsible next step", "Human assessment—not an automatic refund", TEAL),
-    ]
-    for y, (num, head, body, col) in zip([2.35, 3.85, 5.35], steps):
-        circle(s, num, 4.95, y, .52, col, 17)
-        add_text(s, head, 5.73, y - .02, 6.85, .55, 25, INK, True)
-        add_text(s, body, 5.73, y + .67, 6.85, .5, 18, MUTED)
-    line(s, 5.21, 2.95, 5.21, 3.64, "CEC5EC", 2)
-    line(s, 5.21, 4.45, 5.21, 5.13, "CEC5EC", 2)
-
-    s = selected[33]
-    clear(s)
-    title(s, "Choose the operating model",
-          "Use the managed path unless the application needs custom runtime control.", 4, "Agent choices")
-    rect(s, .5, 2.0, 12.33, .72, PURPLE)
-    add_text(s, "The decision", .72, 2.17, 2.65, .34, 20, WHITE, True)
-    add_text(s, "Prompt agent", 3.62, 2.17, 3.9, .34, 20, WHITE, True)
-    add_text(s, "Hosted agent", 8.3, 2.17, 4.1, .34, 20, WHITE, True)
-    rows = [
-        ("Authoring", "Instructions and configuration", "Framework or custom code"),
-        ("Runtime responsibility", "Managed orchestration", "Your logic; managed hosting"),
-        ("Choose it when…", "The managed path is enough", "You need deterministic logic"),
-        ("Cost shape", "Model and tool usage", "Usage + active compute"),
-    ]
-    for i, (a, b, c) in enumerate(rows):
-        y = 2.72 + i * .72
-        rect(s, .5, y, 12.33, .72, WHITE if i % 2 else VIOLET)
-        add_text(s, a, .72, y + .17, 2.7, .45, 17, INK, True)
-        add_text(s, b, 3.62, y + .17, 4.2, .45, 18)
-        add_text(s, c, 8.3, y + .17, 4.2, .45, 18)
-    rect(s, .5, 6.0, 12.33, .7, INK, radius=True)
-    add_text(s, "VOLT'S CHOICE", .72, 6.22, 2.2, .3, 13, "C8BAFF", True)
-    add_text(s, "Agent Framework + Responses  →  deterministic decisions and lifecycle integration",
-             3.05, 6.19, 9.5, .4, 18, WHITE)
-
-    s = selected[31]
-    clear(s)
-    title(s, "Our code. Foundry's runtime.",
-          "Hosted is the control path—not the unmanaged path.", 5, "Hosted responsibilities")
-    # Source slide 31's paired responsibility panels, retained as editable shapes.
-    rect(s, .5, 2.02, 5.96, 3.9, VIOLET, PURPLE, True)
-    rect(s, 6.85, 2.02, 5.98, 3.9, "E8F4FD", AZURE, True)
-    chip(s, "YOU OWN", .78, 2.29, 1.8, PURPLE, WHITE)
-    chip(s, "FOUNDRY PROVIDES", 7.13, 2.29, 2.8, AZURE, WHITE)
-    for y, txt in [(3.01, "Agent logic + orchestration"), (3.77, "Framework + dependencies"), (4.53, "Responses request handling"), (5.29, "Configuration + sizing")]:
-        add_text(s, txt, .82, y, 5.28, .5, 23, INK, True)
-    for y, txt in [(3.01, "Managed hosting + endpoint"), (3.77, "Scaling + agent identity"), (4.53, "Tracing + evaluations"), (5.29, "Operate + monitor")]:
-        add_text(s, txt, 7.17, y, 5.28, .5, 23, INK, True)
-    add_text(s, "GitHub Copilot helps us develop the application.", .55, 6.22, 7.55, .4, 20, PURPLE, True)
-    add_text(s, "It is not the deployed runtime.", 8.12, 6.22, 4.5, .4, 20, INK)
+    footer(s, 3, "The lifecycle")
 
     s = selected[6]
     replace(s, 6, "Where Citadel and Foundry meet", 32, AZURE, True)
@@ -399,336 +392,118 @@ def make_deck():
              .65, 1.21, 12.0, .4, 15, PURPLE)
     footer(s, 6, "Architecture reference")
 
-    s = selected[47]
+
+    cards(content[4], 4, "VC-10482 · Volt Charge 65 · CH-0722 · synthetic data",
+          [("Business facts", "Order, exact batch and replacement eligibility."),
+           ("Policy evidence", "An identifiable replacement policy and recall notice."),
+           ("Responsible answer", "Assessment advice—not a ticket, refund or shipment.")], "BUILD")
+    cards(content[5], 5, "Start with the managed path; choose hosted when application-owned logic matters.",
+          [("Managed harness", "The platform owns orchestration and supported execution."),
+           ("Our hosted choice", "Agent Framework + Responses. Code enforces the business contract."),
+           ("Copilot's role", "Development assistant. The same review and release gate applies.")], "BUILD")
+    demo(content[7], 7, 1, "Can we explain how this answer was produced?",
+         "15–25 MIN · FRESH REQUEST + IDENTIFIED TRACE",
+         [("Ask", "Terminal · pinned released version"),
+          ("Follow", "Foundry · tools, IQ and actual spans"),
+          ("Inspect", "Two code regions, not a repository tour")], 8, "BUILD")
+    cards(content[8], 8, "BACK FROM DEMO 1 · Configuration is not execution evidence.",
+          [("Useful", "The request reaches facts and policy."),
+           ("Inspectable", "The response identifies the executed path."),
+           ("Still unproven", "Did the answer preserve the business meaning?")], "PROVE")
+    cards(content[9], 9, "One metric cannot answer every quality question.",
+          [("Code", "Expected outcome + request-bound tool results + schema and references."),
+           ("Model rubric", "Does the prose claim an action that never happened?"),
+           ("Human", "Review expectations, ambiguous wording and real incidents.")], "PROVE")
+    cards(content[10], 10, "Keep access, content safety and business correctness distinct.",
+          [("Verified evidence", "Routed utility and a recorded input-marker content_filter block."),
+           ("Local v2 contract", "Tool-derived decision and constrained no-action wording before streaming."),
+           ("Separate activation", "Tool-boundary policy and bounded red-team scan need approval and proof.")], "PROVE")
+    cards(content[11], 11, "Completed prior experiment · preview · no candidate applied",
+          [("Bounded search", "Instruction-only; separate training and validation sets."),
+           ("Actual outcome", "Baseline 0.75 retained. No accepted improvement."),
+           ("Review decision", "Job success alone proves neither a quality gain nor release readiness.")], "PROVE")
+    demo(content[12], 12, 2, "What does a passing test actually establish?",
+         "31–40 MIN · NATIVE V1 HISTORY + LOCAL V2 CONTRACT",
+         [("Compare", "Historical 8/9 → 9/9 was a prompt repair"),
+          ("Challenge", "Expected outcome AND observed evidence"),
+          ("Enforce", "Local Responses tests; cloud v2 pending")], 13, "PROVE")
+    cards(content[13], 13, "BACK FROM DEMO 2 · Bridge 1 carries an identifiable candidate.",
+          [("Package once", "Commit + instructions + dependencies + ZIP digest."),
+           ("Evaluate", "Fresh pinned responses; native business and calibrated action gates."),
+           ("Approve", "Protected environment; same artifact; independent DEMO verification.")], "RELEASE")
+    cards(content[14], 14, "The badge is the verdict. The case file explains it.",
+          [("Identity", "Versioned source, package, agent, Toolbox, dataset and grader."),
+           ("Behavior", "Case outcomes, rubric reasons and failure evidence."),
+           ("Release", "Approval + promotion receipt + serving hash + fresh post-run.")], "RELEASE")
+    demo(content[15], 15, 3, "Could another engineer defend this release?",
+         "43–50 MIN · IMPLEMENTED WORKFLOW; CLOUD ACTIVATION PENDING",
+         [("Open", "Workflow and explicit activation controls"),
+          ("Inspect", "Actual historical case file—not v2 proof"),
+          ("Decide", "No live pass or approval is invented")], 16, "RELEASE")
+    s = content[16]
     clear(s)
-    title(s, "Give the agent governed capabilities",
-          "Tools → a curated Toolbox → a pinned agent version", 7, "Tools and evidence")
-    chip(s, "CONCEPTUAL ROUTE · NOT A PORTAL SCREENSHOT", .5, 1.9, 6.15, size=11)
-    rect(s, .5, 2.78, 3.15, 2.85, VIOLET, PURPLE, True)
-    add_text(s, "Read-only\nbusiness tools", .8, 3.08, 2.6, 1.0, 27, PURPLE, True)
-    add_text(s, "Recall\nOrder status\nEligibility", .8, 4.18, 2.65, 1.2, 19)
-    line(s, 3.68, 4.17, 4.38, 4.17, PURPLE, 3, True)
-    rect(s, 4.48, 2.78, 4.35, 2.85, WHITE, PURPLE, True)
-    chip(s, "FOUNDRY TOOLBOX", 4.76, 3.06, 3.8, PURPLE, WHITE, 14)
-    add_text(s, "Curate tools.\nPin the version.\nKeep access explicit.", 4.8, 3.85, 3.75, 1.5, 23, INK, True)
-    line(s, 8.88, 4.17, 9.58, 4.17, PURPLE, 3, True)
-    rect(s, 9.7, 2.78, 3.13, 2.85, INK, radius=True)
-    add_text(s, "Volt agent", 10.0, 3.15, 2.5, .55, 27, WHITE, True)
-    add_text(s, "Agent Framework\nResponses protocol", 10.0, 4.04, 2.5, .9, 20, WHITE)
-    add_text(s, "One answer we can inspect—not an unrestricted tool catalog.",
-             .55, 6.1, 12.1, .6, 24, PURPLE, True)
-
-    s = selected[141]
-    clear(s)
-    title(s, "Ground the answer in policy",
-          "Foundry IQ connects source evidence to the customer response.", 8, "Knowledge", "IQ portal experience · preview")
-    # Source slide 141's source → knowledge base → agent composition, narrowed to Search.
-    heads = [("1", "Sources", .5, 3.55, PURPLE), ("2", "Knowledge base", 4.88, 3.55, AZURE), ("3", "Agent + citation", 9.26, 3.57, TEAL)]
-    for num, head, x, w, col in heads:
-        rect(s, x, 2.25, w, 3.82, WHITE, col, True)
-        circle(s, num, x + .26, 2.53, .44, col)
-        add_text(s, head, x + .85, 2.52, w - 1.05, .6, 23, col, True)
-    # Native document symbols rather than unrelated source screenshots.
-    for y in [3.47, 4.49]:
-        rect(s, .8, y, .48, .65, VIOLET, PURPLE)
-        line(s, .9, y + .19, 1.17, y + .19, PURPLE, 1)
-        line(s, .9, y + .34, 1.17, y + .34, PURPLE, 1)
-    add_text(s, "Replacement policy", 1.46, 3.49, 2.28, .65, 19, INK, True)
-    add_text(s, "Synthetic recall notice", 1.46, 4.51, 2.28, .72, 19, INK, True)
-    add_text(s, "Azure AI Search", .81, 5.45, 2.9, .35, 16, PURPLE, True)
-    add_text(s, "volt-support-\nknowledge", 5.18, 3.5, 2.92, .85, 23, INK, True)
-    add_text(s, "Text + semantic\nextractive retrieval", 5.18, 4.67, 2.92, .85, 20, MUTED)
-    add_text(s, "Retrieve evidence.\nKeep the source.\nExplain next steps.", 9.56, 3.48, 2.94, 1.65, 23, INK, True)
-    add_text(s, "A citation is inspectable.", 9.56, 5.46, 2.95, .4, 16, TEAL, True)
-    line(s, 4.09, 4.25, 4.72, 4.25, PURPLE, 2.6, True)
-    line(s, 8.47, 4.25, 9.1, 4.25, PURPLE, 2.6, True)
-    add_text(s, "Policy knowledge complements business tools. It does not replace them.", .5, 6.35, 12.2, .5, 22, PURPLE, True)
-
-    s = selected[57]
-    clear(s)
-    title(s, "One gateway. Explicit access contracts.",
-          "Citadel's Governance Hub governs the calls routed through it.", 9, "APIM")
-    rect(s, .5, 2.25, 2.95, 3.7, INK, radius=True)
-    add_text(s, "Volt agent", .8, 2.57, 2.35, .6, 28, WHITE, True)
-    add_text(s, "Connected model", .8, 3.65, 2.35, .8, 20, WHITE)
-    add_text(s, "Toolbox → MCP", .8, 4.86, 2.35, .8, 20, WHITE)
-    rect(s, 4.22, 2.25, 4.35, 3.7, VIOLET, PURPLE, True)
-    chip(s, "API MANAGEMENT", 4.52, 2.56, 3.75, PURPLE, WHITE, 16)
-    add_text(s, "Access by use case\nApproved model route\nToken quotas", 4.54, 3.45, 3.65, 1.65, 24, INK, True)
-    add_text(s, "Trace the boundary that acted.", 4.54, 5.45, 3.65, .35, 15, PURPLE)
-    line(s, 3.48, 4.05, 4.04, 4.05, PURPLE, 3, True)
-    line(s, 8.63, 3.4, 9.37, 3.4, AZURE, 3, True)
-    line(s, 8.63, 4.88, 9.37, 4.88, TEAL, 3, True)
-    rect(s, 9.51, 2.65, 3.32, 1.45, "E8F4FD", AZURE, True)
-    add_text(s, "Approved model", 9.79, 2.91, 2.77, .5, 23, AZURE, True)
-    add_text(s, "gpt-5.4-mini route", 9.79, 3.48, 2.77, .35, 16)
-    rect(s, 9.51, 4.37, 3.32, 1.58, "E6F3F3", TEAL, True)
-    add_text(s, "Volt business API", 9.79, 4.62, 2.77, .5, 23, TEAL, True)
-    add_text(s, "Functions + private storage", 9.79, 5.21, 2.77, .7, 17)
-    add_text(s, "An access contract is not customer order-ownership authorization.",
-             .5, 6.35, 12.3, .5, 23, INK, True)
-
-    s = selected[128]
-    clear(s)
-    title(s, "Enforce the right boundary",
-          "Authorization ≠ content guardrails ≠ business eligibility", 10, "Governance", "Agent guardrails · preview")
-    stages = [
-        ("1", "Input", "Inspect content\nat supported\nboundaries.", PURPLE),
-        ("2", "Reason", "Plan from\ninstructions\nand context.", PURPLE),
-        ("3", "Tool access", "Check the\nconsumer's\naccess contract.", AZURE),
-        ("4", "Business rule", "Apply eligibility\nand safety\nrules.", TEAL),
-        ("5", "Response", "Inspect the\noutcome and\nits evidence.", PURPLE),
-    ]
-    for i, (num, head, body, col) in enumerate(stages):
-        x = .5 + i * 2.5
-        rect(s, x, 2.5, 2.31, 3.0, WHITE, col, True)
-        circle(s, num, x + .23, 2.78, .43, col)
-        add_text(s, head, x + .23, 3.48, 1.87, .7, 22, col, True)
-        add_text(s, body, x + .23, 4.2, 1.87, 1.05, 17)
-        if i < 4:
-            line(s, x + 2.33, 3.94, x + 2.47, 3.94, PURPLE, 2, True)
-    rect(s, .5, 5.94, 12.33, .72, VIOLET, radius=True)
-    add_text(s, "Prove permitted utility and the specific block—not just a refusal.",
-             .76, 6.12, 11.8, .43, 21, PURPLE, True)
-
-    s = selected[115]
-    clear(s)
-    title(s, "Remember preferences, not authority",
-          "The same caller can return. The facts still come from authoritative systems.", 11, "Memory", "Memory Store · preview")
-    rect(s, 4.83, 2.28, 3.68, 3.76, VIOLET, PURPLE, True)
-    chip(s, "VOLT-PREFERENCES", 5.12, 2.56, 3.1, PURPLE, WHITE, 13)
-    add_text(s, "“Concise answers.\nNext step first.”", 5.14, 3.36, 3.06, 1.0, 26, INK, True)
-    add_text(s, "User profile only\n7-day retention\nExplicit forget", 5.14, 4.75, 3.05, 1.2, 19, PURPLE)
-    for y, label, sub, writing in [
-        (2.6, "Caller A · session 1", "Write the preference", True),
-        (4.58, "Caller A · session 2", "Return the saved preference", False),
-    ]:
-        circle(s, "A", .63, y, .55, AZURE, 19)
-        add_text(s, label, 1.42, y, 2.87, .56, 22, INK, True)
-        add_text(s, sub, 1.42, y + .72, 2.87, .75, 17, MUTED)
-        start, end = (4.12, 4.65) if writing else (4.65, 4.12)
-        line(s, start, y + .3, end, y + .3, AZURE, 2.5, True)
-    circle(s, "B", 9.12, 2.63, .55, TEAL, 19)
-    add_text(s, "Next validation", 9.91, 2.63, 2.4, .8, 22, INK, True)
-    add_text(s, "Caller B needs a real\nidentity and a separate\nisolation test.", 9.13, 3.66, 3.12, 1.35, 22)
-    chip(s, "ISOLATION NOT YET PROVEN", 9.13, 5.39, 3.36, "E6F3F3", TEAL, 11)
-    add_text(s, "Keep policy, permissions and customer facts out of preference memory.",
-             .5, 6.33, 12.15, .55, 21, PURPLE, True)
-
-    s = selected[83]
-    clear(s)
-    title(s, "Evidence before confidence",
-          "A fluent answer can still make the wrong business decision.", 12, "Evaluation", "Custom evaluators · preview")
-    rect(s, .5, 2.12, 3.75, 3.9, INK, radius=True)
-    add_text(s, "“It sounds right.”", .8, 2.49, 3.15, 1.05, 30, WHITE, True)
-    add_text(s, "Coherence", .8, 3.79, 3.15, .55, 25, "D5C9FF", True)
-    add_text(s, "Useful quality evidence.\nNot recall correctness.", .8, 4.6, 3.15, .9, 20, WHITE)
-    line(s, 4.3, 4.12, 4.99, 4.12, PURPLE, 3, True)
-    rect(s, 5.13, 2.12, 7.7, 3.9, WHITE, PURPLE, True)
-    chip(s, "BUSINESS CONTRACT", 5.45, 2.43, 3.78, PURPLE, WHITE, 14)
-    add_text(s, "Structured decision", 5.47, 3.27, 6.98, .5, 26, INK, True)
-    add_text(s, "+ observed tool evidence", 5.47, 4.04, 6.98, .5, 26, AZURE, True)
-    add_text(s, "+ policy citation when required", 5.47, 4.81, 6.98, .5, 26, TEAL, True)
-    add_text(s, "Compare exact versions on reviewed cases. Keep tuning data separate from holdouts.",
-             .5, 6.35, 12.3, .5, 22, PURPLE, True)
-
-    s = selected[98]
-    clear(s)
-    title(s, "Optimize configuration. Review the change.",
-          "The best score starts a review—it does not authorize a release.", 13, "Agent Optimizer", "Agent Optimizer · limited preview")
-    flow = [
-        ("1", "Define", "Objective +\ntuning cases"),
-        ("2", "Generate", "Configuration\ncandidates"),
-        ("3", "Compare", "Baseline +\nheld-out cases"),
-        ("4", "Review", "Source diff +\ncost / latency"),
-        ("5", "Gate", "Approved for\nrelease"),
-    ]
-    for i, (n, h, b) in enumerate(flow):
-        x = .5 + 2.5 * i
-        fill = PURPLE if i == 3 else WHITE
-        fg = WHITE if i == 3 else INK
-        rect(s, x, 2.49, 2.31, 3.0, fill, PURPLE, True)
-        circle(s, n, x + .25, 2.78, .43, AZURE if i == 3 else PURPLE)
-        add_text(s, h, x + .25, 3.5, 1.82, .64, 23, fg, True)
-        add_text(s, b, x + .25, 4.35, 1.82, .9, 18, fg)
-        if i < 4:
-            line(s, x + 2.34, 3.94, x + 2.46, 3.94, PURPLE, 2, True)
-    add_text(s, "A code defect needs a code fix. An optimizer candidate can also be rejected.",
-             .5, 6.1, 12.2, .65, 24, PURPLE, True)
-
-    s = selected[185]
-    clear(s)
-    title(s, "Operation teaches DEV what to test",
-          "Tool result: eligible. Agent decision: recommendation.", 14, "The trace flywheel")
-    chip(s, "OBSERVED BUSINESS-CONTRACT MISMATCH", .5, 1.98, 5.2, size=12)
-    flow = [
-        ("1", "Trace", "What happened?"),
-        ("2", "Select", "Relevant evidence"),
-        ("3", "Inspect", "Find the decision"),
-        ("4", "Propose", "A regression case"),
-        ("5", "Review", "Expected behavior"),
-        ("6", "Improve", "Test the fix"),
-    ]
-    for i, (n, h, b) in enumerate(flow):
-        x = .5 + i * 2.08
-        fill, fg = (PURPLE, WHITE) if i == 4 else (WHITE, INK)
-        rect(s, x, 2.83, 1.93, 2.65, fill, PURPLE, True)
-        circle(s, n, x + .22, 3.09, .42, AZURE if i == 4 else PURPLE)
-        add_text(s, h, x + .22, 3.79, 1.49, .6, 22, fg, True)
-        add_text(s, b, x + .22, 4.57, 1.49, .65, 17, fg)
-    line(s, 11.85, 5.68, 11.85, 6.08, TEAL, 2)
-    line(s, 11.85, 6.08, 1.46, 6.08, TEAL, 2, True)
-    add_text(s, "A trace is evidence. A person supplies the reviewed expectation.",
-             .5, 6.4, 12.25, .48, 22, PURPLE, True)
-
-    s = selected[159]
-    replace(s, 2, "A PR carries code and behavioral evidence", 32, INK, True)
-    replace(s, 4, "One reviewed candidate. Separate environments. A verifiable serving version.", 16, PURPLE)
-    replace(s, 13, "SYNTHETIC TRAFFIC")
-    replace(s, 14, "DEMO")
-    replace(s, 15, "Production-like requests, real usage.")
-    replace(s, 16, "Verify what is actually serving.")
-    replace(s, 23, "Candidate")
-    replace(s, 24, "Exact\ncandidate", 16)
-    replace(s, 30, "Required\nchecks pass", 16)
-    replace(s, 36, "Approved\nversion", 16)
-    for sid in [24, 30, 36]:
-        for paragraph in get(s, sid).text_frame.paragraphs:
-            paragraph.alignment = PP_ALIGN.LEFT
-    for sid in [23, 29, 35]:
-        replace(s, sid, get(s, sid).text, 18, bold=True)
-    replace(s, 40, "Reviewed traces → new regression tests.", 18)
-    get(s, 40).height = inch(.38)
-    replace(s, 42, "A passing PR is not the finish line. Verify the serving version and the customer outcome.", 19, WHITE, True)
-    replace(s, 43, "DEMO is a synthetic environment—not customer production.", 12, WHITE)
-    footer(s, 15, "The release gate")
-
-    s = new
-    clear(s)
-    title(s, "Follow one fix from trace to customer",
-          "Every link should identify the same change—not merely the latest version.", 16, "The evidence chain")
-    nodes = [
-        (0.5, 2.35, "01", "Trace", "Observed decision"),
-        (4.88, 2.35, "02", "Reviewed case", "Expected: eligible"),
-        (9.26, 2.35, "03", "Issue + PR", "Reproduction + diff"),
-        (9.26, 4.62, "04", "Candidate", "Commit + artifact"),
-        (4.88, 4.62, "05", "Gate", "Exact run + verdict"),
-        (.5, 4.62, "06", "Serving version", "Corrected customer result"),
-    ]
-    for x, y, n, head, sub in nodes:
-        col = TEAL if n == "06" else PURPLE
-        rect(s, x, y, 3.55, 1.7, WHITE, col, True)
-        circle(s, n, x + .25, y + .26, .46, col, 13)
-        add_text(s, head, x + .92, y + .27, 2.38, .72, 23, col, True)
-        add_text(s, sub, x + .26, y + 1.16, 3.03, .4, 16)
-    line(s, 4.09, 3.19, 4.72, 3.19, PURPLE, 2.8, True)
-    line(s, 8.47, 3.19, 9.1, 3.19, PURPLE, 2.8, True)
-    line(s, 11.03, 4.1, 11.03, 4.48, PURPLE, 2.8, True)
-    line(s, 9.1, 5.47, 8.47, 5.47, PURPLE, 2.8, True)
-    line(s, 4.72, 5.47, 4.09, 5.47, TEAL, 2.8, True)
-    add_text(s, "Version identity + behavioral evidence + human judgment", .5, 6.62, 12.1, .35, 20, PURPLE, True)
-
-    s = selected[198]
-    clear(s)
-    title(s, "Useful. Governed. Measurable. Improving.",
-          "Four ideas to take back to your next agent.", 17, "Takeaways + Q&A")
-    takeaways = [
-        (.5, 2.15, "1", "Useful", "Tools establish facts.\nIQ supplies policy evidence.", PURPLE),
-        (6.86, 2.15, "2", "Governed", "Explicit access and boundaries.\nMemory stays deliberately narrow.", AZURE),
-        (.5, 4.28, "3", "Measurable", "Correctness is a contract.\nQuality is more than fluency.", TEAL),
-        (6.86, 4.28, "4", "Improving", "Reviewed traces become tests.\nGated changes reach customers.", PURPLE),
-    ]
-    for x, y, n, h, b, c in takeaways:
-        circle(s, n, x + .05, y + .04, .6, c, 21)
-        add_text(s, h, x + .94, y, 5.02, .63, 30, c, True)
-        add_text(s, b, x + .94, y + .83, 4.96, .97, 21)
-    rect(s, .5, 6.48, 12.33, .43, INK, radius=True)
-    add_text(s, "10 MINUTES FOR YOUR QUESTIONS", .74, 6.57, 11.82, .24, 13, WHITE, True, PP_ALIGN.CENTER)
-
-    s = selected[113]
-    clear(s)
-    title(s, "Memory: a store is not an authorization system",
-          "Q&A backup · one store, explicitly derived scopes, narrow retention", 18, "Hidden backup", "Memory Store · preview")
-    rect(s, .5, 2.1, 7.6, 4.15, VIOLET, PURPLE, True)
-    chip(s, "VOLT-PREFERENCES", .8, 2.4, 3.4, PURPLE, WHITE, 14)
-    for y, h, b in [(3.2, "Caller A scope", "Fixed synthetic response-style preference"),
-                     (4.64, "Caller B scope", "Independent preference state")]:
-        rect(s, .8, y, 7.0, 1.14, WHITE, PURPLE, True)
-        add_text(s, h, 1.05, y + .16, 6.45, .35, 20, PURPLE, True)
-        add_text(s, b, 1.05, y + .66, 6.45, .32, 16)
-    add_text(s, "Scope follows the\nauthenticated caller.", 8.65, 2.65, 4.13, 1.05, 25, INK, True)
-    add_text(s, "7-day TTL\nUser profile only\nForget + verify deletion", 8.65, 4.24, 4.0, 1.5, 23, PURPLE)
-    add_text(s, "New conversation ≠ new identity. Runtime isolation needs two authenticated identities.",
-             .5, 6.55, 12.3, .42, 20, INK, True)
-
-    s = selected[163]
-    clear(s)
-    title(s, "Separate platform and team responsibilities",
-          "Q&A backup · account scope and project scope solve different problems", 19, "Hidden backup")
-    rect(s, .5, 2.08, 12.33, 4.48, "E8F4FD", AZURE, True)
-    chip(s, "FOUNDRY ACCOUNT", .82, 2.39, 3.23, AZURE, WHITE, 15)
-    add_text(s, "fdy-volt-citadel-261111", 4.41, 2.4, 7.8, .4, 23, AZURE, True)
-    add_text(s, "Model deployment, shared infrastructure and account-level responsibilities",
-             .84, 3.07, 11.6, .48, 21)
-    for x, head, body in [(1.0, "volt-dev", "Build, test and compare candidates"), (6.94, "volt-demo", "Serve synthetic customer traffic")]:
-        rect(s, x, 3.94, 5.39, 1.98, WHITE, PURPLE, True)
-        add_text(s, head, x + .27, 4.22, 4.85, .51, 27, PURPLE, True)
-        add_text(s, body, x + .27, 4.99, 4.85, .66, 21)
-    add_text(s, "Different project names are not, by themselves, proof of permission isolation.",
-             .5, 6.71, 12.3, .3, 18, INK, True)
-
-    for after, (number, heading, question, mode, steps, back, takeaway) in DEMOS.items():
-        s = demo_slides[after]
-        clear(s)
-        chip(s, f"DEMO {number:02} · LEAVE THE SLIDES", .5, .42, 4.65, PURPLE, WHITE, 14)
-        add_text(s, heading, .5, 1.15, 12.0, .8, 38, INK, True)
-        add_text(s, mode, .5, 2.05, 12.0, .38, 13, PURPLE, True)
-        rect(s, .5, 2.85, 5.7, 2.73, INK, radius=True)
-        add_text(s, "THE QUESTION TO PROVE", .82, 3.13, 4.95, .4, 14, "D5C9FF", True)
-        add_text(s, question, .82, 3.86, 4.95, 1.4, 29, WHITE, True)
-        for i, (head, detail) in enumerate(steps):
-            y = 2.85 + i * .98
-            circle(s, str(i + 1), 6.72, y + .02, .44, PURPLE, 15)
-            add_text(s, head, 7.4, y, 5.1, .4, 21, INK, True)
-            add_text(s, detail, 7.4, y + .45, 5.1, .43, 17, MUTED)
-        rect(s, .5, 6.05, 12.33, .85, TEAL, radius=True)
-        add_text(s, f"BACK TO SLIDE {back:02}", .78, 6.3, 3.1, .35, 18, WHITE, True)
-        add_text(s, takeaway, 4.05, 6.3, 8.44, .4, 20, WHITE)
-        footer(s, 0, f"Demo {number} · screen switch")
-
-    for source, demo in [(57, 1), (83, 2), (185, 3), (198, 4)]:
-        chip(selected[source], f"BACK FROM DEMO {demo}", .5, .17, 3.1, "E6F3F3", TEAL, 11)
-
+    title(s, TITLES[15], "BACK FROM DEMO 3 · Recorded released DEMO v1", 16, "Operate")
+    rect(s, .5, 2.1, 3.0, 3.9, PURPLE, radius=True)
+    add_text(s, "9 / 9", .8, 2.7, 2.4, .9, 54, WHITE, True)
+    add_text(s, "Historical business\ncases passed", .8, 4.05, 2.4, 1.3, 24, WHITE)
+    add_text(s, "“I'm escalating this\nto human support.”", 4.1, 2.4, 8.3, 1.55, 36, INK, True)
+    add_text(s, "There is no handoff tool.\nThe answer claims more than the tools performed.",
+             4.1, 4.45, 8.2, 1.15, 24, TEAL, True)
+    tracker(s, "OPERATE")
+    cards(content[17], 17, "The escaped claim has a matching saved response ID and a 43-span trace.",
+          [("Actual observation", "Released DEMO response + correlated App Insights export."),
+           ("Missing criterion", "V1 checked decisions, tools and references, but missed action claims."),
+           ("Future monitor", "Sampled continuous evaluation is not yet configured.")], "OPERATE")
+    cards(content[18], 18, "Operation supplies evidence. A reviewer supplies the expectation.",
+          [("Inspect", "Keep the original answer, tool evidence and version identity."),
+           ("Annotate", "No handoff occurred. Advice is not execution."),
+           ("Regress", "Add the escalation case and action rubric; show the old capture fail.")], "IMPROVE")
+    demo(content[19], 19, 4, "What did operation teach us to test?",
+         "60–70 MIN · REAL RECORDED FINDING + LOCAL FAIL/FIX/PASS",
+         [("Find", "Same response, trace and reviewed expectation"),
+          ("Repair", "Copilot-assisted diff + real host-stream test"),
+          ("Return", "Cloud proof awaits approval")], 20, "IMPROVE")
+    cards(content[20], 20, "BACK FROM DEMO 4 · One reason for each architectural choice.",
+          [("Application", "Hosted Responses; request-bound decision renderer; read-only business API."),
+           ("Platform", "Toolbox + IQ; governed model and tool routes; scoped identity."),
+           ("Lifecycle", "Versioned tests, case file, release gate and feedback.")], "IMPROVE")
+    cards(content[21], 21, "A customer-ready next step is a scoped experiment, not a platform shopping list.",
+          [("One decision", "Choose a business outcome and an accountable owner."),
+           ("One contract", "Define supported actions, expected results and failure boundaries."),
+           ("One proof chain", "Agree release criteria, representative cases and an operational feedback path.")])
+    cards(content[22], 22, "10 MINUTES FOR QUESTIONS",
+          [("Own the contract", "The harness runs the loop; our application enforces business meaning."),
+           ("Open the evidence", "A green badge is a verdict. The case file explains it."),
+           ("Learn from operation", "Reviewed findings become tests before they become fixes.")])
+    cards(content[23], 23, "Q&A backup · Memory preview · DEV only",
+          [("Proved", "One caller: remember, recall across conversations, forget and verify deletion."),
+           ("Not authority", "Synthetic response style only. No policy, permissions or business facts."),
+           ("Still unverified", "Cross-user isolation needs a second genuine authenticated identity.")])
+    cards(content[24], 24, "Q&A backup · shared account is not a hard production isolation boundary",
+          [("Caller + runtime", "Entra-authenticated entry; runtime reaches versioned capabilities."),
+           ("DEV + DEMO", "Different contracts and projects. DEMO Memory remains off."),
+           ("Release identity", "Scoped OIDC roles and real approvals still require separate activation.")])
     script = (ROOT / "Presenter manuscript.md").read_text(encoding="utf-8")
     sections = re.findall(r"(?ms)^## Slide (\d{2})[^\n]*\n(.*?)(?=^## Slide \d{2}|^## Appendix|\Z)", script)
     by_num = {int(n): text.strip() for n, text in sections}
-    assert set(by_num) == set(range(1, 24)), by_num.keys()
-    for n, slide in enumerate(prs.slides, 1):
+    assert set(by_num) == set(range(1, 25))
+    for n, slide in content.items():
         for shape in slide.shapes:
             if shape.name == "Workshop slide number":
                 shape.text_frame.paragraphs[0].runs[0].text = f"{n:02}"
         notes(slide, by_num[n])
         prune_slide(slide)
-    used_layouts = {slide.slide_layout.part for slide in prs.slides}
+    used = {s.slide_layout.part for s in prs.slides}
     for master in prs.slide_masters:
-        for layout_id in list(master._element.sldLayoutIdLst):
-            if master.part.related_part(layout_id.rId) not in used_layouts:
-                master.part.drop_rel(layout_id.rId)
-                master._element.sldLayoutIdLst.remove(layout_id)
-    prs.core_properties.title = "Volt & Co — From useful agent to governed service"
-    prs.core_properties.subject = "90-minute internal developer enablement · Microsoft Foundry + Citadel"
+        for item in list(master._element.sldLayoutIdLst):
+            if master.part.related_part(item.rId) not in used:
+                master.part.drop_rel(item.rId)
+                master._element.sldLayoutIdLst.remove(item)
+    prs.core_properties.title = "Volt & Co — Can we defend this release?"
+    prs.core_properties.subject = "Evidence-first revision · cloud activation pending"
     prs.core_properties.author = "Microsoft · Volt & Co enablement"
-    prs.core_properties.keywords = "Foundry, Citadel, Volt, internal enablement, rehearsal draft"
-    prs.core_properties.comments = "Adapted from the user-supplied workshop. Presenter bindings require rehearsal verification."
     prs.save(OUTPUT)
-    with zipfile.ZipFile(OUTPUT) as z:
-        slides = [p for p in z.namelist() if re.fullmatch(r"ppt/slides/slide\d+\.xml", p)]
-        assert len(slides) == 23, slides
-        for path in slides:
-            xml = z.read(path).decode()
-            assert not any(t in xml.lower() for t in ["northstar", "financial-report", "nova", "private preview", "classified"])
-    print(OUTPUT)
-    print("23 slides: 21 visible, including four explicit demo checkpoints; 2 hidden Q&A backups.")
+    print(f"{OUTPUT}\n24 slides: 22 visible and 2 hidden backups. Cloud-dependent v2 proof is explicitly pending.")
 
 
 if __name__ == "__main__":

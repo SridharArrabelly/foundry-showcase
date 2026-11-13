@@ -1,138 +1,117 @@
-# Volt & Co — delivery map and readiness
+# Evidence-first workshop: source map and readiness
 
-The current deck has **23 slides: 21 visible, including four demo checkpoints,
-and two hidden Q&A backups**. It is designed for approximately 50 technical
-attendees, with 80 minutes of content and 10 minutes of questions.
+## What this revision delivers
 
-## The screen-switch map
+**24 slides: 22 visible, two hidden backups.** One 90-minute story, four substantial
+demonstrations, explicit return cues and full spoken notes. Memory moves to backup.
 
-| Clock | Slides / screen | Action |
+The current pre-activation version is honest about local v2 code versus historical
+cloud proof. It must not be presented as a completed v2 live release until the
+separately approved cloud workflow, model calibration and promotion have succeeded.
+
+| Clock | Chapter | Screen-switch instruction |
 |---|---|---|
-| 00–13 | 1–6 | Customer, inner/outer loop, runtime choice and Citadel |
-| 13–15 | 7–8 | Explain the tools and policy needed for the request |
-| 15–27 | **9 → terminal / Foundry / focused code → 10** | **Demo 1:** fresh customer request, Toolbox and IQ |
-| 27–30 | 10–12 | Debrief utility; distinguish access, guardrails and memory |
-| 30–45 | **13 → APIM / Foundry / verified proofs → 14** | **Demo 2:** govern capabilities |
-| 45–47 | 14–15 | Debrief boundaries; define quality and optimization decisions |
-| 47–57 | **16 → native evaluation / Optimizer reports → 17** | **Demo 3:** inspect completed runs |
-| 57–60 | 17–19 | Debrief measured outcomes; explain the repair/release chain |
-| 60–78 | **20 → evidence / GitHub / editor / terminal → 21** | **Demo 4:** actual repair history, exact release and a new request |
-| 78–80 | 21 | Four takeaways |
-| 80–90 | 21; optional 22–23 | Q&A |
+| 00–10 | Why, agenda and lifecycle | Slides 1–3 |
+| 10–25 | Build and inspect | Slides 4–6 → **7 / Demo 1 → 8** |
+| 25–40 | Prove | Slides 8–11 → **12 / Demo 2 → 13** |
+| 40–50 | Bridge 1 | Slides 13–14 → **15 / Demo 3 → 16** |
+| 50–60 | Operate and the escaped finding | Slides 16–18 |
+| 60–70 | Bridge 2 | **19 / Demo 4 → 20** |
+| 70–80 | Architecture and POC | Slides 20–22 |
+| 80–90 | Q&A | Slide 22; backups 23–24 only if useful |
 
-Show the demo card before switching. Say its opening bridge, Alt+Tab to the
-prepared application group, and remain there for the full demonstration.
-Return to the card and advance once to the numbered return slide. That slide's
-notes begin with the debrief. Cards do not automatically run commands or launch
-applications.
+Show the entry card, say its bridge, then leave the slides. Return once at the
+named target and speak the debrief. The cards do not execute commands.
 
-The time budget includes 25 minutes on concept/return slides, 49 minutes of
-demonstration/evidence inspection and six minutes of screen transitions.
-Narration overlaps the demonstrations: do not count it a second time.
-`spoken-word-estimate.json` is a speech estimate, not a human rehearsal.
+## Verified reviewer reference
 
-## Files and ownership
+The reviewer refers to the [linked online workshop](https://onedrive.cloud.microsoft/:p:/a@3wd7z4b6/S/cQqcmS2qKIDnQbWAX3_QQjI_EgUC2eDOq6LllEwyqTs4S8z6zA?isSPOFile=1).
+The user supplied a fresh local copy after browser access stalled. Its content
+is readable and the review's principal slide references match this copy.
+The online file itself has not been independently inspected.
 
-| File | Purpose |
-|---|---|
-| `Volt & Co - Governed and improving agents.pptx` | Editable audience deck with the full script embedded in notes |
-| `Volt & Co - Audience.pdf` | Visible slides only |
-| `Presenter manuscript.md` / `.html` / `.pdf` | One synchronized, fully written presenter script |
-| `Recorded evidence.html` | Self-contained offline fallback, visibly labeled recorded |
-| `Rehearsal bindings.json` | Actual project/version/run links and four entry/return pairs |
-| `build_citadel_deck.py` and rendering helpers | Rebuild tools, not runtime agent code |
-| `..\docs\OPERATIONS.md` | Authoritative setup and operational commands |
-| `..\.runtime\presentation-renders` | Generated slide/review images; not another source deck |
+The current local source is
+`C:\Users\sarrabelly\OneDrive - Microsoft\00FY27\AI Roadshow FY27\Foundry Agent Platform Workshop v1.0.0.pptx`
+(198 slides, 35 hidden, 105 with nonempty speaker notes).
+SHA-256: `e3e4c79391b114f14968bb990812b757a3c200a13079f7e03ef4109bcbb2ec47`.
+It differs from the earlier Downloads copy; the reused slide XML for 1, 6, 15
+and 159 is unchanged. The builder now reads this current source and keeps its
+original cover theme, two-loop diagram
+(local slide 15) and Citadel diagram (local slide 6). Other slides use the same
+editable visual language. Neither the local source nor the shared online file is modified.
 
-The earlier 50-minute workshop is retained in Git history, not in this checkout.
-The user's edited older deck was preserved in a local recovery backup outside
-the repository. Use only the current workshop commands and slides here.
+The source references below describe selected concepts, not wholesale slide
+imports. References checked include 84 (evaluator types), 171 (case file),
+174 (PR gate), 181 (continuous evaluation), 189 (trace-to-dataset), 192
+(architecture) and 195/198 (POC and takeaways). Source slide 13's actual title
+is "Why agent engineering feels decoupled"; "two loops, two bridges" is the
+reviewer's description, not its literal title.
 
-## Source mapping
-
-Primary source: the user-supplied
-`C:\Users\sarrabelly\Downloads\Foundry Agent Platform Workshop v1.0.0.pptx`
-(**198 slides, 35 hidden**). The older 202-slide deck has different numbering.
-Its visual language, original wave artwork, masters, lifecycle and architecture
-diagrams are retained. The source deck itself is not edited.
-
-| Current | Title / purpose | Source slide |
+| Output | Purpose | Source treatment |
 |---:|---|---|
-| 1 | From useful agent to governed service | 1 |
-| 2 | Two loops. One improving service. | 15; original diagram |
-| 3 | One customer. One support journey. | 9 |
-| 4 | Choose the operating model | 33; originally hidden |
-| 5 | Our code. Foundry's runtime. | 31 |
-| 6 | Where Citadel and Foundry meet | 6; original layered diagram |
-| 7 | Give the agent governed capabilities | 47 |
-| 8 | Ground the answer in policy | 141 |
-| 9 | Demo 1 — Make the answer useful | New screen-switch checkpoint |
-| 10 | One gateway. Explicit access contracts. | 57; return from Demo 1 |
-| 11 | Enforce the right boundary | 128 |
-| 12 | Remember preferences, not authority | 115; second-identity test explicitly unverified |
-| 13 | Demo 2 — Govern the capabilities | New screen-switch checkpoint |
-| 14 | Evidence before confidence | 83; return from Demo 2 |
-| 15 | Optimize configuration. Review the change. | 98, informed by 101 |
-| 16 | Demo 3 — Measure before improving | New screen-switch checkpoint |
-| 17 | Operation teaches DEV what to test | 185; return from Demo 3 |
-| 18 | A PR carries code and behavioral evidence | 159; original outer-loop diagram |
-| 19 | Follow one fix from trace to customer | Authored evidence chain |
-| 20 | Demo 4 — Close the loop | New screen-switch checkpoint |
-| 21 | Useful. Governed. Measurable. Improving. | 198; return from Demo 4 |
-| 22 | Memory authorization | 113; hidden backup |
-| 23 | Account/project responsibilities | 163; hidden backup |
+| 1 | Can we defend this release? | Original cover theme; trust question from review/AgentOps narrative |
+| 2 | Loop-based timed agenda | Newly authored; not the source's full feature agenda |
+| 3 | Two loops and bridges | Local source 15's actual diagram |
+| 4 | Volt customer contract | Same synthetic order/batch and non-mutation boundary |
+| 5 | Harness and runtime ownership | Clean comparison; no restricted AKS card or parity claim |
+| 6 | Citadel and Foundry | Local source 6's architecture; contextual layers explicitly distinguished |
+| 7–8 | Demo 1 and debrief | New checkpoint; tracing appears in the inner loop |
+| 9 | Code/model/human evaluation | Concept informed by reviewer reference 84 |
+| 10 | Control boundaries | Supported proof versus pending tool-boundary/safety work |
+| 11 | Honest optimization outcome | One completed no-improvement experiment, not a feature tour |
+| 12–13 | Demo 2 and Bridge 1 | New checkpoint; historical prompt repair distinct from new code enforcement |
+| 14–15 | Case file and Demo 3 | Concepts from reviewer references 171/174; actual custom workflow, not an unverified AgentOps installation |
+| 16–17 | Released finding and observability | Actual DEMO claim and matching recorded trace; continuous monitoring pending |
+| 18–19 | Bridge 2 and Demo 4 | Actual annotation/regression path; not a fictional native Insights result |
+| 20 | Selected architecture | One reason per layer; inspired by reviewer reference 192 |
+| 21–22 | Customer POC and takeaways | Adapted close inspired by 195/198; three memorable lines |
+| 23–24 | Memory and identity | Hidden Q&A backups; no cross-user-isolation claim |
 
-Unrelated finance scenarios, screenshots, the broad feature agenda, source slide
-27's restricted material and unsupported blanket security claims are excluded.
-No native portal screenshot or successful result was fabricated.
+Restricted AKS/A-B experiment content and private release dates are excluded.
+No portal screenshot, successful pipeline or score is fabricated.
 
-## Rehearsal checklist
+## Evidence readiness
 
-- Open the current deck in Presenter View; test readability from the back of the room.
-  Use large terminal/editor text and browser zoom. Close unrelated tabs and notifications.
-- Pre-open the **DEMO** agent and Toolbox v1 for Demo 1. DEV's Toolbox is v2;
-  do not interchange their configuration evidence.
-- Verify Azure/GitHub access and the exact native report links in the bindings.
-  Do not project connection headers, keys or private Memory records.
-- Prepare both fresh-request commands from the script. Each uses a new output
-  directory, `--fresh`, DEMO v1 and one replacement-recall case.
-- At 30 seconds without a result, announce the recorded fallback and move on.
-  Never replace a pending request with recorded output without saying so.
-- Keep the original incident capture distinct from current DEMO behavior.
-  Its exported App Insights span is unverified; the separate golden DEMO trace has 43 spans.
-- Inspect already-completed native evaluations and Optimizer. Do not start a job,
-  merge the existing PR again, change capacity or redeploy on stage.
-- Memory's main route uses redacted prior proof. A live four-conversation branch
-  requires its own timing/redaction rehearsal. A second authenticated user is still
-  needed before making cross-user isolation claims.
-- The restricted-consumer APIM denial drill has no verified capture. Explain that
-  boundary conceptually unless real evidence is obtained separately.
-- If an answer says “I'm escalating,” state that no ticket/handoff was executed.
-- Rehearse all four entry/return pairs and reserve Q&A from 80:00. If behind,
-  skip deeper policy/latency inspection, not the distinction between live and recorded.
+| Capability | Current evidence | Remaining condition |
+|---|---|---|
+| Historical hosted release | DEV 8/9 → 9/9 and separate DEMO 9/9; same ZIP/native hash | Keep v1 identities and instruction-only repair description |
+| Genuine outer-loop finding | Recorded DEMO “I'm escalating” claim; same response ID in trace; local v1-pass/v2-fail regression | Optional fresh incident capture has to establish its own correlation |
+| Runtime enforcement | Real local Agent tool loop and Responses HTTP stream tests | New DEV/DEMO deployment and cloud behavior verification |
+| Evaluation v2 | Original nine expectations retained, additive escalation case, tool-result consistency tests | Native registration/evaluation and semantic judge calibration |
+| Model rubric | Versioned rubric and eight positive/negative calibration examples | Approved model calls; authored examples alone are not calibrated proof |
+| Automated release | Opt-in workflow, current check names, exact commit and response lineage, protection preflight | Configure actual OIDC roles/reviewers/branch protection and exercise failing/passing runs |
+| Guardrails | Recorded native input-marker block and permitted utility | Tool-boundary route support and bounded red-team run separately approved |
+| Continuous evaluation / Insights | Architecture and intended operating role only | No recurring job or native monitor configured |
+| Memory | Historical one-caller DEV lifecycle proof | Backup only; Memory off in DEMO; no second-identity proof |
 
-## What remains true
+Use `docs/RELEASE-GATE.md` for exact activation conditions. The new workflow is
+not enabled by adding YAML, and an environment name is not an approval control.
+Do not rerun or overwrite historical packages, recordings or receipts.
 
-Native business evidence is DEV **8/9 → 9/9** and an independent fresh DEMO
-**9/9**. It grades captured real responses, not server-side agent reruns or
-availability. The saved code ZIP and native deployed hash match.
-Optimizer retained a 0.75 task-adherence baseline with no accepted candidate;
-that metric is not the business-contract score.
+## Presenter readiness
 
-The actual fix used local Copilot assistance. The gate is operator-run, not
-GitHub-enforced branch protection. No automatic Insights monitor, rollback
-drill, universal safety, production SLA, cost saving or customer-order ownership
-authorization is claimed.
+The spoken-route estimate excludes commands, stage directions, fallback branches,
+backups and Q&A. Demonstration narration overlaps interaction. Do not add all
+demo minutes again as silent time or treat an estimate as a completed rehearsal.
 
-This is a shared-account, synthetic profile. DataZoneStandard is not Sweden-only
-processing; APIM Developer has no production SLA; selected gateway quotas do not
-cover every service-internal call. Base resources remain billable. A full human
-90-minute rehearsal is still outstanding.
+Rehearse the four entry/return pairs with the actual projector and browser zoom.
+Use 22–26-point terminal/editor text. Put these notes on a private display.
+Prepare only the relevant tabs and close notifications.
 
-## Rebuild locally
+Keep the 30-second fallback cutoff for a fresh call. State whether the fallback
+is a different recorded request. A pending/error response is not a pass.
+Use the local routes for Demos 2–4 until cloud proof exists. After activation,
+update the version bindings and notes from actual receipts before presenting.
 
-These are local document operations, not Azure operations. The presentation
-builders use the existing Python presentation environment, PowerPoint and Word.
+If behind, shorten the Optimizer counters and broad trace navigation, then use
+part of the architecture/POC block as recovery. Preserve the actual finding,
+contract boundary and ten-minute Q&A.
+
+## Build and verification
+
+The source builder and manuscript remain synchronized; the final deck embeds
+every section's notes. `Volt & Co - Audience.pdf` excludes hidden backups.
+Rendered review images belong under `.runtime/presentation-renders`.
 
 ```powershell
 python .\presentation\build_citadel_deck.py
@@ -141,6 +120,9 @@ python .\presentation\make_contact_sheets.py
 python .\presentation\render_manuscript.py
 python .\presentation\validate_artifacts.py
 python .\presentation\estimate_spoken_words.py
-python .\presentation\build_recorded_evidence.py
 python .\presentation\test_recorded_evidence.py
 ```
+
+The recorded viewer still shows unchanged historical evidence. The new finding
+annotation is `recordings/escalation-finding.json`; local regression results
+must not be relabeled as new native cloud scores.

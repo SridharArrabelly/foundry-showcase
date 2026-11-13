@@ -1,0 +1,157 @@
+name: Volt behavioral release
+
+on:
+  workflow_dispatch:
+    inputs:
+      pull_request:
+        description: Reviewed same-repository PR targeting main
+        required: true
+        type: number
+      expected_commit:
+        description: Exact reviewed 40-character PR head SHA
+        required: true
+        type: string
+      promote:
+        description: Promote only after the evaluated PR is merged and DEMO approval is granted
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+  checks: read
+  pull-requests: read
+
+concurrency:
+  group: volt-approved-live-release
+  cancel-in-progress: false
+
+env:
+  PR_NUMBER: ${{ inputs.pull_request }}
+  CANDIDATE_SHA: ${{ inputs.expected_commit }}
+  VOLT_LIVE_GATE_ENABLED: ${{ vars.VOLT_LIVE_GATE_ENABLED }}
+  GH_TOKEN: ${{ github.token }}
+
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - uses: astral-sh/setup-uv@v6
+      - name: Verify explicit activation, trusted source and actual protection rules
+        env:
+          VOLT_GATE_READ_TOKEN: ${{ secrets.VOLT_GATE_READ_TOKEN }}
+        working-directory: agent/src
+        run: uv run --locked python ../../scripts/live_gate_preflight.py --pull-request "$PR_NUMBER" --expected-commit "$CANDIDATE_SHA" --environment volt-dev-evaluation
+
+  live-evaluation:
+    needs: preflight
+    environment: volt-dev-evaluation
+    timeout-minutes: 45
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      checks: read
+      id-token: write
+      statuses: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.expected_commit }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - uses: astral-sh/setup-uv@v6
+      - name: Recheck the approved head before receiving Azure credentials
+        env:
+          VOLT_GATE_READ_TOKEN: ${{ secrets.VOLT_GATE_READ_TOKEN }}
+        working-directory: agent/src
+        run: uv run --locked python ../../scripts/live_gate_preflight.py --pull-request "$PR_NUMBER" --expected-commit "$CANDIDATE_SHA" --environment volt-dev-evaluation
+      - name: Mark the exact commit pending
+        run: gh api "repos/$GITHUB_REPOSITORY/statuses/$CANDIDATE_SHA" -f state=pending -f context=volt/live-behavior -f description="Versioned native business and action-truthfulness gates"
+      - uses: azure/login@v2
+        with:
+          client-id: ${{ vars.VOLT_DEV_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      - name: Package once and deploy candidate to existing DEV
+        working-directory: agent/src
+        run: uv run --locked python ../../scripts/prepare_candidate.py --expected-commit "$CANDIDATE_SHA" --out ../../.runtime/case-file/candidate --deploy
+      - name: Evaluate fresh candidate responses and calibrate the action judge
+        working-directory: agent/src
+        run: uv run --locked python ../../scripts/validate_live_release.py --environment dev --deployment-receipt ../../.runtime/case-file/candidate/deployment.json --out ../../.runtime/case-file/dev --execute
+      - name: Preserve the case file, including partial failure evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: volt-case-file-${{ inputs.expected_commit }}
+          path: .runtime/case-file
+          if-no-files-found: warn
+          retention-days: 7
+      - name: Publish the actual verdict and case-file link
+        if: always()
+        env:
+          OUTCOME: ${{ job.status }}
+        run: |
+          STATE=failure
+          if [ "$OUTCOME" = success ] && [ -f .runtime/case-file/dev/summary.json ]; then STATE=success; fi
+          RUN_URL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          gh api "repos/$GITHUB_REPOSITORY/statuses/$CANDIDATE_SHA" -f state="$STATE" -f context=volt/live-behavior -f target_url="$RUN_URL" -f description="Native v2 + calibrated action rubric: $STATE"
+          gh pr comment "$PR_NUMBER" --body "Copilot-authored gate report for \`$CANDIDATE_SHA\`: **$STATE**. [Open the run and its versioned case file]($RUN_URL). This is bounded synthetic evidence, not an availability or universal safety guarantee."
+
+  promote:
+    if: inputs.promote
+    needs: live-evaluation
+    environment: volt-demo-promotion
+    timeout-minutes: 45
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      checks: read
+      pull-requests: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.expected_commit }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - uses: astral-sh/setup-uv@v6
+      - uses: actions/download-artifact@v4
+        with:
+          name: volt-case-file-${{ inputs.expected_commit }}
+          path: .runtime/case-file
+      - name: Require merged exact PR and actual DEMO approval controls
+        env:
+          VOLT_GATE_READ_TOKEN: ${{ secrets.VOLT_GATE_READ_TOKEN }}
+        working-directory: agent/src
+        run: uv run --locked python ../../scripts/live_gate_preflight.py --pull-request "$PR_NUMBER" --expected-commit "$CANDIDATE_SHA" --environment volt-demo-promotion
+      - uses: azure/login@v2
+        with:
+          client-id: ${{ vars.VOLT_DEMO_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      - name: Promote the evaluated ZIP without rebuilding
+        working-directory: agent/src
+        run: |
+          uv run --locked python ../../scripts/promote_demo.py \
+            --package ../../.runtime/case-file/candidate/agent.zip \
+            --deployment-receipt ../../.runtime/case-file/candidate/deployment.json \
+            --evaluation-receipt ../../.runtime/case-file/dev/native-evaluation.json \
+            --action-judgments ../../.runtime/case-file/dev/action-judgments.json \
+            --expected-commit "$CANDIDATE_SHA" --pull-request "$PR_NUMBER" \
+            --required-check contracts --contract-version v2 --out ../../.runtime/case-file/promotion.json --execute
+      - name: Verify independent post-promotion behavior
+        working-directory: agent/src
+        run: uv run --locked python ../../scripts/validate_live_release.py --environment demo --deployment-receipt ../../.runtime/case-file/promotion.json --out ../../.runtime/case-file/demo --execute
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: volt-release-${{ inputs.expected_commit }}
+          path: .runtime/case-file
+          if-no-files-found: error
+          retention-days: 7

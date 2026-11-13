@@ -1,9 +1,9 @@
 {
-  "slides": 23,
-  "visible": 21,
+  "slides": 24,
+  "visible": 22,
   "hidden": [
-    22,
-    23
+    23,
+    24
   ],
   "notes": "Full manuscript embedded in every slide",
   "source_slide_27": "excluded",

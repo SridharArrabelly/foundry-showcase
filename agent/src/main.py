@@ -12,8 +12,18 @@ from azure.identity.aio import DefaultAzureCredential
 from dotenv import load_dotenv
 
 from preferences import PreferenceMemory
+from evidence_contract import EvidenceContract
 from response_contract import SupportResponse
 from settings import Settings
+
+
+def create_support_agent(client, tools, instructions, memory=None):
+    middleware = [EvidenceContract()] if memory is None else [memory]
+    return Agent(
+        client=client, name="VoltSupport", instructions=instructions,
+        tools=tools, middleware=middleware,
+        default_options={"store": False, "response_format": SupportResponse},
+    )
 
 
 async def main():
@@ -34,19 +44,11 @@ async def main():
         )
         toolbox = FoundryToolbox(credential, url=settings.toolbox_endpoint)
         tools = [toolbox]
-        middleware = []
+        memory = None
         if settings.memory_enabled:
             memory = PreferenceMemory(project)
             tools.extend([memory.remember_response_style, memory.forget_response_style])
-            middleware.append(memory)
-        agent = Agent(
-            client=client,
-            name="VoltSupport",
-            instructions=config.compose_instructions(),
-            tools=tools,
-            middleware=middleware,
-            default_options={"store": False, "response_format": SupportResponse},
-        )
+        agent = create_support_agent(client, tools, config.compose_instructions(), memory)
         await ResponsesHostServer(agent).run_async()
 
 if __name__ == "__main__":

@@ -10,6 +10,7 @@ from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import MemoryStoreDefaultDefinition, MemoryStoreDefaultOptions
 from azure.core.exceptions import ResourceNotFoundError
 from azure.identity import DefaultAzureCredential
+from evaluate_captures import contract_source, evaluator_name
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -19,8 +20,9 @@ def main() -> None:
     parser.add_argument("--project-endpoint", required=True)
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--evaluator-only", action="store_true", help="Do not create or inspect a Memory store.")
+    parser.add_argument("--contract-version", choices=["v1", "v2"], default="v1")
     args = parser.parse_args()
-    code = (ROOT / "evaluations" / "business_contract.py").read_text(encoding="utf-8")
+    code = contract_source(args.contract_version).read_text(encoding="utf-8")
     code_hash = hashlib.sha256(code.encode()).hexdigest()
     with DefaultAzureCredential() as credential, AIProjectClient(
         endpoint=args.project_endpoint, credential=credential
@@ -50,11 +52,11 @@ def main() -> None:
                     ),
                     description="Internal Volt showcase: synthetic response-style preferences only.",
                 )
-        evaluator_name = "volt_business_contract"
+        name_of_evaluator = evaluator_name(args.contract_version)
         try:
             matches = [
                 version for version in project.evaluators.list_versions(
-                    evaluator_name, headers={"Foundry-Features": "Evaluations=V1Preview"}
+                    name_of_evaluator, headers={"Foundry-Features": "Evaluations=V1Preview"}
                 )
                 if version.metadata and version.metadata.get("source_sha256") == code_hash
             ]
@@ -65,7 +67,7 @@ def main() -> None:
             evaluator = matches[0]
         else:
             evaluator = project.evaluators.create_version(
-                name=evaluator_name,
+                name=name_of_evaluator,
                 headers={"Foundry-Features": "Evaluations=V1Preview"},
                 evaluator_version={
                     "display_name": "Volt business contract",
@@ -102,7 +104,7 @@ def main() -> None:
                                         name: {"type": "string"}
                                         for name in (
                                             "response", "observed_tools", "expected_decision",
-                                            "required_tool", "expected_reference",
+                                            "required_tool", "expected_reference", "observed_calls", "expected_arguments",
                                         )
                                     },
                                 }

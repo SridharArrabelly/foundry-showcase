@@ -14,13 +14,19 @@ Designed for a **90-minute internal technical session: 80 minutes plus 10 minute
 
 | Demonstration | Question | Main surfaces |
 |---|---|---|
-| 1. Make the answer useful | Can the agent justify a replacement assessment? | Hosted request, Toolbox, Foundry IQ |
-| 2. Govern the capabilities | Which boundaries act, and what may persist? | Citadel/APIM, guardrails, narrow DEV Memory |
-| 3. Measure before improving | Did the change actually improve behavior? | Native evaluations and the completed Optimizer experiment |
-| 4. Close the loop | Can evidence become a reviewed fix and verified release? | Trace, GitHub issue/PR, code, release evidence, fresh DEMO request |
+| 1. Build and inspect | Can we explain how the answer was produced? | Hosted request, Toolbox, IQ, gateway and trace |
+| 2. Prove the contract | What does passing actually establish? | Code/model/human evaluation, controls and honest optimization |
+| 3. Inspect the release gate | Can we defend the exact artifact? | Trusted commit, case file, native/rubric gates and approvals |
+| 4. Turn a finding into a repair | What did operation teach us to test? | Real escaped DEMO action claim, trace, annotation, additive test and code boundary |
 
 Use the deck's demo entry/return cues. New requests are live; completed evaluations,
 the Optimizer job and the already-merged PR are inspected as historical evidence.
+
+**Current revision status:** runtime enforcement, v2 evaluation and the opt-in
+behavioral release workflow are locally implemented; cloud activation and v2
+results are pending separate approval. See [the release-gate guide](docs/RELEASE-GATE.md).
+The historical 8/9 → 9/9 repair was instructions-only, not code enforcement.
+Memory is now a Q&A backup, not part of the main demo route.
 
 ## Repository map
 
