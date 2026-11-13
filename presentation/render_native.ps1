@@ -1,6 +1,6 @@
 $ErrorActionPreference = 'Stop'
 $root = $PSScriptRoot
-$pptx = Join-Path $root 'Volt & Co - Governed and improving agents.pptx'
+$pptx = Join-Path $root 'Can we defend this release - Foundry SE Showcase.pptx'
 $pdf = Join-Path $root 'Volt & Co - Audience.pdf'
 $render = Join-Path $root '..\.runtime\presentation-renders'
 New-Item -ItemType Directory -Force -Path $render | Out-Null

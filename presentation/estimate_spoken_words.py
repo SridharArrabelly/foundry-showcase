@@ -11,7 +11,7 @@ for section in re.finditer(
     r"(?ms)^## Slide (\d{2})[^\n]*\n(.*?)(?=^## Slide \d{2}|^## Appendix|\Z)", source
 ):
     number = int(section[1])
-    if number > 22:
+    if number > 23:
         continue
     body = section[2]
     clock = re.search(r"\*\*Clock (\d+):(\d+)–(\d+):(\d+)([^\n]*)", body)
@@ -38,24 +38,24 @@ for section in re.finditer(
         "speech_plus_transition_at_130wpm_minutes": round(minimum, 2),
         "excess_before_silent_demo_at_130wpm_seconds": round(max(0, minimum - (end - start)) * 60, 1),
     })
-assert len(rows) == 22
+assert len(rows) == 23
 assert sum(row["allocated_minutes"] for row in rows) == 80
 total = sum(row["spoken_words"] for row in rows)
 transitions = sum(row["booked_transition_minutes"] for row in rows)
 result = {
-    "method": "Count leading-curly-quote main-route paragraphs on visible slides 1–22, before each If branch; exclude stage directions, fenced/inline code, headings, backups, Q&A and appendices.",
+    "method": "Count explicitly quoted talk-track paragraphs on content slides 1–23. This is a lower bound: imported source notes also contain unquoted guidance, not a complete verbatim speech. Exclude commands, cues, Q&A and hidden backups.",
     "tokenization": "Unicode word tokens; hyphenated/slashed terms count as one. Verbal expansion of numbers/IDs and unscripted commentary can add time.",
     "manuscript_sha256": hashlib.sha256(source.encode()).hexdigest(),
     "spoken_words": total, "content_budget_minutes": 80, "qa_budget_excluded_minutes": 10,
     "booked_transitions_minutes": transitions,
-    "speech_minutes_by_words_per_minute": {str(rate): round(total / rate, 2) for rate in [120, 130, 140]},
-    "remaining_for_non_narrated_demo_and_wait_minutes": {
-        str(rate): round(80 - transitions - total / rate, 2) for rate in [120, 130, 140]
-    },
+    "quoted_speech_lower_bound_minutes_by_words_per_minute": {str(rate): round(total / rate, 2) for rate in [120, 130, 140]},
+    "remaining_demo_and_wait_minutes": None,
+    "remaining_time_note": "Not inferred from partial speaker notes; rehearse the timed route.",
     "opening_six_slides_speech_minutes_at_130wpm": round(
         sum(row["spoken_words"] for row in rows[:6]) / 130, 2
     ),
     "warnings": [
+        "Quoted talk-track only; do not treat these partial-note word counts as a complete speech duration.",
         "Demo-block narration overlaps interaction; do not count it twice as silent demonstration time.",
         "Leave deliberate time for case-level inspection and audience interpretation; don't fill every pause with narration.",
         "Preserve the 30-second fallback cutoff for fresh requests; finish Demo 4 at 70:00.",

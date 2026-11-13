@@ -14,6 +14,6 @@ for start in range(0, len(images), 6):
         image = Image.open(path).convert("RGB")
         image.thumbnail((704, 396))
         sheet.paste(image, (x + 8, y + 34))
-        draw.text((x + 12, y + 4), path.stem + (" · hidden backup" if int(path.stem[-2:]) > 17 else ""), font=font, fill="#201b36")
+        draw.text((x + 12, y + 4), path.stem + (" · hidden backup" if int(path.stem[-2:]) > 24 else ""), font=font, fill="#201b36")
     sheet.save(renders / f"contact-{start // 6 + 1}.png")
 print("Contact sheets written")

@@ -333,8 +333,8 @@
     "spoken_caveat": "That is an unsupported action claim; no ticket or handoff was created. The historical nine-case metric validates decision/tool/reference, not every natural-language action claim.",
     "newer_fresh_rehearsal_wording": "More cautious; does not erase the earlier recorded limitation",
     "presentation_locations": [
-      "Slides 16–18 released finding and feedback",
-      "Slide 19 recorded finding and local regression"
+      "Slide 18 recorded released finding",
+      "Slide 20 recorded finding and local regression"
     ],
     "source": "docs\\OPERATIONS.md — Start the presentation",
     "new_issue_or_model_deployment": false
@@ -453,7 +453,7 @@
     {
       "id": "RB01",
       "slides": [
-        7
+        8
       ],
       "purpose": "Workspace and versioned configuration",
       "verified": true,
@@ -470,7 +470,7 @@
     {
       "id": "RB02",
       "slides": [
-        7
+        8
       ],
       "purpose": "Historical baseline hosted execution through Responses",
       "verified": true,
@@ -494,7 +494,7 @@
     {
       "id": "RB03",
       "slides": [
-        7
+        8
       ],
       "purpose": "Toolbox contract and actual MCP invocation",
       "verified": true,
@@ -515,7 +515,7 @@
     {
       "id": "RB04",
       "slides": [
-        7
+        8
       ],
       "purpose": "Recorded IQ/source-citation evidence",
       "verified": true,
@@ -536,8 +536,8 @@
     {
       "id": "RB05",
       "slides": [
-        6,
-        10
+        7,
+        12
       ],
       "purpose": "APIM permitted calls and optional restricted-consumer drill",
       "verified": false,
@@ -555,8 +555,8 @@
     {
       "id": "RB06",
       "slides": [
-        10,
-        12
+        12,
+        13
       ],
       "purpose": "Verified native harmless-marker input guardrail enforcement",
       "verified": true,
@@ -574,7 +574,7 @@
     {
       "id": "RB07",
       "slides": [
-        23
+        26
       ],
       "purpose": "Verified single-caller native Memory lifecycle; cross-user proof pending",
       "verified": true,
@@ -597,7 +597,7 @@
     {
       "id": "RB08",
       "slides": [
-        12
+        13
       ],
       "purpose": "Verified independent DEV/DEMO native business results",
       "verified": true,
@@ -623,8 +623,8 @@
     {
       "id": "RB09",
       "slides": [
-        11,
-        12
+        12,
+        13
       ],
       "purpose": "Verified native Optimizer baseline-only outcome",
       "verified": true,
@@ -643,9 +643,9 @@
     {
       "id": "RB10",
       "slides": [
-        16,
+        18,
         17,
-        19
+        20
       ],
       "purpose": "Native captured baseline response/tool sequence and failed evaluation",
       "verified": true,
@@ -667,8 +667,8 @@
     {
       "id": "RB11",
       "slides": [
-        18,
-        19
+        19,
+        20
       ],
       "purpose": "Regression dataset and evaluator provenance",
       "verified": true,
@@ -688,8 +688,8 @@
     {
       "id": "RB12",
       "slides": [
-        15,
-        19
+        16,
+        20
       ],
       "purpose": "Merged exact PR and actual local Copilot assistance",
       "verified": true,
@@ -710,8 +710,8 @@
     {
       "id": "RB13",
       "slides": [
-        14,
-        15
+        15,
+        16
       ],
       "purpose": "DEV v6 candidate provenance and native business result",
       "verified": true,
@@ -734,7 +734,7 @@
     {
       "id": "RB14",
       "slides": [
-        15
+        16
       ],
       "purpose": "User-approved operator promotion and runtime-verified receipt",
       "verified": true,
@@ -758,7 +758,7 @@
     {
       "id": "RB15",
       "slides": [
-        7
+        8
       ],
       "purpose": "Rehearsed fresh single-case DEMO command, separate nine-case gate and prior golden trace",
       "verified": true,
@@ -784,31 +784,31 @@
     }
   ],
   "presentation_flow": {
-    "visible_slides": 22,
+    "visible_slides": 24,
     "hidden_backups": [
-      23,
-      24
+      25,
+      26
     ],
     "demo_entry_return_pairs": [
       [
-        7,
-        8
+        8,
+        9
       ],
       [
-        12,
-        13
+        13,
+        14
       ],
       [
-        15,
-        16
+        16,
+        17
       ],
       [
-        19,
-        20
+        20,
+        21
       ]
     ],
     "fresh_request_slides": [
-      7
+      8
     ],
     "corrected_escalation_cloud_demo": "pending approved v2 deployment; use local host test until then",
     "historical_package_not_rebuilt": true
@@ -834,5 +834,12 @@
     "protection_and_oidc": "not configured by this revision",
     "demo_promotion": "not performed",
     "incident": "recordings/escalation-finding.json"
+  },
+  "current_presentation": {
+    "file": "Can we defend this release - Foundry SE Showcase.pptx",
+    "source_approval": "User supplied General/public copy; native PowerPoint rights management disabled",
+    "source_sha256": "52f893b09ec0039c27f46fc51d9ab7ec608dbca4cabfaa0823f610a4692ff07b",
+    "total_slides": 26,
+    "readiness": "Cloud execution remains pending; notes identify local and recorded routes."
   }
 }

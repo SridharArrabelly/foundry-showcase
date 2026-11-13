@@ -5,7 +5,7 @@ Designed for a **90-minute internal technical session: 80 minutes plus 10 minute
 
 ## Start here
 
-- **Present:** [editable deck](presentation/Volt%20%26%20Co%20-%20Governed%20and%20improving%20agents.pptx) and [full presenter manuscript](presentation/Presenter%20manuscript.md).
+- **Present:** [current 26-slide deck](presentation/Can%20we%20defend%20this%20release%20-%20Foundry%20SE%20Showcase.pptx), [presenter notes](presentation/Presenter%20manuscript.md) and [demo runbook](docs/DEMO-RUNBOOK.md).
 - **Run:** [setup, live commands and operational boundaries](docs/OPERATIONS.md).
 - **Rehearse:** [source mapping and readiness](presentation/Source%20mapping%20and%20readiness.md).
 - **Recover:** [offline recorded evidence](presentation/Recorded%20evidence.html). Always label it as recorded, never live.
@@ -28,12 +28,13 @@ results are pending separate approval. See [the release-gate guide](docs/RELEASE
 The historical 8/9 → 9/9 repair was instructions-only, not code enforcement.
 Memory is now a Q&A backup, not part of the main demo route.
 
-The feature-branch follow-up adds automatic PR/release workflows and an optional
+The follow-up adds automatic PR/release workflows and an optional
 scheduled synthetic check, all disabled until explicitly activated. Its 11-case
 v2 dataset and always-on contract are locally tested; red-team SDK installation
-and cloud execution remain pending. The imported 26-slide candidate and its
-[draft runbook](docs/DEMO-RUNBOOK.md) are separate from the current presentation;
-the rights-managed source deck is kept local under ignored `.runtime/incoming`.
+and cloud execution remain pending. The user-approved General/public 26-slide
+deck is now the current presentation, with 24 visible slides and two hidden
+backups. Demo entry/return pairs are **8/9, 13/14, 16/17 and 20/21**.
+The older 24-slide deck is retained in Git history, not as a second current deck.
 
 ## Repository map
 

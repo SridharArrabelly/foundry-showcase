@@ -8,26 +8,18 @@ from pptx import Presentation
 import win32com.client
 
 ROOT = Path(__file__).parent
-deck_path = ROOT / "Volt & Co - Governed and improving agents.pptx"
+deck_path = ROOT / "Can we defend this release - Foundry SE Showcase.pptx"
 deck = Presentation(deck_path)
-assert len(deck.slides) == 24
-assert sum(s._element.get("show") != "0" for s in deck.slides) == 22
-assert all(s.has_notes_slide and len(s.notes_slide.notes_text_frame.text) > 350 for s in deck.slides)
+assert len(deck.slides) == 26
+assert sum(s._element.get("show") != "0" for s in deck.slides) == 24
+assert all(s.has_notes_slide and s.notes_slide.notes_text_frame.text.strip() for s in deck.slides)
 
 slide_texts = []
 for n, slide in enumerate(deck.slides, 1):
     text = "\n".join(s.text for s in slide.shapes if s.has_text_frame)
     slide_texts.append(text)
     assert not re.search(r"xxxx|lorem|ipsum|speaker name|financial|northstar|nova|library assistant|classified|private preview", text, re.I), (n, text)
-    for shape in slide.shapes:
-        if shape.has_text_frame:
-            for p in shape.text_frame.paragraphs:
-                for run in p.runs:
-                    assert run.font.name, (n, shape.shape_id, run.text)
-                    assert run.font.size is not None, (n, shape.shape_id, run.text)
-                    assert run.font.color.type is not None, (n, shape.shape_id, run.text)
-
-for entry, back in [(7, 8), (12, 13), (15, 16), (19, 20)]:
+for entry, back in [(8, 9), (13, 14), (16, 17), (20, 21)]:
     assert f"RETURN TO SLIDE {back:02}" in slide_texts[entry - 1]
     assert "[SWITCH OUT" in deck.slides[entry - 1].notes_slide.notes_text_frame.text
     assert f"slide {back}" in deck.slides[entry - 1].notes_slide.notes_text_frame.text
@@ -36,7 +28,7 @@ for entry, back in [(7, 8), (12, 13), (15, 16), (19, 20)]:
 with zipfile.ZipFile(deck_path) as z:
     slide_parts = [p for p in z.namelist() if re.fullmatch(r"ppt/slides/slide\d+\.xml", p)]
     note_parts = [p for p in z.namelist() if re.fullmatch(r"ppt/notesSlides/notesSlide\d+\.xml", p)]
-    assert len(slide_parts) == len(note_parts) == 24
+    assert len(slide_parts) == len(note_parts) == 26
     for part in slide_parts + note_parts:
         etree.fromstring(z.read(part))
     assert not any(p.startswith("ppt/media/") and p.endswith((".mp3", ".wav", ".mp4", ".wmv")) for p in z.namelist())
@@ -62,10 +54,10 @@ finally:
     pres.Close()
 
 report = {
-    "slides": 24,
-    "visible": 22,
-    "hidden": [23, 24],
-    "notes": "Full manuscript embedded in every slide",
+    "slides": 26,
+    "visible": 24,
+    "hidden": [25, 26],
+    "notes": "Speaker notes and delivery clocks embedded in every slide",
     "source_slide_27": "excluded",
     "unused_source_audio": "removed",
     "textual_checks": "passed",

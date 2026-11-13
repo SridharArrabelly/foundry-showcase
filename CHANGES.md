@@ -17,6 +17,11 @@ The red-team target adapter is implemented and tested locally; full SDK installa
 is blocked by package-feed/TLS failures. No cloud scan or activation has occurred.
 The proposal below is historical rationale, not authorization or execution evidence.
 
+The user subsequently supplied a General/public copy of the 26-slide deck.
+That approved copy is now the current repository presentation; the protected
+originals remain local. The current presenter guide, audience PDF and demo
+entry/return links were synchronized when adopting it.
+
 ## What PR #4 got right (keep it)
 
 | Recommendation | Status in PR #4 |
