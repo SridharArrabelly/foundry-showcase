@@ -2,6 +2,21 @@
 
 Reviewed: `main` at 62c60f3 (merge of PR #4, "evidence-first workshop and opt-in behavioral release gate").
 
+## Local integration status
+
+The supplied ZIP matches the original `feature/gate-and-contract-fixes` commit.
+The newer standalone runbook's demo cards (8, 13, 16, 20) were checked against
+the supplied 26-slide presentation. Original files are preserved under ignored
+`.runtime/incoming/cowork-review-20261113`; the rights-managed deck remains
+protected and local, not published to GitHub or substituted for the current deck.
+
+Subsequent fixes repair test discovery, exercise enforcement with Memory context,
+bind preflight to real PR/main/scheduled events, add explicit cloud activation
+guards and shared concurrency, and use the exact evaluated source during release.
+The red-team target adapter is implemented and tested locally; full SDK installation
+is blocked by package-feed/TLS failures. No cloud scan or activation has occurred.
+The proposal below is historical rationale, not authorization or execution evidence.
+
 ## What PR #4 got right (keep it)
 
 | Recommendation | Status in PR #4 |

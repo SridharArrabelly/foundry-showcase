@@ -7,10 +7,6 @@ name: Agent release to DEMO
 on:
   push:
     branches: [main]
-    paths:
-      - "agent/**"
-      - "tools/**"
-      - "evaluations/**"
   workflow_dispatch:
     inputs:
       pull_request:
@@ -22,14 +18,16 @@ permissions:
   contents: read
 
 concurrency:
-  group: volt-demo-promotion
+  group: volt-approved-live-release
   cancel-in-progress: false
 
 env:
   GH_TOKEN: ${{ github.token }}
+  VOLT_LIVE_GATE_ENABLED: ${{ vars.VOLT_LIVE_GATE_ENABLED }}
 
 jobs:
   promote:
+    if: vars.VOLT_LIVE_GATE_ENABLED == 'true'
     environment: volt-demo-promotion   # required reviewer = release approval
     timeout-minutes: 45
     runs-on: ubuntu-latest
@@ -49,12 +47,18 @@ jobs:
         id: lineage
         run: |
           if [ -n "${{ inputs.pull_request }}" ]; then PR="${{ inputs.pull_request }}";
-          else PR=$(gh pr list --state merged --search "${GITHUB_SHA}" --json number --jq '.[0].number'); fi
+          else
+            PR=$(gh api "repos/$GITHUB_REPOSITORY/commits/$GITHUB_SHA/pulls" --jq "[.[] | select(.merged_at != null and .base.ref == \"main\" and .merge_commit_sha == \"$GITHUB_SHA\")] | if length == 1 then .[0].number else empty end")
+          fi
           test -n "$PR" || { echo "No merged PR found for ${GITHUB_SHA}"; exit 1; }
           HEAD=$(gh pr view "$PR" --json headRefOid --jq .headRefOid)
-          RUN=$(gh run list --workflow agent-pr-gate.yml --commit "$HEAD" --status success --json databaseId --jq '.[0].databaseId')
+          RUN=$(gh run list --workflow agent-pr-gate.yml --commit "$HEAD" --event pull_request --status success --json databaseId --jq '.[0].databaseId')
           test -n "$RUN" || { echo "No successful PR gate run for $HEAD - refusing to promote"; exit 1; }
           echo "pr=$PR" >> "$GITHUB_OUTPUT"; echo "head=$HEAD" >> "$GITHUB_OUTPUT"; echo "run=$RUN" >> "$GITHUB_OUTPUT"
+      - name: Use the evaluated source for dataset and evaluator identity
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.lineage.outputs.head }}
       - name: Fetch the evaluated case file from the PR gate run
         uses: actions/download-artifact@v4
         with:

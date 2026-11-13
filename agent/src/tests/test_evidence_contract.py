@@ -4,7 +4,7 @@ import sys
 from pathlib import Path
 
 import pytest
-from agent_framework import BaseChatClient, ChatResponse, ChatResponseUpdate, Content, FunctionInvocationLayer, Message, ResponseStream, tool
+from agent_framework import AgentMiddleware, BaseChatClient, ChatResponse, ChatResponseUpdate, Content, FunctionInvocationLayer, Message, ResponseStream, tool
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from evidence_contract import ELIGIBILITY, RECALL, NO_ACTION, supported_response
@@ -88,14 +88,24 @@ class ScriptedClient(FunctionInvocationLayer, BaseChatClient):
 
 
 @pytest.mark.parametrize("stream", [False, True])
-def test_real_agent_tool_loop_and_registered_boundary_never_emit_unvalidated_text(stream):
+@pytest.mark.parametrize("memory_enabled", [False, True])
+def test_real_agent_tool_loop_and_registered_boundary_never_emit_unvalidated_text(stream, memory_enabled):
     async def exercise():
+        class MemoryContext(AgentMiddleware):
+            called = False
+
+            async def process(self, context, call_next):
+                self.called = True
+                context.messages.insert(0, Message(role="developer", contents=["Prefer concise responses."]))
+                await call_next()
+
+        memory = MemoryContext() if memory_enabled else None
         @tool(name=ELIGIBILITY)
         def eligibility(order_id: str, batch: str) -> dict:
             """Read the synthetic eligibility result."""
             assert order_id == "VC-10482" and batch == "CH-0722"
             return outcome()
-        agent = create_support_agent(ScriptedClient(), [eligibility], "Synthetic test.")
+        agent = create_support_agent(ScriptedClient(), [eligibility], "Synthetic test.", memory)
         if stream:
             response = agent.run(QUERY, stream=True)
             updates = [update async for update in response]
@@ -107,6 +117,8 @@ def test_real_agent_tool_loop_and_registered_boundary_never_emit_unvalidated_tex
         assert answer["decision"] == "eligible"
         assert NO_ACTION in answer["answer"]
         assert any(c.type == "function_result" for m in result.messages for c in m.contents)
+        if memory:
+            assert memory.called
     asyncio.run(exercise())
 
 

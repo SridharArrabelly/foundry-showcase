@@ -28,6 +28,13 @@ results are pending separate approval. See [the release-gate guide](docs/RELEASE
 The historical 8/9 → 9/9 repair was instructions-only, not code enforcement.
 Memory is now a Q&A backup, not part of the main demo route.
 
+The feature-branch follow-up adds automatic PR/release workflows and an optional
+scheduled synthetic check, all disabled until explicitly activated. Its 11-case
+v2 dataset and always-on contract are locally tested; red-team SDK installation
+and cloud execution remain pending. The imported 26-slide candidate and its
+[draft runbook](docs/DEMO-RUNBOOK.md) are separate from the current presentation;
+the rights-managed source deck is kept local under ignored `.runtime/incoming`.
+
 ## Repository map
 
 ```text

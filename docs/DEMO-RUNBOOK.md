@@ -1,5 +1,18 @@
 # Demo runbook — "Can we defend this release?"
 
+**Candidate runbook for the supplied 26-slide deck**, not the current 24-slide
+repository deck. Local source copies are in
+`.runtime\incoming\cowork-review-20261113`. The supplied presentation is
+rights-managed and remains local with its protection intact; it has not replaced
+the repository presentation.
+
+**Activation pending:** the steps below describe the intended post-activation
+route. No new DEV/DEMO release, failed/passing live PR gate, red-team scorecard
+or weekly monitoring result exists from this integration. Until separately
+approved runs produce those artifacts, use the historical/local routes in
+`presentation/Presenter manuscript.md`. Do not demonstrate approvals or invent
+results to fill an empty tab. See `docs/RELEASE-GATE.md` for prerequisites.
+
 Four demos, one agent (`volt-support`), one customer request. Every demo answers one
 question and ends on one sentence. Prepared tabs are listed per demo; open them before
 the session in this order. Terminal and editor at 22–26 pt. Notifications off.
@@ -8,11 +21,11 @@ the session in this order. Terminal and editor at 22–26 pt. Notifications off.
 `CH-0722`, past the 30-day window, customer asks for a replacement.
 
 **Rule for every live call:** 30-second cutoff. If it misses, say "here is the same
-request recorded yesterday" and open the recorded tab. Never present a recording as live.
+request from a previous recorded run" and open the recorded tab. Never present a recording as live.
 
 ---
 
-## Demo 1 — Build and trace (inner loop) · 8 min · after slide 9
+## Demo 1 — Build and trace (inner loop) · 8 min · deck slide 8
 
 **Question:** Can we explain how this answer was produced?
 
@@ -29,10 +42,11 @@ VS Code on `agent/src/evidence_contract.py`, terminal in repo root, Foundry Trac
    Entra token check, model allow-list, 20k TPM / 500k daily token contract.
 5. **Live request (2 min).**
    ```powershell
+   $out = ".\.runtime\live-demo1-" + (Get-Date -Format "yyyyMMdd-HHmmss")
    & .\agent\src\.venv\Scripts\python.exe .\scripts\capture_cases.py `
      --project-endpoint "https://fdy-volt-citadel-261111.services.ai.azure.com/api/projects/volt-dev" `
      --expected-version <DEV version> --dataset ".\agent\src\.foundry\datasets\volt-regression-v2.jsonl" `
-     --case replacement-recall --fresh --out .\.runtime\live-demo1 --pause-seconds 0
+     --contract-version v2 --case replacement-recall --fresh --out $out --pause-seconds 0
    ```
    Read out: `decision: eligible`, citation `VOLT-REPLACEMENT-2026-11`, and the sentence
    "No ticket, handoff, refund, shipment or order change has been performed."
@@ -47,7 +61,7 @@ Fallback: `presentation/Recorded evidence.html` → golden DEMO trace (43 spans)
 
 ---
 
-## Demo 2 — Prove it (inner loop) · 8 min · after slide 13
+## Demo 2 — Prove it (inner loop) · 8 min · deck slide 13
 
 **Question:** What does "passing" actually establish?
 
@@ -56,7 +70,8 @@ terminal, red-team scorecard, guardrail probe output, Optimizer run.
 
 1. **Baseline 8/9 (2 min).** Open the native evaluation. Open the failed row:
    answer sounds right; `decision: recommendation`, tool returned `eligible`.
-   Say: *"Fluent and wrong. A human reviewer would have passed it."*
+   Say: *"Fluent prose does not establish a correct business decision."*
+   The historical 8/9 → 9/9 repair changed instructions; the code boundary is newer.
 2. **Three kinds of evaluator (1 min).** Code grader (`business_contract_v2.py`: did the
    decision equal what the tool returned?), model rubric (`action_truthfulness.json`:
    did it claim an action it can't perform?), human review (the annotation in Demo 4).
@@ -64,17 +79,17 @@ terminal, red-team scorecard, guardrail probe output, Optimizer run.
    ```powershell
    & .\agent\src\.venv\Scripts\python.exe -m pytest .\agent\src\tests .\evaluations -q
    ```
-4. **Red team (1 min).** Open the scorecard from `run_red_team.py`: attack success rate by
+4. **Red team (1 min, only with a real completed scan).** Open the scorecard from `run_red_team.py`: attack success rate by
    risk category and strategy. Say what it covers and what it doesn't (content risks, not business logic).
 5. **Guardrail (1 min).** `scripts/probe_guardrail.py`: blocklisted marker → HTTP 400 `content_filter`.
 6. **Optimizer (1 min).** Completed run: baseline retained at 0.75, no better candidate.
    Say: *"The optimizer found nothing better. That is evidence too — we didn't ship a change for its own sake."*
 
-**Close:** *"Passing means: right tool, right arguments, decision equals the tool, no invented actions, and the attacks we tried failed."*
+**Close:** *"Passing is bounded by the cases, rubric and attacks actually evaluated."*
 
 ---
 
-## Demo 3 — The gate (Bridge 1) · 8 min · after slide 16
+## Demo 3 — The gate (Bridge 1) · 8 min · deck slide 16
 
 **Question:** Can we defend this exact artifact?
 
@@ -88,15 +103,16 @@ Pre-staged before the session (a gate run takes up to 45 min):
 2. **PR B (2 min).** Required status ✓, comment with summary, environment approval history
    (who approved DEV credentials and when).
 3. **Case file (2 min).** Download the artifact: candidate ZIP + SHA-256, native evaluation,
-   rubric verdicts and calibration, response IDs. Say: *"Ninety days from now an auditor can reopen this."*
-4. **Release (2 min).** `Agent release to DEMO` run → approve `volt-demo-promotion` live
-   (or show the approval) → promotion receipt: same ZIP hash as the evaluated one → DEMO verification.
+   rubric verdicts and calibration, response IDs. Say: *"The workflow requests 90-day retention; our evidence policy determines what we preserve."*
+4. **Release (2 min).** Show an already approved `Agent release to DEMO` run and
+   its promotion receipt: same ZIP hash as the evaluated one → DEMO verification.
+   A presentation is not authorization for a new deployment or approval.
 
 **Close:** *"Nothing reaches DEMO without passing the gate, and what we ship is byte-for-byte what we tested."*
 
 ---
 
-## Demo 4 — Production teaches development (Bridge 2) · 10 min · after slide 20
+## Demo 4 — Production teaches development (Bridge 2) · 10 min · deck slide 20
 
 **Question:** What did production teach us to test next?
 
@@ -116,7 +132,9 @@ production-watch run, GitHub issue, dataset diff, PR B (or a Copilot-drafted PR)
 4. **The loop closes (3 min).** Production watch → issue → PR (optionally drafted by the
    Copilot coding agent from the issue) → the same gate → promotion. Show PR B's run as the
    result. Say: *"AI-written or human-written, the change faces the same gate."*
-5. **What runs every week (1 min).** `production-watch.yml`: scheduled re-score of DEMO;
-   a failure opens a `production-finding` issue.
+5. **Scheduled checks (1 min).** After explicit activation, `production-watch.yml`
+   re-scores the configured DEMO version with fixed synthetic cases. Capture or
+   scoring failure opens an issue for triage. It is not sampled production traffic,
+   and the v1 suite does not catch every unsupported action claim.
 
 **Close:** *"Every production finding becomes a test before it becomes a fix."*
