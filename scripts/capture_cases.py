@@ -14,7 +14,8 @@ from azure.identity import DefaultAzureCredential
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "evaluations"))
 from business_contract import grade
-from observed_tools import successful_business_tools
+from observed_tools import successful_business_tools, successful_business_calls
+from business_contract_v2 import grade as grade_v2
 
 
 def main() -> None:
@@ -28,6 +29,7 @@ def main() -> None:
     parser.add_argument("--pause-seconds", type=float, default=20)
     parser.add_argument("--case", help="Run one selected case for the live walkthrough; the full release gate still requires all cases.")
     parser.add_argument("--fresh", action="store_true", help="Require a new output directory and prohibit recorded-response reuse.")
+    parser.add_argument("--contract-version", choices=["v1", "v2"], default="v1")
     args = parser.parse_args()
     if args.pause_seconds < 0:
         parser.error("Pause must not be negative.")
@@ -121,7 +123,9 @@ def main() -> None:
                 "response_id": response["id"], "agent_name": args.agent,
                 "agent_version": reference["version"], "code_content_hash": code_hash,
             }
-            row["local_business_score"] = grade({}, row)
+            if args.contract_version == "v2":
+                row["observed_calls"] = json.dumps(successful_business_calls(response))
+            row["local_business_score"] = (grade_v2 if args.contract_version == "v2" else grade)({}, row)
             rows.append(row)
             print(f"{case['id']}: score={row['local_business_score']} response={response['id']}", flush=True)
             if args.case:

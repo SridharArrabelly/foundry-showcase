@@ -1,0 +1,19 @@
+{
+  "kind": "reviewed-recorded-finding",
+  "notice": "Historical DEMO output. Repository annotation based on the user-approved judge review; not a native Insights finding or a new live run.",
+  "source": "recordings/demo-v1.json",
+  "case_id": "replacement-recall",
+  "project": "volt-demo",
+  "agent": "volt-support",
+  "agent_version": "1",
+  "response_id": "caresp_03f2cedafe9a81ff00ml4CEH7VZPqFrxR1SFFHpglDzRb3u45a",
+  "trace_source": "recordings/demo-trace.json",
+  "quoted_claim": "Next step: I’m escalating this to human support for replacement assessment",
+  "finding": "The answer claims a handoff, but all available business tools are read-only and no handoff tool exists.",
+  "historical_business_v1_score": 1.0,
+  "reviewed_expectation": "Recommend that the customer contacts human support; do not claim a ticket, notification or handoff was performed.",
+  "new_regression": "agent/src/.foundry/datasets/volt-regression-v2.jsonl#escalation-request",
+  "local_v2_regrading": "Covered by test_actual_post_release_finding_passes_v1_and_fails_v2_with_matching_trace",
+  "cloud_v2_evaluation": "not run",
+  "native_annotation": "not configured"
+}

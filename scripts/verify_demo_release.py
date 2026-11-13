@@ -9,22 +9,31 @@ from pathlib import Path
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 
-from evaluate_captures import HEADERS, ROOT
+from evaluate_captures import HEADERS, ROOT, contract_source, evaluator_name
 from promote_demo import DEMO, validate_quality
+from score_action_claims import verify_action_gate
 
 
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--receipt", type=Path, required=True)
     parser.add_argument("--runtime-evaluation", type=Path, required=True)
+    parser.add_argument("--action-judgments", type=Path)
     args = parser.parse_args()
     receipt = json.loads(args.receipt.read_text(encoding="utf-8"))
     evaluation = json.loads(args.runtime_evaluation.read_text(encoding="utf-8"))
     if receipt["target_project"] != DEMO:
         raise ValueError("This verifier only targets the approved isolated DEMO project.")
-    path = ROOT / "agent" / "src" / ".foundry" / "datasets" / "volt-regression.jsonl"
+    contract_version = receipt.get("contract_version", "v1")
+    filename = "volt-regression-v2.jsonl" if contract_version == "v2" else "volt-regression.jsonl"
+    path = ROOT / "agent" / "src" / ".foundry" / "datasets" / filename
     cases = [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
-    grader_hash = hashlib.sha256((ROOT / "evaluations" / "business_contract.py").read_text(encoding="utf-8").encode()).hexdigest()
+    grader_hash = hashlib.sha256(contract_source(contract_version).read_text(encoding="utf-8").encode()).hexdigest()
+    if contract_version == "v2":
+        if not args.action_judgments:
+            raise ValueError("DEMO v2 verification also requires independent action judgments.")
+        actions = json.loads(args.action_judgments.read_text(encoding="utf-8"))
+        verify_action_gate(actions, cases, receipt["source_commit"], receipt["package_sha256"])
     with DefaultAzureCredential() as credential, AIProjectClient(
         endpoint=DEMO, credential=credential, allow_preview=True
     ) as project, project.get_openai_client(default_headers=HEADERS) as client:
@@ -47,6 +56,10 @@ def main() -> None:
         )]
         # Source-commit lineage was verified on the immutable target version above.
         validate_quality(run.model_dump(mode="json"), items, cases, None, receipt["package_sha256"])
+        if contract_version == "v2" and {r["id"]: r["response_id"] for r in actions["cases"]} != {
+            i["datasource_item"]["id"]: i["datasource_item"]["response_id"] for i in items
+        }:
+            raise ValueError("DEMO native and model judgments refer to different responses.")
         if any(
             item["datasource_item"]["agent_name"] != "volt-support"
             or item["datasource_item"]["agent_version"] != receipt["agent_version"]
@@ -55,10 +68,10 @@ def main() -> None:
             raise ValueError("A native case identifies another DEMO agent version.")
         group = client.evals.retrieve(evaluation["eval_id"]).model_dump(mode="json")
         criteria = group["testing_criteria"]
-        grader = project.evaluators.get_version("volt_business_contract", "1", headers=HEADERS)
+        grader = project.evaluators.get_version(evaluator_name(contract_version), evaluation["evaluator_version"], headers=HEADERS)
         if (
-            len(criteria) != 1 or criteria[0].get("evaluator_name") != "volt_business_contract"
-            or criteria[0].get("evaluator_version") != "1"
+            len(criteria) != 1 or criteria[0].get("evaluator_name") != evaluator_name(contract_version)
+            or criteria[0].get("evaluator_version") != evaluation["evaluator_version"]
             or run.metadata.get("evaluator_sha256") != grader_hash
             or hashlib.sha256(grader.definition.code_text.encode()).hexdigest() != grader_hash
         ):

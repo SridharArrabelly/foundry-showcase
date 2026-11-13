@@ -7,6 +7,11 @@ Nothing here is a claim of customer-production readiness.
 
 ## What is implemented
 
+The evidence-first revision adds a locally tested business response boundary,
+additive v2 evaluation and an opt-in behavioral workflow. It has not been
+deployed or cloud-validated. [Release activation and remaining approvals](RELEASE-GATE.md)
+are separate from the historical results below.
+
 - Pinned Citadel Governance Hub parameters for a small, single-region deployment.
 - Separate Foundry `volt-dev` and production-like `volt-demo` projects.
 - Agent Framework Responses host with an optimizer baseline, a versioned toolbox
@@ -26,7 +31,7 @@ correct but used `decision: recommendation` while the eligibility tool returned
 Fresh model responses can vary; the recording preserves the original incident.
 The harmless guardrail marker produced a native HTTP 400 `content_filter`.
 
-The focused fix in PR #2 has a complete native v6 evaluation: **9 passed, 0
+The instruction-only fix in PR #2 has a complete native v6 evaluation: **9 passed, 0
 failed, 0 errored**, using the same evaluator and unchanged nine-case dataset.
 One invocation initially failed with a model-service error; its evidence was
 preserved and that case retried once. Business grading of completed responses
@@ -34,7 +39,8 @@ is not an availability measurement. The native status is attached to the exact
 PR commit. After explicit human approval, PR #2 was merged into
 `feature/volt-citadel`, and the saved ZIP was promoted unchanged to
 `volt-demo` / `volt-support` v1. A fresh native DEMO evaluation also passed all
-nine cases. Issue #1 is closed. Neither `main` nor the original demo was changed.
+nine cases. Issue #1 is closed. That historical repair targeted the feature branch;
+the workshop was later merged to `main` in PR #3.
 
 Native Memory now passes remember, cross-conversation recall, forget and native
 deletion checks for one authenticated caller. A second-identity test remains
@@ -63,9 +69,10 @@ Open `presentation\Volt & Co - Governed and improving agents.pptx`
 in PowerPoint Presenter View. Use `Presenter manuscript.pdf` for the complete
 spoken script and `Source mapping and readiness.md` for preflight checks.
 `Recorded evidence.html` is the clearly labeled offline fallback, not a live UI.
-The four visible demo cards are slides **9, 13, 16 and 20**. They return to
-**10, 14, 17 and 21**. Demo 1 and Demo 4 issue new requests; the intervening
-native jobs and previous control proofs are explicitly completed evidence.
+The four visible demo cards are slides **7, 12, 15 and 19**, returning to
+**8, 13, 16 and 20**. The pre-activation route distinguishes historical cloud
+results from local v2 tests. A fresh corrected escalation request in Demo 4
+requires a separately approved and verified v2 deployment; never use v1 as its proof.
 
 The default walkthrough uses real, completed issue/PR/evaluation evidence rather
 than pretending to create the already-merged fix again. Copilot assistance was
@@ -91,10 +98,12 @@ decision, human assessment rather than an executed replacement, and genuine poli
 citations. A one-case walkthrough is not the nine-case release gate.
 
 There is no ticket creation or human-handoff integration. Some recorded prose
-uses wording such as "I'm escalating"; that is not evidence that an escalation
-was executed. Clarify this boundary when presenting. The nine-case metric checks
+uses wording such as "I'm escalating"; that is an unsupported action claim,
+not evidence that an escalation was executed. This is the real feedback incident.
+The historical nine-case metric checks
 the decision, required tool evidence and reference, not every natural-language
-action claim.
+action claim. The matching DEMO response/trace, repository annotation and additive
+regression are documented in `recordings/escalation-finding.json`.
 
 ## Environment and costs
 

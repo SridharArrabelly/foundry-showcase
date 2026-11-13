@@ -10,8 +10,8 @@ import win32com.client
 ROOT = Path(__file__).parent
 deck_path = ROOT / "Volt & Co - Governed and improving agents.pptx"
 deck = Presentation(deck_path)
-assert len(deck.slides) == 23
-assert sum(s._element.get("show") != "0" for s in deck.slides) == 21
+assert len(deck.slides) == 24
+assert sum(s._element.get("show") != "0" for s in deck.slides) == 22
 assert all(s.has_notes_slide and len(s.notes_slide.notes_text_frame.text) > 350 for s in deck.slides)
 
 slide_texts = []
@@ -27,8 +27,8 @@ for n, slide in enumerate(deck.slides, 1):
                     assert run.font.size is not None, (n, shape.shape_id, run.text)
                     assert run.font.color.type is not None, (n, shape.shape_id, run.text)
 
-for entry, back in [(9, 10), (13, 14), (16, 17), (20, 21)]:
-    assert f"BACK TO SLIDE {back:02}" in slide_texts[entry - 1]
+for entry, back in [(7, 8), (12, 13), (15, 16), (19, 20)]:
+    assert f"RETURN TO SLIDE {back:02}" in slide_texts[entry - 1]
     assert "[SWITCH OUT" in deck.slides[entry - 1].notes_slide.notes_text_frame.text
     assert f"slide {back}" in deck.slides[entry - 1].notes_slide.notes_text_frame.text
     assert "BACK FROM DEMO" in slide_texts[back - 1]
@@ -36,7 +36,7 @@ for entry, back in [(9, 10), (13, 14), (16, 17), (20, 21)]:
 with zipfile.ZipFile(deck_path) as z:
     slide_parts = [p for p in z.namelist() if re.fullmatch(r"ppt/slides/slide\d+\.xml", p)]
     note_parts = [p for p in z.namelist() if re.fullmatch(r"ppt/notesSlides/notesSlide\d+\.xml", p)]
-    assert len(slide_parts) == len(note_parts) == 23
+    assert len(slide_parts) == len(note_parts) == 24
     for part in slide_parts + note_parts:
         etree.fromstring(z.read(part))
     assert not any(p.startswith("ppt/media/") and p.endswith((".mp3", ".wav", ".mp4", ".wmv")) for p in z.namelist())
@@ -62,9 +62,9 @@ finally:
     pres.Close()
 
 report = {
-    "slides": 23,
-    "visible": 21,
-    "hidden": [22, 23],
+    "slides": 24,
+    "visible": 22,
+    "hidden": [23, 24],
     "notes": "Full manuscript embedded in every slide",
     "source_slide_27": "excluded",
     "unused_source_audio": "removed",
